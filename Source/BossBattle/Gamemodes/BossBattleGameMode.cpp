@@ -1,7 +1,7 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "BossBattleGameMode.h"
-#include "BossBattleCharacter.h"
+#include "Characters/ThirdPersonCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ABossBattleGameMode::ABossBattleGameMode()
