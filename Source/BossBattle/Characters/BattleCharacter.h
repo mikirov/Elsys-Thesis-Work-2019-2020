@@ -51,7 +51,6 @@ public:
 	bool ServerInteractWithWeapon_Validate();
 	void ServerInteractWithWeapon_Implementation();
 
-	UFUNCTION()
 	void OnDeathAnimationEnd();
 
 	void FinishReloading();

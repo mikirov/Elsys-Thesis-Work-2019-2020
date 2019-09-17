@@ -26,13 +26,13 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Instigator;
+	AActor* DamageDealer;
 	if (validate(IsValid(CapsuleComponent))) { 
-		Instigator = GetOwner();
-		if (validate(IsValid(Instigator)) == false) { return; }
+		DamageDealer = GetOwner();
+		if (validate(IsValid(DamageDealer)) == false) { return; }
 
 		CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::AProjectile::OnOverlapBegin);
-		CapsuleComponent->IgnoreActorWhenMoving(Instigator, true);
+		CapsuleComponent->IgnoreActorWhenMoving(DamageDealer, true);
 	}
 
 	validate(IsValid(HitParticleSystem));

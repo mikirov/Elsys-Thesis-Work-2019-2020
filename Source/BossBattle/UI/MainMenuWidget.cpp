@@ -69,8 +69,8 @@ void UMainMenuWidget::JoinServer() {
 	if (validate(IsValid(World)) == false) { return; }
 	if (validate(IsValid(ServerTextBox)) == false) return;
 
-	FName ServerAddress;
-	ServerAddress = FName(*ServerTextBox->GetText().ToString());
+	FName ServerAddressName;
+	ServerAddressName = FName(*ServerTextBox->GetText().ToString());
 	
-	UGameplayStatics::OpenLevel(World, ServerAddress);
+	UGameplayStatics::OpenLevel(World, ServerAddressName);
 }
