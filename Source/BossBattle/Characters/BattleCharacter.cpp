@@ -16,6 +16,8 @@
 #include "UnrealNetwork.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Animation/CharacterAnimInstance.h"
+#include "Characters/HealthComponent.h"
 #include "Weapons/Gun.h"
 #include "Utilities/CustomMacros.h"
 
@@ -25,6 +27,18 @@ ABattleCharacter::ABattleCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	DeathSoundComponent = CreateDefaultSubobject<UAudioComponent>("DeathSoundAudioComponent");
+	DeathSoundComponent->bAutoActivate = false;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
+	HealthComponent->OnDeath.AddDynamic(this, &ABattleCharacter::Die);
+	HealthComponent->SetIsReplicated(true);
+
+
+	USkeletalMeshComponent* SkeletalMesh = GetMesh();
+	if (validate(IsValid(SkeletalMesh)) == false) { return; }
+	SkeletalMesh->SetRenderCustomDepth(true);
 	
 }
 
@@ -32,6 +46,18 @@ ABattleCharacter::ABattleCharacter()
 void ABattleCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CharacterMesh = GetMesh();
+	if (validate(IsValid(CharacterMesh))) {
+		if (validate(IsValid(CharacterAnimationTemplate))) {
+			CharacterMesh->SetAnimInstanceClass(CharacterAnimationTemplate);
+		}
+
+		CharacterAnimation = Cast<UCharacterAnimInstance>(CharacterMesh->GetAnimInstance());
+		validate(IsValid(CharacterAnimation));
+	}
+
+	SpawnStartingGun();
 	
 }
 
@@ -47,16 +73,6 @@ bool ABattleCharacter::IsFiring()
 {
 	if (validate(IsValid(Gun)) == false) { return false; }
 	return Gun->IsFiring();
-}
-
-void ABattleCharacter::Destroyed() {
-	Super::Destroyed();
-
-	
-	if (IsValid(Gun)) {
-		Gun->Destroy();
-	}
-	
 }
 
 void ABattleCharacter::Move(FVector Direction) {
@@ -79,6 +95,34 @@ FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 
 }
 
+
+void ABattleCharacter::OnDeathAnimationEnd()
+{
+	if (IsValid(Gun)) {
+		Gun->Destroy();
+	}
+	Destroy();
+	
+}
+
+void ABattleCharacter::Die()
+{
+	
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	if (validate(IsValid(DeathSoundComponent))) {
+		DeathSoundComponent->Play();
+	}
+
+	if (validate(IsValid(CharacterAnimation))) {
+		CharacterAnimation->Die();
+	}
+
+	if (IsFiring()) {
+		ServerStopFiringRequest();
+	}
+}
 
 void ABattleCharacter::StartFiringRequest() {
 	//bWantsToShoot = true;
@@ -137,18 +181,22 @@ void ABattleCharacter::InteractWithWeapon()
 void ABattleCharacter::PickGun(class AGun* NewGun)
 {
 	if (validate(IsValid(NewGun)) == false) { return; }
-	//if (validate(IsValid(CharacterMesh)) == false) { return; }
-	//if (validate(CharacterMesh->DoesSocketExist("GunSocket")) == false) { return; }
+	if (validate(IsValid(CharacterMesh)) == false) { return; }
+	if (validate(CharacterMesh->DoesSocketExist("GunSocket")) == false) { return; }
 
 	Gun = NewGun;
-	//Gun->SetupAttachmentComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+	
+	USkeletalMeshComponent* GunMesh = Gun->FindComponentByClass<USkeletalMeshComponent>();
+	if (validate(IsValid(GunMesh)) == false) return;
+
+	GunMesh->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
 }
 
 void ABattleCharacter::DropGun()
 {
 	Gun->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false));
 	
-	//TODO: set the state of the gun to dropped so that it spins and shines untill it gets picked up
+	//TODO: set the state of the gun to dropped so that it spins and shines until it gets picked up
 	Gun = nullptr;
 }
 
@@ -166,7 +214,7 @@ void ABattleCharacter::StartReloading()
 	if (validate(IsValid(Gun)) == false) { return; }
 
 	bReloadingAllowed = false;
-	//CharacterAnimation->Reload();
+	CharacterAnimation->Reload();
 }
 
 void ABattleCharacter::FinishReloading()

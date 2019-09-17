@@ -21,8 +21,6 @@ public:
 	// Checks whether firing is possible
 	bool IsFiring();
 
-	void Destroyed() override;
-
 	//might not be needed
 	void Move(FVector Direction);
 
@@ -53,6 +51,11 @@ public:
 	bool ServerInteractWithWeapon_Validate();
 	void ServerInteractWithWeapon_Implementation();
 
+	UFUNCTION()
+	void OnDeathAnimationEnd();
+
+	void FinishReloading();
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
@@ -60,6 +63,25 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Gun")
 	class AGun* Gun = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
+	class USkeletalMeshComponent* CharacterMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
+	class UHealthComponent* HealthComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
+	class UAudioComponent* DeathSoundComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	class UCharacterAnimInstance* CharacterAnimation = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	TSubclassOf<class UCharacterAnimInstance> CharacterAnimationTemplate = nullptr;
+
+	
+	UFUNCTION()
+	void Die();
 
 	UFUNCTION()
 	void StartFiringRequest();
@@ -77,14 +99,11 @@ protected:
 
 	void InteractWithWeapon();
 
-	virtual void PickGun(class AGun* NewGun);
+	void PickGun(class AGun* NewGun);
 
 	void DropGun();
 	
 	float InteractionDistance = 100.0f;
-
-
-	//float WeaponDropDistance = 150.0f;
 
 	UPROPERTY(VisibleAnywhere)
 	bool bGunCanShoot = true;
@@ -108,15 +127,11 @@ protected:
 	bool MulticastFinishReloading_Validate();
 	void MulticastFinishReloading_Implementation();
 
-	void FinishReloading();
-
 	void AttemptFiring();
 
 	FTimerHandle AttemptFiringTimerHandle;
 
 	void SpawnStartingGun();
-
-	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
 
 private:

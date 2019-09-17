@@ -26,7 +26,7 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Instigator = nullptr;
+	AActor* Instigator;
 	if (validate(IsValid(CapsuleComponent))) { 
 		Instigator = GetOwner();
 		if (validate(IsValid(Instigator)) == false) { return; }
