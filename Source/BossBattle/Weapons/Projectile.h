@@ -6,11 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
-
-//forward declarations
-class UProjectileMovementComponent;
-class UCapsuleComponent;
-
 UCLASS()
 class BOSSBATTLE_API AProjectile : public AActor
 {
@@ -24,25 +19,38 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void SelfDestroy();
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent * OverlappedComp,
 		AActor * OtherActor, UPrimitiveComponent * OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep,
 		const FHitResult & SweepResult);
 
-	UPROPERTY(EditDefaultsOnly)
-	UProjectileMovementComponent* ProjectileMovementComponent;
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent = nullptr;
+
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* StaticMeshComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	class UProjectileMovementComponent* ProjectileMovementComponent = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite)
-	UCapsuleComponent* CapsuleComponent = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UCapsuleComponent* CapsuleComponent = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Particle")
-	UParticleSystem* HitParticleSystem = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	class UAudioComponent* HitSoundComponent = nullptr;
 
-	//Damage to deal on hit
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float Damage = 30.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	TArray<FName> TagsToIgnore;
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* ProjectileDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName ProjectileName;
+
+	struct FProjectileData* ProjectileData = nullptr;
+
+	FTimerHandle DestroyTimerHandler;
 };

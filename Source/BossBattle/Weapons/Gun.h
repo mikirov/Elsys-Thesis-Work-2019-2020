@@ -6,12 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
-UENUM()
-enum class EProjectileSpawnRotation : uint8
+enum EProjectileSpawnRotation : uint8
 {
 	GunForwardVector, // Less precise but looks better
 	ControlRotation // Most precise but doesn't respect actor rotation limits.
 };
+
+enum EGunState
+{
+	Picked,
+	Dropped
+};
+
 
 
 UCLASS()
@@ -35,7 +41,6 @@ public:
 	//finishes the weapon reload, updating the ammo
 	void FinishReload();
 
-
 	virtual void BeginPlay() override;
 
 	bool IsFiring();
@@ -44,23 +49,24 @@ public:
 
 	FFire OnFire;
 
-	TSubclassOf<UCameraShake> GetGunfireCameraShake();
+	TSubclassOf<class UCameraShake> GetGunfireCameraShake();
 
-	EProjectileSpawnRotation GetProjectileSpawnRotationMode();
+	void OnDrop();
 
+	void OnPick();
 protected:
 	
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USceneComponent* ProjectileSpawnTransform = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* SkeletalMeshComponent = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UArrowComponent* ArrowComponent = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USphereComponent* SphereComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
@@ -68,14 +74,13 @@ protected:
 
 	class UAudioComponent* FireSoundComponent = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* WeaponDataTable = nullptr;
 
 	bool bTriggerPressed = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
-	TSubclassOf<UCameraShake> GunfireCameraShake;
-
-	bool bInfiniteAmmo = false;
+	TSubclassOf<class UCameraShake> GunfireCameraShake;
 
 	int CurrentAmmo = 0;
 
@@ -83,8 +88,13 @@ protected:
 
 	EProjectileSpawnRotation SpawnRotationMode = EProjectileSpawnRotation::ControlRotation;
 
+	//degrees to rotate around yaw axis while dropped
+	float RotationPerSecond = 45.0f;
+
 	UFUNCTION()
 	void Fire();
+
+	virtual void Tick(float deltaTime);
 
 	void SpawnProjectile();
 
@@ -99,6 +109,7 @@ protected:
 
 	bool HasAmmo(int Amount);
 
-private:
+	enum EGunState GunState = EGunState::Dropped;
+
 	struct FWeaponData* WeaponData = nullptr;
 };

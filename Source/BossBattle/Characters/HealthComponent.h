@@ -45,7 +45,7 @@ protected:
 	void BeginPlay() override;
 	
 	UPROPERTY(EditDefaultsOnly)
-	int MaxHealth;
+	int MaxHealth = 100;
 
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_HealthCheck, VisibleInstanceOnly)
 	int Health;

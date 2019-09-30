@@ -16,27 +16,17 @@ public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
 
-	void SetTarget(AActor* Target);
+	void SetTarget(class AActor* Target);
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-	void Die();
-
-	UFUNCTION()
-	void OnCapsuleHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	void Die() override;
 
 	// Added score when enemy dies.
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float Score = 500.0f;
 
 	// target player used for checking collision actor
-	UPROPERTY()
-	AActor* Target = nullptr;
-
-	UPROPERTY(EditDefaultsOnly)
-	float PushBackMagnitude = 500.0f;
+	class AActor* Target = nullptr;
 
 };

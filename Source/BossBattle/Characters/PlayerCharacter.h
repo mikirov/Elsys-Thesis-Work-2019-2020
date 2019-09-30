@@ -14,44 +14,43 @@ class BOSSBATTLE_API APlayerCharacter : public ABattleCharacter
 public:
 	APlayerCharacter();
 
+protected:
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
+	UPROPERTY(VisibleAnywhere, Category = Camera)
 	float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
+	UPROPERTY(VisibleAnywhere, Category = Camera)
 	float BaseLookUpRate;
 
-	/** Returns CameraBoom subobject **/
-	class USpringArmComponent* GetCameraBoom();
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UArrowComponent* RotationArrow = nullptr;
 
-	/** Returns FollowCamera subobject **/
-	class UCameraComponent* GetFollowCamera();
-
-//protected:
-
-	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-	class USpringArmComponent* CameraBoom = nullptr;
+	class USpringArmComponent* SpringArm = nullptr;
 
-	/** Follow camera */
+	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-	class UCameraComponent* FollowCamera = nullptr;
+	class UCameraComponent* FPCamera = nullptr;
+	
+	/** third person camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	class UCameraComponent* TPCamera = nullptr;
 
-	UPROPERTY()
-	class UPlayerStatsWidget* PlayerStatsWidget = nullptr;
-
-	void OnDeathAnimationEnd();
+	void OnDeathAnimationEnd() override;
 
 	UFUNCTION()
 	void OnHealthChanged(int Health);
 	
+	void SwapCamera();
+
 	UFUNCTION()
 	void PlayCameraShake();
 	
 	void BeginPlay() override;
 
-	void Die();
+	void Die() override;
 
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);
@@ -65,18 +64,11 @@ public:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-
-	/** 
-	 * Called via input to turn at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
 	void TurnAtRate(float Rate);
 
-	/**
-	 * Called via input to turn look up/down at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
 	void LookUpAtRate(float Rate);
+
+	void Restart() override;
 
 	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);

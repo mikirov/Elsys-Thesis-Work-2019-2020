@@ -35,10 +35,15 @@ ABattleCharacter::ABattleCharacter()
 	HealthComponent->OnDeath.AddDynamic(this, &ABattleCharacter::Die);
 	HealthComponent->SetIsReplicated(true);
 
+	CharacterMovementComponent = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+	if (validate(IsValid(CharacterMovementComponent)) == false) return;
+	CharacterMovementComponent->GetNavAgentPropertiesRef().bCanCrouch = true;
+	CharacterMovementComponent->bCrouchMaintainsBaseLocation = true;
+	CharacterMovementComponent->SetIsReplicated(true);
+
 
 	USkeletalMeshComponent* SkeletalMesh = GetMesh();
 	if (validate(IsValid(SkeletalMesh)) == false) { return; }
-	SkeletalMesh->SetRenderCustomDepth(true);
 	
 }
 
@@ -48,24 +53,13 @@ void ABattleCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CharacterMesh = GetMesh();
-	if (validate(IsValid(CharacterMesh))) {
-		if (validate(IsValid(CharacterAnimationTemplate))) {
-			CharacterMesh->SetAnimInstanceClass(CharacterAnimationTemplate);
-		}
+	if (validate(IsValid(CharacterMesh)) == false) return;
 
-		CharacterAnimation = Cast<UCharacterAnimInstance>(CharacterMesh->GetAnimInstance());
-		validate(IsValid(CharacterAnimation));
-	}
+	CharacterAnimation = Cast<UCharacterAnimInstance>(CharacterMesh->GetAnimInstance());
+	validate(IsValid(CharacterAnimation));
 
 	SpawnStartingGun();
 	
-}
-
-// Called every frame
-void ABattleCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 
@@ -98,9 +92,9 @@ FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 
 void ABattleCharacter::OnDeathAnimationEnd()
 {
-	if (IsValid(Gun)) {
-		Gun->Destroy();
-	}
+	//if (IsValid(Gun)) {
+	//	Gun->Destroy();
+	//}
 	Destroy();
 	
 }
@@ -118,36 +112,40 @@ void ABattleCharacter::Die()
 	if (validate(IsValid(CharacterAnimation))) {
 		CharacterAnimation->Die();
 	}
-
+	
+	
 	if (IsFiring()) {
-		ServerStopFiringRequest();
+		ServerStopFiring();
 	}
 }
 
-void ABattleCharacter::StartFiringRequest() {
-	//bWantsToShoot = true;
-	GetWorldTimerManager().SetTimer(
-		AttemptFiringTimerHandle,
-		this,
-		&ABattleCharacter::AttemptFiring,
-		0.05,
-		true,
-		0
-	);
+void ABattleCharacter::Destroyed()
+{
+	Super::Destroyed();
+
+	if (IsValid(Gun)) {
+		Gun->Destroy();
+	}
 }
 
-
 void ABattleCharacter::StartFiring() {
+	if (validate(IsValid(Gun)) == false) return;
 	Gun->PullTrigger();
 }
 
 
 void ABattleCharacter::StopFiring() {
+	if (validate(IsValid(Gun)) == false) return;
+
 	Gun->ReleaseTrigger();
 }
 
 void ABattleCharacter::InteractWithWeapon()
 {
+	AGun* OldGun = nullptr;
+	if (IsValid(Gun)) {
+		OldGun = Gun;
+	}
 	//drop the current gun if you have one
 	if (IsValid(Gun)) {
 		DropGun();
@@ -160,22 +158,23 @@ void ABattleCharacter::InteractWithWeapon()
 	DrawDebugSphere(World, GetActorLocation(), InteractionDistance, 50, FColor::Yellow, false, 1.0f);
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-
-	//FIXME
 	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);
-	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery_MAX);
 
 	TArray<AActor*> OverlappedActors;
 	TArray<AActor*> ActorsToIgnore;
 
 	UKismetSystemLibrary::SphereOverlapActors(World, GetActorLocation(), InteractionDistance, ObjectTypes, AGun::StaticClass(), ActorsToIgnore, OverlappedActors);
 	if (validate(OverlappedActors.Num() != 0) == false) return;
+	for (auto OverlappedActor : OverlappedActors) {
+		
+		AGun* NewGun = Cast<AGun>(OverlappedActor);
+		if (validate(IsValid(NewGun)) == false) continue;
+		if (NewGun == OldGun) continue;
 
+		PickGun(NewGun);
+		break;
+	}
 
-	AGun* NewGun = Cast<AGun>(OverlappedActors[0]);
-	if (validate(IsValid(NewGun)) == false) return;
-
-	PickGun(NewGun);
 }
 
 void ABattleCharacter::PickGun(class AGun* NewGun)
@@ -189,22 +188,22 @@ void ABattleCharacter::PickGun(class AGun* NewGun)
 	USkeletalMeshComponent* GunMesh = Gun->FindComponentByClass<USkeletalMeshComponent>();
 	if (validate(IsValid(GunMesh)) == false) return;
 
+
+	Gun->OnPick();
+
 	GunMesh->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
+
 }
 
 void ABattleCharacter::DropGun()
 {
+	if (validate(IsValid(Gun)) == false) return;
+
 	Gun->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false));
+
+	Gun->OnDrop();
 	
-	//TODO: set the state of the gun to dropped so that it spins and shines until it gets picked up
 	Gun = nullptr;
-}
-
-void ABattleCharacter::StopFiringRequest() {
-
-	bWantsToShoot = false;
-
-	IsFiring() ? StopFiring() : GetWorldTimerManager().ClearTimer(AttemptFiringTimerHandle);
 }
 
 void ABattleCharacter::StartReloading()
@@ -214,7 +213,10 @@ void ABattleCharacter::StartReloading()
 	if (validate(IsValid(Gun)) == false) { return; }
 
 	bReloadingAllowed = false;
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::StartReloading"));
 	CharacterAnimation->Reload();
+	//CharacterAnimation->ReloadBP();
+
 }
 
 void ABattleCharacter::FinishReloading()
@@ -222,26 +224,14 @@ void ABattleCharacter::FinishReloading()
 	if (validate(IsValid(Gun)) == false) return;
 
 	bReloadingAllowed = true;
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::FinishReloading"))
 	Gun->FinishReload();
-}
-
-
-void ABattleCharacter::AttemptFiring() {
-	if (validate(IsValid(Gun)) == false) { return; }
-	if (validate(IsFiring() == false) == false) { return; }
-
-	if (bGunCanShoot) {
-		StartFiring();
-		if (validate(IsFiring())) {
-			GetWorldTimerManager().ClearTimer(AttemptFiringTimerHandle);
-		}
-	}
 }
 
 void ABattleCharacter::SpawnStartingGun()
 {
 	// No validate because player may not have a starting gun.
-	if (IsValid(StartingGunTemplate) == false) { return; }
+	if (IsValid(StartingGunTemplate.Get()) == false) { return; }
 
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
@@ -255,22 +245,22 @@ void ABattleCharacter::SpawnStartingGun()
 }
 
 
-void ABattleCharacter::ServerStartFiringRequest_Implementation() {
-	StartFiringRequest();
+void ABattleCharacter::ServerStartFiring_Implementation() {
+	StartFiring();
 }
 
 
-bool ABattleCharacter::ServerStartFiringRequest_Validate()
+bool ABattleCharacter::ServerStartFiring_Validate()
 {
 	return true;
 }
 
-void ABattleCharacter::ServerStopFiringRequest_Implementation() {
-	StopFiringRequest();
+void ABattleCharacter::ServerStopFiring_Implementation() {
+	StopFiring();
 }
 
 
-bool ABattleCharacter::ServerStopFiringRequest_Validate()
+bool ABattleCharacter::ServerStopFiring_Validate()
 {
 	return true;
 }

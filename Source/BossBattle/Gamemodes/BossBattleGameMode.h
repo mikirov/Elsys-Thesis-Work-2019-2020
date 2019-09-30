@@ -16,42 +16,31 @@ class BOSSBATTLE_API ABossBattleGameMode : public AGameModeBase
 
 	GENERATED_BODY()
 public:
-	ABossBattleGameMode();
-
+	
 	virtual void BeginPlay() override;
 
 	// Increments the score by a given amount
-	UFUNCTION(BlueprintCallable)
 	void IncrementScore(const int Amount);
 
 	// Respawns the player to his initial transform
-	UFUNCTION()
 	virtual void RespawnPlayer(APlayerController* PlayerController);
 
-	UFUNCTION()
 	void IncrementEnemyCounter(int EnemyCount);
 
-	UFUNCTION()
-	virtual void DecrementEnemyCounter();
+	void DecrementEnemyCounter();
 
-	UFUNCTION()
 	void RestartLevel();
 
-	UFUNCTION()
 	void LoadWinLevel();
 
 protected:
 
-	UFUNCTION()
 	virtual void WinGame();
 
-	UFUNCTION()
 	virtual void LoseGame();
 
-	UFUNCTION()
 	bool AreAllEnemiesDead();
 
-	UFUNCTION()
 	void UpdateHUDScore(int Score);
 
 	void FindPlayerControllers();
@@ -74,5 +63,15 @@ protected:
 
 
 	class ATriggerBox* RespawnBox = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	const class UDataTable* SpawnerLookupTable = nullptr;
+
+	int CurrentWaveIndex = 0;
+
+	UFUNCTION()
+	void SpawnEnemyWave();
+
+	int WaveCount = 0;
 
 };

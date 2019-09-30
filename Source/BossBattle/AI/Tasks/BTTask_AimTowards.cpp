@@ -29,10 +29,9 @@ EBTNodeResult::Type UBTTask_AimTowards::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	FRotator LookAtRotation = AICharacter->GetAimAtRotation(TargetLocation);
 
-	// Aim Offset is used in order to aim pitch so in actor rotation pitch should not be set
-	AICharacter->SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	AICharacter->SetActorRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
 
-	//AIController->SetControlRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
+	AIController->SetControlRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
 
 	return EBTNodeResult::Succeeded;
 }

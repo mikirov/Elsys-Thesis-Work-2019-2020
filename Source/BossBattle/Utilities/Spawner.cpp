@@ -5,8 +5,9 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/DataTable.h"
-#include "GameFramework/Character.h"
 
+#include "Gamemodes/BossBattleGameMode.h"
+#include "Characters/EnemyCharacter.h"
 #include "Utilities/SpawnerTable.h"
 #include "Utilities/CustomMacros.h"
 
@@ -15,19 +16,12 @@ ASpawner::ASpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	if (validate(IsValid(BoxComponent)) == false) return;
 }
 
-// Called when the game starts or when spawned
-void ASpawner::BeginPlay()
-{
-	Super::BeginPlay();
 
-	BoxComponent = FindComponentByClass<UBoxComponent>();
-	validate(IsValid(BoxComponent));
-}
-
-void ASpawner::SpawnEnemy(TSubclassOf<ACharacter> EnemyTemplate, int Count) {
+void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate, int Count) {
 	if (validate(IsValid(BoxComponent))  == false) { return; }
 	if (validate(IsValid(EnemyTemplate)) == false) { return; }
 
@@ -54,13 +48,12 @@ void ASpawner::SpawnEnemy(TSubclassOf<ACharacter> EnemyTemplate, int Count) {
 			EnemySpawnPosition,
 			SpawnParameters);
 	}
-	/*
-	AShooterGameMode* GameMode = Cast<AShooterGameMode>(World->GetAuthGameMode());
-	if (validate(IsValid(GameMode)) == false) { continue;; }
+
+	ABossBattleGameMode* GameMode = Cast<ABossBattleGameMode>(World->GetAuthGameMode());
+	if (validate(IsValid(GameMode)) == false) { return; }
 
 	GameMode->IncrementEnemyCounter(Count);
 
-	*/
 
 }
 

@@ -6,6 +6,11 @@
 #include "Animation/AnimInstance.h"
 #include "CharacterAnimInstance.generated.h"
 
+UENUM()
+enum class EAnimationState : uint8 {
+	Walking,
+	Dead
+};
 
 /**
  * 
@@ -18,14 +23,7 @@ class BOSSBATTLE_API UCharacterAnimInstance : public UAnimInstance
 public:
 	void Die();
 
-	FVector GetRootBonePosition();
-
-	float GetCurrentCoverAnimationTimeRemaining();
-
-	float GetCurrentCoverAnimationTime();
-
-	void SetCoverAimOffsetLimitation(float LowerLimit, float UpperLimit);
-
+	UFUNCTION(BlueprintImplementableEvent)
 	void Reload();
 
 protected:
@@ -34,6 +32,8 @@ protected:
 	void NativeInitializeAnimation() override;
 
 	void NativeUpdateAnimation(float DeltaTimeX) override;
+
+	void OnReloadFinished();
 
 	class ABattleCharacter* CharacterPawn = nullptr;
 
@@ -45,15 +45,29 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	float AimOffsetHorizontal;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	bool bReload;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	bool bCrouching = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	bool bInAir = false;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	float AimingDirection = 0;
+	float MovementDirection = 0;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	float Speed = 0;
+	
+	//UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	//float Direction = 0;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	EAnimationState AnimationState = EAnimationState::Walking;
+
+	UFUNCTION(BlueprintCallable)
+	void OnDeathAnimationEnd();
 
 private:
 	float AimOffsetLowerLimit = -180;

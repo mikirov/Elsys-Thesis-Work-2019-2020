@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SceneComponent.h"
+#include "Components/ArrowComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -26,9 +28,6 @@
 #include "Utilities/CustomMacros.h"
 #include "Weapons/Gun.h"
 
-//////////////////////////////////////////////////////////////////////////
-// APlayerCharacter
-
 APlayerCharacter::APlayerCharacter()
 {
 	// Set size for collision capsule
@@ -39,52 +38,37 @@ APlayerCharacter::APlayerCharacter()
 		Capsule->InitCapsuleSize(42.f, 96.0f);
 	}
 	
+	RotationArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	RotationArrow->SetupAttachment(Capsule);
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
-
-	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
-	if (validate(IsValid(CharacterMovementComponent))) {
-			// Configure character movement
-			CharacterMovementComponent->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-			CharacterMovementComponent->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-			CharacterMovementComponent->JumpZVelocity = 600.f;
-			CharacterMovementComponent->AirControl = 0.2f;
-	}
 	
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	// Create a spring arm (pulls in towards the player if there is a collision)
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->TargetArmLength = 500.0f; // The camera follows at this distance behind the character	
+	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	TPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TPCamera"));
+	TPCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	TPCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	TPCamera->SetActive(true);
 
+	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCamera"));
+	FPCamera->SetupAttachment(RootComponent);
+	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
+	FPCamera->bUsePawnControlRotation = true;
+	FPCamera->SetActive(false);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
-
-class USpringArmComponent* APlayerCharacter::GetCameraBoom()
-{
-	return CameraBoom;
-}
-
-class UCameraComponent* APlayerCharacter::GetFollowCamera()
-{
-	return FollowCamera;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-// Input
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -118,15 +102,40 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::ServerInteractWithWeapon);
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &APlayerCharacter::ServerStartReloading);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::ServerStartFiring);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::ServerStopFiring);
+
+	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &APlayerCharacter::SwapCamera);
 }
 
 
 
 void APlayerCharacter::OnHealthChanged(int Health) {
 	if (IsLocallyControlled()) {
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		if (validate(IsValid(PlayerController)) == false) { return; }
+
+		ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+		if (validate(IsValid(HUD)) == false) { return; }
+
+		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
 		if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
 
 		PlayerStatsWidget->SetHealth(Health);
+	}
+}
+
+void APlayerCharacter::SwapCamera()
+{
+	if (validate(IsValid(FPCamera)) == false) return;
+	if (validate(IsValid(TPCamera)) == false) return;
+	
+	FPCamera->ToggleActive();
+	TPCamera->ToggleActive();
+
+	if (FPCamera->IsActive()) {
+		FPCamera->SetRelativeLocation(FVector(30, 10, 70));
 	}
 }
 
@@ -136,6 +145,9 @@ void APlayerCharacter::BeginPlay()
 
 	if (validate(IsValid(HealthComponent)) == false) { return; }
 	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
+
+	if (validate(IsValid(FPCamera)) == false) return;
+	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
 }
 
 void APlayerCharacter::Die()
@@ -152,8 +164,7 @@ void APlayerCharacter::Die()
 
 void APlayerCharacter::OnDeathAnimationEnd()
 {
-	Super::OnDeathAnimationEnd();
-
+	
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
 	if (IsValid(GameMode)) {
 		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
@@ -162,8 +173,10 @@ void APlayerCharacter::OnDeathAnimationEnd()
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		if (validate(IsValid(PlayerController)) == false) { return; }
 
-		//BattleGameMode->RespawnPlayer(PlayerController);
+		BattleGameMode->RespawnPlayer(PlayerController);
 	}
+
+	//Super::OnDeathAnimationEnd();
 }
 
 void APlayerCharacter::PickGun(AGun* NewGun)
@@ -212,6 +225,25 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void APlayerCharacter::Restart()
+{
+	Super::Restart();
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (validate(IsValid(PlayerController)) == false) { return; }
+
+	ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(HUD)) == false) { return; }
+
+	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+	if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
+
+	if (validate(IsValid(HealthComponent)) == false) { return; }
+
+	PlayerStatsWidget->SetMaxHealth(HealthComponent->GetMaxHealth());
+	PlayerStatsWidget->SetHealth(HealthComponent->GetHealth());
 }
 
 void APlayerCharacter::MoveForward(float Value)

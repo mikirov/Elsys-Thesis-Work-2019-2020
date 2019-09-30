@@ -5,7 +5,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "Sound/SoundBase.h"
 #include "WeaponData.generated.h"
 
 /**
@@ -17,9 +16,10 @@ struct FWeaponData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+	// whether or not the gun has infinite ammo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool bInfiniteAmmo;
-	
+
 	// max ammo outside the clip
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int MaxAmmo;
@@ -54,7 +54,16 @@ struct FWeaponData : public FTableRowBase
 	
 	//sound to be played on weapon fire
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<USoundBase> FireSound;
+	TAssetPtr<class USoundCue> FireSound;
+
+
+	//animation to be played on fire
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TAssetPtr<class UAnimSequence> FireAnimation;
+
+	//sound to be played on weapon reload
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TAssetPtr<class USoundCue> ReloadSound;
 
 	//type of projectile to use
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

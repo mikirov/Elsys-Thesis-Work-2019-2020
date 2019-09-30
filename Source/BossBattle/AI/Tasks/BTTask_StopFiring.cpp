@@ -12,8 +12,10 @@ EBTNodeResult::Type UBTTask_StopFiring::ExecuteTask(UBehaviorTreeComponent& Owne
 	if (Super::ExecuteTask(OwnerComp, NodeMemory) != EBTNodeResult::Succeeded) {
 		return EBTNodeResult::Failed;
 	}
-	AICharacter->ServerStopFiringRequest();
-
+	if (AICharacter->IsFiring()) {
+		AICharacter->StopFiring();
+	}
+	
 
 	return EBTNodeResult::Succeeded;
 }

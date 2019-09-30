@@ -24,5 +24,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<class UPlayerStatsWidget> PlayerStatsWidgetTemplate;
 
-	class UPlayerStatsWidget* PlayerStatsWidget;
+	class UPlayerStatsWidget* PlayerStatsWidget = nullptr;
+
+	/** Primary draw call for the HUD */
+	virtual void DrawHUD() override;
+
+	/** Crosshair asset pointer */
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	class UTexture2D* CrosshairTex = nullptr;
 };

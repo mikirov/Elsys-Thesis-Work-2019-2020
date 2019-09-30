@@ -7,7 +7,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
-
+#include "TimerManager.h"
+#include "Engine/World.h"
 
 #include "Characters/BattleCharacter.h"
 #include "Utilities/CustomMacros.h"
@@ -18,7 +19,6 @@ void UCharacterAnimInstance::NativeInitializeAnimation() {
 
 	CharacterPawn = Cast<ABattleCharacter>(TryGetPawnOwner());
 	if (validate(IsValid(CharacterPawn)) == false) { return; }
-
 }
 
 
@@ -30,8 +30,19 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 	FVector Velocity = CharacterPawn->GetVelocity();
 	Speed = Velocity.Size();
 
-	AimingDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
-	AimingDirection = FCustomUtilities::NormalizeFloatAsRotationValue(AimingDirection);
+	//MovementDirection = CalculateDirection(Velocity, CharacterPawn->GetControlRotation());
+
+
+	//AimingDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
+	//AimingDirection = FCustomUtilities::NormalizeFloatAsRotationValue(AimingDirection);
+	
+	MovementDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
+	MovementDirection = FCustomUtilities::NormalizeFloatAsRotationValue(MovementDirection);
+	
+	UPawnMovementComponent* CharacterMovement = CharacterPawn->GetMovementComponent();
+	if (validate(IsValid(CharacterMovement)) == false) return;
+	bCrouching = CharacterMovement->IsCrouching();
+	bInAir = CharacterMovement->IsFalling();
 
 	FRotator RotationDelta = CharacterPawn->GetControlRotation() - CharacterPawn->GetActorRotation();
 	RotationDelta = FCustomUtilities::GetStandardUnrealRotation(RotationDelta);
@@ -41,57 +52,21 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 }
 
 
-void UCharacterAnimInstance::Die() {
-	if (validate(IsValid(CharacterPawn)) == false) return;
-	//TODO: play animation
-	CharacterPawn->OnDeathAnimationEnd();
-	
-}
-
-FVector UCharacterAnimInstance::GetRootBonePosition() {
-	USkeletalMeshComponent* SkeletalMesh = GetOwningComponent();
-	if (validate(IsValid(SkeletalMesh)) == false) { return FVector::ZeroVector; }
-
-
-	return SkeletalMesh->RootBoneTranslation;
-}
-
-
-float UCharacterAnimInstance::GetCurrentCoverAnimationTimeRemaining() {
-	FAnimNode_StateMachine* CoverStateMachine = GetStateMachineInstanceFromName(FName("CoverStateMachine"));
-	if (validate(CoverStateMachine != nullptr) == false) { return 0; }
-
-
-	float TimeRemaining = GetRelevantAnimTimeRemaining(
-		GetStateMachineIndex(FName("CoverStateMachine")),
-		CoverStateMachine->GetCurrentState()
-	);
-
-	return TimeRemaining;
-}
-
-
-float UCharacterAnimInstance::GetCurrentCoverAnimationTime() {
-	FAnimNode_StateMachine* CoverStateMachine = GetStateMachineInstanceFromName(FName("CoverStateMachine"));
-	if (validate(CoverStateMachine != nullptr) == false) { return 0; }
-	
-
-	float Length = GetRelevantAnimLength(
-		GetStateMachineIndex(FName("CoverStateMachine")),
-		CoverStateMachine->GetCurrentState()
-	);
-
-	return Length;
-}
-
-
-void UCharacterAnimInstance::SetCoverAimOffsetLimitation(float LowerLimit, float UpperLimit) {
-	AimOffsetLowerLimit = LowerLimit;
-	AimOffsetUpperLimit = UpperLimit;
-}
-
-void UCharacterAnimInstance::Reload()
+void UCharacterAnimInstance::OnReloadFinished()
 {
-	//TODO: play reload animation
-	CharacterPawn->FinishReloading();
+	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::OnReloadFinished"))
+	CharacterPawn->ServerFinishReloading();
 }
+
+void UCharacterAnimInstance::OnDeathAnimationEnd()
+{
+	if (validate(IsValid(CharacterPawn)) == false) return;
+	CharacterPawn->OnDeathAnimationEnd();
+
+}
+
+void UCharacterAnimInstance::Die() {
+	AnimationState = EAnimationState::Dead;
+	
+}
+

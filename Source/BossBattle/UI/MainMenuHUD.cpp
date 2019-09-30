@@ -5,9 +5,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
-#include "SettingsWidget.h"
-#include "MainMenuWidget.h"
+#include "UI/SettingsWidget.h"
+#include "UI/MainMenuWidget.h"
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"
 #include "Utilities/SettingsSaveGame.h"
@@ -17,6 +18,14 @@ void AMainMenuHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 
 	LoadMainMenu();
+	
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
+	
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, MainMenuWidget, false);
 }
 
 

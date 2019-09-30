@@ -15,9 +15,6 @@ public:
 	// Sets default values for this character's properties
 	ABattleCharacter();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	
 	// Checks whether firing is possible
 	bool IsFiring();
 
@@ -27,14 +24,14 @@ public:
 	FRotator GetAimAtRotation(FVector TargetLocation);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerStartFiringRequest();
-	bool ServerStartFiringRequest_Validate();
-	void ServerStartFiringRequest_Implementation();
+	void ServerStartFiring();
+	bool ServerStartFiring_Validate();
+	void ServerStartFiring_Implementation();
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerStopFiringRequest();
-	bool ServerStopFiringRequest_Validate();
-	void ServerStopFiringRequest_Implementation();
+	void ServerStopFiring();
+	bool ServerStopFiring_Validate();
+	void ServerStopFiring_Implementation();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartReloading();
@@ -51,50 +48,45 @@ public:
 	bool ServerInteractWithWeapon_Validate();
 	void ServerInteractWithWeapon_Implementation();
 
-	void OnDeathAnimationEnd();
+	virtual void OnDeathAnimationEnd();
 
 	void FinishReloading();
+
+	void StartFiring();
+
+	void StopFiring();
+
 
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
 	TSubclassOf<class AGun> StartingGunTemplate = nullptr;
 
-	UPROPERTY(VisibleInstanceOnly, Category = "Gun")
+	UPROPERTY(VisibleAnywhere, Category = "Gun")
 	class AGun* Gun = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Character")
 	class USkeletalMeshComponent* CharacterMesh = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
 	class UHealthComponent* HealthComponent = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
 	class UAudioComponent* DeathSoundComponent = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	class UCharacterAnimInstance* CharacterAnimation = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	TSubclassOf<class UCharacterAnimInstance> CharacterAnimationTemplate = nullptr;
+	class UCharacterMovementComponent* CharacterMovementComponent = nullptr;
 
+	bool bGunCanShoot = false;
 	
 	UFUNCTION()
-	void Die();
+	virtual void Die();
 
-	UFUNCTION()
-	void StartFiringRequest();
-
-	UFUNCTION()
-	void StopFiringRequest();
-
+	void Destroyed() override;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	void StartFiring();
-
-	void StopFiring();
 
 	void InteractWithWeapon();
 
@@ -103,11 +95,6 @@ protected:
 	void DropGun();
 	
 	float InteractionDistance = 100.0f;
-
-	UPROPERTY(VisibleAnywhere)
-	bool bGunCanShoot = true;
-
-	bool bWantsToShoot = false;
 
 	// In process of reloading
 	bool bReloading = false;

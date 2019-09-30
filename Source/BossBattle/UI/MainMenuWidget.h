@@ -6,10 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
-
-class UButton;
-class USettingsWidget;
-
 /**
  * 
  */
@@ -29,19 +25,23 @@ protected:
 	FName ServerAddress;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	UButton* StartGameButton = nullptr;
+	class UButton* StartGameButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	UButton* SettingsButton = nullptr;
-
+	class UButton* SettingsButton = nullptr;
+	/*
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	UButton* JoinServerButton = nullptr;
+	class UButton* JoinServerButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UEditableTextBox* ServerTextBox = nullptr;
 
+	*/
+
+	void SetInputModeGameOnly();
+	
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	UButton* QuitButton = nullptr;
+	class UButton* QuitButton = nullptr;
 
 	UFUNCTION()
 	void StartLevel();

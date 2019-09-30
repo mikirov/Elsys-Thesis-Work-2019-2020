@@ -14,6 +14,9 @@
 #include "ConstructorHelpers.h"
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
+#include "Animation/AnimSequence.h"
+#include "Sound/SoundBase.h"
+#include "Sound/SoundCue.h"
 
 #include "Weapons/Projectile.h"
 #include "Weapons/WeaponData.h"
@@ -24,7 +27,7 @@
 AGun::AGun()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	RootComponent = SkeletalMeshComponent;
@@ -42,35 +45,37 @@ AGun::AGun()
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>("ArrowComponent");
 	ArrowComponent->SetupAttachment(ProjectileSpawnTransform);
 
-	ConstructorHelpers::FObjectFinder<UDataTable> WeaponTableAsset(TEXT("DataTable'/Game/TwinStickShooter/Core/Weapons/DT_WeaponStats.DT_WeaponStats'"));
-	WeaponDataTable = WeaponTableAsset.Object;
-	if (validate(IsValid(WeaponDataTable)) == false) return;
-
 }
 
 void AGun::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (validate(IsValid(WeaponDataTable)) == false) return;
 	FString ContextString(TEXT("GENERAL"));
 	WeaponData = WeaponDataTable->FindRow<FWeaponData>(WeaponName, ContextString);
 	if (validate(WeaponData != nullptr) == false) return;
 
 	USoundBase* FireSound = Cast<USoundBase>(WeaponData->FireSound.Get());
-	if (validate(IsValid(FireSound))) {
+	if (IsValid(FireSound)) {
 		FireSoundComponent->SetSound(FireSound);
 	}
-	GunfireCameraShake = WeaponData->CameraShakeTemplate;
-
-	bInfiniteAmmo = WeaponData->bInfiniteAmmo;
-	if (bInfiniteAmmo == false) {
-		CurrentAmmo = WeaponData->MaxAmmo - WeaponData->MaxClipAmmo;
+	if (IsValid(GunfireCameraShake.Get())) {
+		GunfireCameraShake = WeaponData->CameraShakeTemplate;
 	}
 
-	CurrentClipAmmo = WeaponData->MaxClipAmmo;
+	if (WeaponData->bInfiniteAmmo == false) {
+		CurrentAmmo = WeaponData->MaxAmmo - WeaponData->MaxClipAmmo;
+	}
+	else {
+		CurrentClipAmmo = WeaponData->MaxClipAmmo;
+
+	}
 }
 
 void AGun::PullTrigger() {
+	if (validate(WeaponData != nullptr) == false) return;
+
 	GetWorldTimerManager().SetTimer(
 		FireTimerHandle,
 		this,
@@ -79,7 +84,6 @@ void AGun::PullTrigger() {
 		true,
 		WeaponData->FireDelay
 	);
-
 	bTriggerPressed = true;
 }
 
@@ -92,6 +96,7 @@ void AGun::ReleaseTrigger() {
 
 void AGun::Fire() {
 	if (validate(WeaponData != nullptr) == false) return;
+
 	if (HasAmmo(WeaponData->BulletsPerShot)) {
 		PlayFireSound();
 		for (int i = 0; i < WeaponData->BulletsPerShot; i++) {
@@ -100,6 +105,15 @@ void AGun::Fire() {
 
 	    OnFire.Broadcast();
 		CurrentClipAmmo -= WeaponData->BulletsPerShot;
+		
+		if (IsValid(WeaponData->FireAnimation.Get())) {
+			UAnimSequence* FireAnimation = Cast<UAnimSequence>(WeaponData->FireAnimation.Get());
+
+			if (validate(IsValid(FireAnimation)) == false) return;
+			SkeletalMeshComponent->PlayAnimation(FireAnimation, false);
+
+		}
+		
 	}
 	else {
 		GetWorldTimerManager().ClearTimer(FireTimerHandle);
@@ -108,12 +122,36 @@ void AGun::Fire() {
 }
 
 
+void AGun::OnDrop()
+{
+	SetActorRotation(FRotator(0, 0, 0));
+	GunState = EGunState::Dropped;
+}
+
+void AGun::OnPick()
+{
+	SetActorRotation(FRotator(0, 0, 0));
+	GunState = EGunState::Picked;
+}
+
+void AGun::Tick(float deltaTime)
+{
+	Super::Tick(deltaTime);
+	switch (GunState)
+	{
+		case Dropped:
+			float ActorRotationYaw = GetActorRotation().Yaw;
+			SetActorRotation(FRotator(0, ActorRotationYaw + (RotationPerSecond * deltaTime), 0));
+			break;
+	}
+}
+
 void AGun::SpawnProjectile() {
 
 	if (validate(WeaponData != nullptr) == false) return;
 	if (validate(IsValid(ProjectileSpawnTransform)) == false) { return; }
 
-	if (validate(IsValid(WeaponData->ProjectileTemplate)) == false) { return; }
+	if (validate(IsValid(WeaponData->ProjectileTemplate.Get())) == false) { return; }
 
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
@@ -126,7 +164,7 @@ void AGun::SpawnProjectile() {
 	SpawnParameters.Instigator = Parent->Instigator;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    FRotator ForwardRotator;
+	FRotator ForwardRotator;
 	switch (SpawnRotationMode) {
 		case EProjectileSpawnRotation::ControlRotation:
 			ForwardRotator = Parent->GetControlRotation();
@@ -137,7 +175,7 @@ void AGun::SpawnProjectile() {
 		default:
 			validate(false);
 	}
-
+	
 	const int RandomSeed = FMath::Rand();
 	FRandomStream RandomStream(RandomSeed);
 
@@ -161,14 +199,14 @@ void AGun::SpawnProjectile() {
 
 
 void AGun::PlayFireSound() {
-	if (validate(IsValid(FireSoundComponent)) == false) { return; }
+	if (IsValid(FireSoundComponent) == false) { return; }
 
 	FireSoundComponent->Play();
 }
 
 bool AGun::CanReload()
 {
-	if (bInfiniteAmmo) {
+	if (WeaponData->bInfiniteAmmo) {
 		return true;
 
 	}
@@ -191,7 +229,7 @@ void AGun::FinishReload()
 {
 	if (validate(WeaponData != nullptr) == false) return;
 
-	if (bInfiniteAmmo) {
+	if (WeaponData->bInfiniteAmmo) {
 		CurrentClipAmmo = WeaponData->MaxClipAmmo;
 	}
 	else {
@@ -215,9 +253,6 @@ bool AGun::HasAmmo(int Amount)
 	return CurrentClipAmmo >= Amount;
 }
 
-TSubclassOf<UCameraShake> AGun::GetGunfireCameraShake() {
-	return GunfireCameraShake;
-}
 
 
 void AGun::SetProjectileSpawnRotationMode(EProjectileSpawnRotation NewSpawnRotation) {
@@ -225,10 +260,10 @@ void AGun::SetProjectileSpawnRotationMode(EProjectileSpawnRotation NewSpawnRotat
 }
 
 
-EProjectileSpawnRotation AGun::GetProjectileSpawnRotationMode() {
-	return SpawnRotationMode;
+TSubclassOf<UCameraShake> AGun::GetGunfireCameraShake()
+{
+	return WeaponData->CameraShakeTemplate;
 }
-
 
 bool AGun::IsFiring() {
 	return bTriggerPressed;
