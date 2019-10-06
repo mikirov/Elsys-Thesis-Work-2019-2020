@@ -29,6 +29,10 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UButton* SettingsButton = nullptr;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UButton* QuitButton = nullptr;
+	
 	/*
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UButton* JoinServerButton = nullptr;
@@ -39,9 +43,6 @@ protected:
 	*/
 
 	void SetInputModeGameOnly();
-	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UButton* QuitButton = nullptr;
 
 	UFUNCTION()
 	void StartLevel();

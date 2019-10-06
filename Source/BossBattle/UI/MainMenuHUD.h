@@ -34,7 +34,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class USettingsWidget> SettingsWidgetTemplate;
 
-	class UMainMenuWidget* MainMenuWidget = nullptr;
+	class UUserWidget* MainMenuWidget = nullptr;
 
 	class USettingsWidget* SettingsWidget = nullptr;
 };

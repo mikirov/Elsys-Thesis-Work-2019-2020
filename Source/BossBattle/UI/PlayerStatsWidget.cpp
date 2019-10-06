@@ -24,3 +24,34 @@ void UPlayerStatsWidget::SetScore(int Score) {
 
 	ScoreText->SetText(FText::FromString(FString::FromInt(Score)));
 }
+
+void UPlayerStatsWidget::SetLoseGame()
+{
+	if (validate(IsValid(GameEndText)) == false) { return; }
+
+	if (validate(LoseGameText.ToString() != FString(""))) {
+		GameEndText->SetText(LoseGameText);
+		GameEndText->SetColorAndOpacity(FSlateColor(FColor::Red));
+		GameEndText->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UPlayerStatsWidget::SetWinGame()
+{
+	if (validate(IsValid(GameEndText)) == false) { return; }
+
+	if (validate(WinGameText.ToString() != FString(""))) {
+		GameEndText->SetText(WinGameText);
+		GameEndText->SetColorAndOpacity(FSlateColor(FColor::Green));
+		GameEndText->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UPlayerStatsWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (validate(IsValid(GameEndText)) == false) { return; }
+
+	GameEndText->SetVisibility(ESlateVisibility::Collapsed);
+}
