@@ -14,6 +14,16 @@ class BOSSBATTLE_API UPlayerStatsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UTextBlock* GameEndText = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	FText WinGameText;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	FText LoseGameText;
+
 	UFUNCTION()
 	void SetMaxHealth(float Health);
 
@@ -23,7 +33,14 @@ public:
 	UFUNCTION()
 	void SetScore(int Score);
 
+	void SetLoseGame();
+
+	void SetWinGame();
+
 protected:
+
+	void NativeConstruct() override;
+
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float MaxHealth = 100;
 
