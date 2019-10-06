@@ -17,6 +17,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 
 #include "UI/BattleHUD.h"
 #include "GameModes/BossBattleGameMode.h"
@@ -68,6 +69,16 @@ APlayerCharacter::APlayerCharacter()
 	FPCamera->SetActive(false);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+}
+
+bool APlayerCharacter::IsRespawning()
+{
+	return bRespawning;
+}
+
+void APlayerCharacter::SetRespawning(bool State)
+{
+	bRespawning = State;
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -162,9 +173,8 @@ void APlayerCharacter::Die()
 	}
 }
 
-void APlayerCharacter::OnDeathAnimationEnd()
+void APlayerCharacter::Respawn()
 {
-	
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
 	if (IsValid(GameMode)) {
 		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
@@ -175,6 +185,27 @@ void APlayerCharacter::OnDeathAnimationEnd()
 
 		BattleGameMode->RespawnPlayer(PlayerController);
 	}
+
+}
+
+void APlayerCharacter::OnDeathAnimationEnd()
+{
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	if (IsValid(GameMode)) {
+		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
+		if (validate(IsValid(BattleGameMode)) == false) { return; }
+
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		if (validate(IsValid(PlayerController)) == false) { return; }
+
+		
+		BattleGameMode->OnPlayerDeath(PlayerController);
+	}
+
+
+	//FTimerHandle DeathTimerHandle;
+	//GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &APlayerCharacter::Respawn, RespawnCooldown, false, -1.f);
+	//bRespawning = true;
 
 	//Super::OnDeathAnimationEnd();
 }

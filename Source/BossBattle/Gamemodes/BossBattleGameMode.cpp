@@ -10,6 +10,8 @@
 #include "Components/BoxComponent.h"
 #include "Engine/TriggerVolume.h"
 #include "Engine/TriggerBox.h"
+#include "TimerManager.h"
+
 #include "Characters/BattleCharacter.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/EnemyCharacter.h"
@@ -235,4 +237,16 @@ void ABossBattleGameMode::LoadWinLevel() {
 	if (validate(WinGameLevelName.Len() > 0) == false) { return; }
 
 	World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
+}
+
+
+void ABossBattleGameMode::OnPlayerDeath(APlayerController* PlayerController)
+{
+	FTimerHandle DeathTimerHandle;
+	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ABossBattleGameMode::RespawnPlayer, PlayerController);
+
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, RespawnDelegate, RespawnCooldown, false, -1.f);
+	
+	//bRespawning = true;
+
 }

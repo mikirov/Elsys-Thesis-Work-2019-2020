@@ -14,6 +14,10 @@ class BOSSBATTLE_API APlayerCharacter : public ABattleCharacter
 public:
 	APlayerCharacter();
 
+	bool IsRespawning();
+
+	void SetRespawning(bool State);
+
 protected:
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -51,6 +55,12 @@ protected:
 	void BeginPlay() override;
 
 	void Die() override;
+
+	void Respawn();
+
+	float RespawnCooldown = 5.0f;
+
+	bool bRespawning = false;
 
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);

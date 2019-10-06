@@ -7,6 +7,7 @@
 
 #include "GameModes/BossBattleGameMode.h"
 #include "UI/BattleHUD.h"
+#include "UI/PlayerStatsWidget.h"
 #include "Utilities/SettingsSaveGame.h"
 #include "Utilities/CustomMacros.h"
 
@@ -20,12 +21,12 @@ void APlayerCharacterController::OnWinGame_Implementation() {
 	ABattleHUD* HUD = Cast<ABattleHUD>(GetHUD());
 	if (validate(IsValid(HUD)) == false) { return; }
 
-	/*
-	UNexusDefenceStatsWidget * NexusStatsWidget = NexusDefenceHUD->GetNexusDefenceWidget();
-	if (validate(IsValid(NexusStatsWidget))) {
-		NexusStatsWidget->SetWinGame();
+	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+
+	if (validate(IsValid(PlayerStatsWidget))) {
+
+		PlayerStatsWidget->SetWinGame();
 	}
-	*/
 	
 }
 
@@ -39,12 +40,23 @@ void APlayerCharacterController::OnLoseGame_Implementation() {
 	ABattleHUD* HUD = Cast<ABattleHUD>(GetHUD());
 	if (validate(IsValid(HUD)) == false) { return; }
 
-	/*
 	
-	UNexusDefenceStatsWidget * NexusStatsWidget = NexusDefenceHUD->GetNexusDefenceWidget();
-	if (validate(IsValid(NexusStatsWidget))) {
-		NexusStatsWidget->SetLoseGame();
+	
+	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+	
+	if (validate(IsValid(PlayerStatsWidget))) {
+		PlayerStatsWidget->SetLoseGame();
 	}
-	*/
 	
+	
+}
+
+bool APlayerCharacterController::IsRespawning()
+{
+	return bRespawning;
+}
+
+void APlayerCharacterController::SetRespawning(bool State)
+{
+	bRespawning = State;
 }

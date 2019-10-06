@@ -26,5 +26,12 @@ public:
 	bool OnLoseGame_Validate();
 	void OnLoseGame_Implementation();
 
+	bool IsRespawning();
+
+	void SetRespawning(bool State);
+
 	
+protected:
+
+	bool bRespawning = false;
 };

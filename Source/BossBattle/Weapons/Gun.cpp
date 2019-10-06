@@ -162,7 +162,7 @@ void AGun::SpawnProjectile() {
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Owner = Parent;
 	SpawnParameters.Instigator = Parent->Instigator;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	FRotator ForwardRotator;
 	switch (SpawnRotationMode) {

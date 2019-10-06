@@ -33,7 +33,13 @@ public:
 
 	void LoadWinLevel();
 
+	void OnPlayerDeath(APlayerController* PlayerController);
+
 protected:
+
+	//time in seconds that each player has to wait after death to respawn
+	UPROPERTY(EditDefaultsOnly)
+	float RespawnCooldown = 5.0f;
 
 	virtual void WinGame();
 
