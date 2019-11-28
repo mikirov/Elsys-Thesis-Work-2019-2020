@@ -7,10 +7,17 @@ public class BossBattle : ModuleRules
 	public BossBattle(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-
+        
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "UMG", "HeadMountedDisplay" });
 
         // Uncomment if you are using Slate UI
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+
+        PublicDependencyModuleNames.AddRange(new string[] {
+            "OnlineSubsystem",
+            "OnlineSubsystemUtils"
+         });
+
+        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
     }
 }

@@ -16,6 +16,7 @@
 #include "UnrealNetwork.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+
 #include "Animation/CharacterAnimInstance.h"
 #include "Characters/HealthComponent.h"
 #include "Weapons/Gun.h"
@@ -228,6 +229,36 @@ void ABattleCharacter::FinishReloading()
 	Gun->FinishReload();
 }
 
+//Rotate character along Yaw axis smoothly to control rotation
+void ABattleCharacter::SmoothRotation()
+{
+	if (validate(GetCharacterMovement() != nullptr) == false) return;
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	bRotateSmooth = true;
+
+	FRotator OldActorRotation = GetActorRotation();
+	FRotator ControlRotation = GetControlRotation();
+
+	FRotator InterpolatedRotation = FMath::RInterpTo(OldActorRotation, ControlRotation, 0.01, 1);
+
+	SetActorRotation(FRotator(0.0f, InterpolatedRotation.Yaw, 0.0f), ETeleportType::None);
+
+
+
+	FRotator NewActorRotation = GetActorRotation();
+
+	if (FMath::IsNearlyEqual(NewActorRotation.Yaw, ControlRotation.Yaw) == false) { // continue interpolating until they are nearly the same
+
+		GetWorldTimerManager().SetTimerForNextTick(this, &ABattleCharacter::SmoothRotation);
+	}
+
+	bUseControllerRotationYaw = true;
+	bRotateSmooth = false;
+}
+
+
 void ABattleCharacter::SpawnStartingGun()
 {
 	// No validate because player may not have a starting gun.
@@ -238,7 +269,7 @@ void ABattleCharacter::SpawnStartingGun()
 
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Owner = this;
-	SpawnInfo.Instigator = Instigator;
+	SpawnInfo.Instigator = GetInstigator();
 
 	Gun = World->SpawnActor<AGun>(StartingGunTemplate, SpawnInfo);
 	PickGun(Gun);
@@ -309,6 +340,7 @@ void ABattleCharacter::ServerInteractWithWeapon_Implementation()
 {
 	InteractWithWeapon();
 }
+
 
 bool ABattleCharacter::ServerInteractWithWeapon_Validate()
 {

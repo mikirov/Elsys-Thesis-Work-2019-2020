@@ -42,8 +42,6 @@ APlayerCharacter::APlayerCharacter()
 	RotationArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
 	RotationArrow->SetupAttachment(Capsule);
 	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -64,7 +62,7 @@ APlayerCharacter::APlayerCharacter()
 
 	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCamera"));
 	FPCamera->SetupAttachment(RootComponent);
-	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
+	//FPCamera->SetRelativeLocation(FVector(30, 10, 110));
 	FPCamera->bUsePawnControlRotation = true;
 	FPCamera->SetActive(false);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -97,18 +95,10 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &ACharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &ACharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
-
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &APlayerCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &APlayerCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APlayerCharacter::OnResetVR);
-
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::ServerInteractWithWeapon);
 
@@ -118,8 +108,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::ServerStopFiring);
 
 	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &APlayerCharacter::SwapCamera);
-}
 
+}
 
 
 void APlayerCharacter::OnHealthChanged(int Health) {
@@ -137,17 +127,18 @@ void APlayerCharacter::OnHealthChanged(int Health) {
 	}
 }
 
+
 void APlayerCharacter::SwapCamera()
 {
 	if (validate(IsValid(FPCamera)) == false) return;
 	if (validate(IsValid(TPCamera)) == false) return;
-	
+
 	FPCamera->ToggleActive();
 	TPCamera->ToggleActive();
 
-	if (FPCamera->IsActive()) {
-		FPCamera->SetRelativeLocation(FVector(30, 10, 70));
-	}
+	//if (FPCamera->IsActive()) {
+	//	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
+	//}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -157,8 +148,6 @@ void APlayerCharacter::BeginPlay()
 	if (validate(IsValid(HealthComponent)) == false) { return; }
 	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
 
-	if (validate(IsValid(FPCamera)) == false) return;
-	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
 }
 
 void APlayerCharacter::Die()
@@ -187,6 +176,7 @@ void APlayerCharacter::Respawn()
 	}
 
 }
+
 
 void APlayerCharacter::OnDeathAnimationEnd()
 {
@@ -231,25 +221,13 @@ void APlayerCharacter::PlayCameraShake() {
 
 }
 
-void APlayerCharacter::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void APlayerCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
-}
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {
+
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+
 }
 
 void APlayerCharacter::LookUpAtRate(float Rate)

@@ -36,6 +36,10 @@ void UMainMenuWidget::NativeConstruct() {
 	if (validate(IsValid(QuitButton))) {
 		QuitButton->OnPressed.AddDynamic(this, &UMainMenuWidget::QuitGame);
 	}
+
+	if (validate(IsValid(MultiplayerSettingsButton))) {
+		MultiplayerSettingsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadMultiplayerMenu);
+	}
 	/*
 	if (validate(IsValid(JoinServerButton))) {
 		JoinServerButton->OnPressed.AddDynamic(this, &UMainMenuWidget::JoinServer);
@@ -75,6 +79,16 @@ void UMainMenuWidget::LoadSettingsMenu() {
 	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
 	if (validate(IsValid(MainMenuHUD))) {
 		MainMenuHUD->LoadSettingsMenu();
+	}
+}
+
+void UMainMenuWidget::LoadMultiplayerMenu() {
+	APlayerController* PlayerController = GetOwningPlayer();
+	if (validate(IsValid(PlayerController)) == false) { return; }
+
+	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(MainMenuHUD))) {
+		MainMenuHUD->LoadMultiplayerMenu();
 	}
 }
 

@@ -32,9 +32,9 @@ AGun::AGun()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	RootComponent = SkeletalMeshComponent;
 
-	FireSoundComponent = CreateDefaultSubobject<UAudioComponent>("FireAudioComponent");
-	FireSoundComponent->bAutoActivate = false;
-	FireSoundComponent->SetupAttachment(SkeletalMeshComponent);
+	SoundComponent = CreateDefaultSubobject<UAudioComponent>("FireAudioComponent");
+	SoundComponent->bAutoActivate = false;
+	SoundComponent->SetupAttachment(SkeletalMeshComponent);
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetupAttachment(SkeletalMeshComponent);
@@ -45,6 +45,8 @@ AGun::AGun()
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>("ArrowComponent");
 	ArrowComponent->SetupAttachment(ProjectileSpawnTransform);
 
+
+	this->Tags.Add(FName("Weapon"));
 }
 
 void AGun::BeginPlay()
@@ -56,10 +58,6 @@ void AGun::BeginPlay()
 	WeaponData = WeaponDataTable->FindRow<FWeaponData>(WeaponName, ContextString);
 	if (validate(WeaponData != nullptr) == false) return;
 
-	USoundBase* FireSound = Cast<USoundBase>(WeaponData->FireSound.Get());
-	if (IsValid(FireSound)) {
-		FireSoundComponent->SetSound(FireSound);
-	}
 	if (IsValid(GunfireCameraShake.Get())) {
 		GunfireCameraShake = WeaponData->CameraShakeTemplate;
 	}
@@ -97,6 +95,8 @@ void AGun::ReleaseTrigger() {
 void AGun::Fire() {
 	if (validate(WeaponData != nullptr) == false) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentClipAmmo)
+
 	if (HasAmmo(WeaponData->BulletsPerShot)) {
 		PlayFireSound();
 		for (int i = 0; i < WeaponData->BulletsPerShot; i++) {
@@ -111,7 +111,7 @@ void AGun::Fire() {
 
 			if (validate(IsValid(FireAnimation)) == false) return;
 			SkeletalMeshComponent->PlayAnimation(FireAnimation, false);
-
+			
 		}
 		
 	}
@@ -125,6 +125,8 @@ void AGun::Fire() {
 void AGun::OnDrop()
 {
 	SetActorRotation(FRotator(0, 0, 0));
+	FVector ActorLocation = GetActorLocation();
+	SetActorLocation(FVector(ActorLocation.X, ActorLocation.Y, 100));
 	GunState = EGunState::Dropped;
 }
 
@@ -161,7 +163,7 @@ void AGun::SpawnProjectile() {
 
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Owner = Parent;
-	SpawnParameters.Instigator = Parent->Instigator;
+	SpawnParameters.Instigator = Parent->GetInstigator();
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	FRotator ForwardRotator;
@@ -199,9 +201,15 @@ void AGun::SpawnProjectile() {
 
 
 void AGun::PlayFireSound() {
-	if (IsValid(FireSoundComponent) == false) { return; }
+	if (IsValid(SoundComponent) == false) { return; }
 
-	FireSoundComponent->Play();
+	USoundBase* FireSound = Cast<USoundBase>(WeaponData->FireSound.Get());
+	if (IsValid(FireSound)) {
+		SoundComponent->SetSound(FireSound);
+		SoundComponent->Play();
+
+	}
+
 }
 
 bool AGun::CanReload()
@@ -216,9 +224,18 @@ bool AGun::CanReload()
 void AGun::StartReload()
 {
 	if (CanReload() == false) {
-		//play gun blocking animation
 		return;
 	}
+	
+	USoundBase* ReloadSound = Cast<USoundBase>(WeaponData->ReloadSound.Get());
+	if (IsValid(ReloadSound)) {
+
+		if (validate(IsValid(SoundComponent)) == false) return;
+		SoundComponent->SetSound(ReloadSound);
+		SoundComponent->Play();
+	}
+
+
 	ABattleCharacter* Character = Cast<ABattleCharacter>(GetAttachParentActor());
 	if (validate(IsValid(Character)) == false) return;
 

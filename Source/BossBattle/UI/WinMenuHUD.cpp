@@ -25,7 +25,7 @@ void AWinMenuHUD::PostInitializeComponents()
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
-	UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, WinMenuWidget, false);
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, WinMenuWidget, EMouseLockMode::DoNotLock);
 
 }
 

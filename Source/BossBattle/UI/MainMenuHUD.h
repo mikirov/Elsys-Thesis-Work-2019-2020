@@ -17,9 +17,12 @@ class BOSSBATTLE_API AMainMenuHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
 
 	void LoadSettingsMenu();
+
+	void LoadMultiplayerMenu();
 
 	UFUNCTION(BlueprintCallable)
 	void SaveSettings();
@@ -33,8 +36,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class USettingsWidget> SettingsWidgetTemplate;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UMultiplayerWidget> MultiplayerWidgetTemplate;
 
 	class UMainMenuWidget* MainMenuWidget = nullptr;
 
 	class USettingsWidget* SettingsWidget = nullptr;
+
+	class UMultiplayerWidget* MultiplayerWidget = nullptr;
 };

@@ -80,4 +80,8 @@ protected:
 
 	int WaveCount = 0;
 
+	UPROPERTY(BlueprintReadWrite)
+	int MaxPlayers = 2;
+
+
 };
