@@ -9,5 +9,10 @@ public class BossBattleEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		ExtraModuleNames.Add("BossBattle");
-	}
+
+
+        //bLegacyPublicIncludePaths = true;
+
+        //DefaultBuildSettings = BuildSettingsVersion.V2;
+    }
 }

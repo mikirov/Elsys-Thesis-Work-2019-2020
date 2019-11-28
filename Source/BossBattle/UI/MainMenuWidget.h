@@ -33,6 +33,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UButton* QuitButton = nullptr;
 	
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UButton* MultiplayerSettingsButton = nullptr;
+
+
 	/*
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UButton* JoinServerButton = nullptr;
@@ -49,6 +53,9 @@ protected:
 
 	UFUNCTION()
 	void LoadSettingsMenu();
+
+	UFUNCTION()
+	void LoadMultiplayerMenu();
 
 	UFUNCTION()
 	void QuitGame();

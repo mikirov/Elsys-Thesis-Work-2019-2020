@@ -41,6 +41,8 @@ AProjectile::AProjectile()
 
 	bReplicates = true;
 
+	this->Tags.Add(FName("Projectile"));
+
 }
 
 // Called when the game starts or when spawned

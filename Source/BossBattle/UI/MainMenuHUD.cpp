@@ -9,6 +9,7 @@
 
 #include "UI/SettingsWidget.h"
 #include "UI/MainMenuWidget.h"
+#include "UI/MultiplayerWidget.h"
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"
 #include "Utilities/SettingsSaveGame.h"
@@ -25,7 +26,7 @@ void AMainMenuHUD::PostInitializeComponents() {
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
-	UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, MainMenuWidget, false);
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, MainMenuWidget, EMouseLockMode::DoNotLock);
 }
 
 
@@ -62,6 +63,22 @@ void AMainMenuHUD::LoadSettingsMenu() {
 	}
 }
 
+void AMainMenuHUD::LoadMultiplayerMenu() {
+	if (validate(IsValid(MultiplayerWidgetTemplate)) == false) { return; }
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	MultiplayerWidget = Cast<UMultiplayerWidget>(CreateWidget(World, MultiplayerWidgetTemplate));
+	if (validate(IsValid(MultiplayerWidget)) == false) { return; }
+
+	MultiplayerWidget->AddToViewport();
+
+	if (IsValid(MainMenuWidget)) {
+		MainMenuWidget->RemoveFromViewport();
+	}
+}
+
 
 void AMainMenuHUD::LoadMainMenu() {
 	if (validate(IsValid(MainMenuWidgetTemplate)) == false) { return; }
@@ -74,6 +91,10 @@ void AMainMenuHUD::LoadMainMenu() {
 
 	if (IsValid(SettingsWidget)) {
 		SettingsWidget->RemoveFromViewport();
+	}
+
+	if (IsValid(MultiplayerWidget)) {
+		MultiplayerWidget->RemoveFromViewport();
 	}
 
 	MainMenuWidget->AddToViewport();

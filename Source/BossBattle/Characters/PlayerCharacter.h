@@ -35,7 +35,7 @@ protected:
 	class USpringArmComponent* SpringArm = nullptr;
 
 	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 	class UCameraComponent* FPCamera = nullptr;
 	
 	/** third person camera */
@@ -46,7 +46,7 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(int Health);
-	
+
 	void SwapCamera();
 
 	UFUNCTION()
@@ -57,7 +57,7 @@ protected:
 	void Die() override;
 
 	void Respawn();
-
+	
 	float RespawnCooldown = 5.0f;
 
 	bool bRespawning = false;
@@ -65,8 +65,6 @@ protected:
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -80,14 +78,10 @@ protected:
 
 	void Restart() override;
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void SmoothRotation();
 
 
 };

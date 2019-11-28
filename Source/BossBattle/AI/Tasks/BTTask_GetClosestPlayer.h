@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AI/Tasks/BTTask_BaseBlackboardTask.h"
+#include "BTTask_BaseBlackboardTask.h"
 #include "BTTask_GetClosestPlayer.generated.h"
 
 /**

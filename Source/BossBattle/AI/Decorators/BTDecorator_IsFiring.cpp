@@ -4,7 +4,7 @@
 
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Classes/AIController.h"
+#include "AIController.h"
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/BattleCharacter.h"

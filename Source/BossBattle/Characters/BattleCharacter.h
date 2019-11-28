@@ -12,6 +12,9 @@ class BOSSBATTLE_API ABattleCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+
+
+
 	// Sets default values for this character's properties
 	ABattleCharacter();
 
@@ -58,6 +61,10 @@ public:
 
 
 protected:
+
+
+	UPROPERTY(VisibleAnywhere, Category = Character)
+	bool bRotateSmooth = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
 	TSubclassOf<class AGun> StartingGunTemplate = nullptr;
@@ -119,6 +126,7 @@ protected:
 
 	void SpawnStartingGun();
 
+	void SmoothRotation();
 
 private:
 

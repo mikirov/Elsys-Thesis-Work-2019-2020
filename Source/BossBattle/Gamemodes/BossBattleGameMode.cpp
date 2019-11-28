@@ -52,7 +52,7 @@ void ABossBattleGameMode::FindPlayerControllers() {
 
 	PlayerControllers.Reset();
 	TArray<AActor*> PlayerControllerActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacterController::StaticClass(), PlayerControllerActors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerController::StaticClass(), PlayerControllerActors);
 
 	for (AActor* PlayerControllerActor : PlayerControllerActors) {
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerControllerActor);

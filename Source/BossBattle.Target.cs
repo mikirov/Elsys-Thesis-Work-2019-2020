@@ -8,6 +8,13 @@ public class BossBattleTarget : TargetRules
 	public BossBattleTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		ExtraModuleNames.Add("BossBattle");
-	}
+
+        bUsesSteam = true;
+        ExtraModuleNames.Add("BossBattle");
+
+        //bLegacyPublicIncludePaths = true;
+
+        //DefaultBuildSettings = BuildSettingsVersion.V2;
+
+    }
 }
