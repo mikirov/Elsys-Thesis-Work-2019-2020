@@ -14,7 +14,7 @@
 
 #include "Characters/BattleCharacter.h"
 #include "Characters/PlayerCharacter.h"
-#include "Characters/EnemyCharacter.h"
+#include "Characters/AIEnemyCharacter.h"
 #include "Characters/PlayerCharacterController.h"
 #include "Weapons/Projectile.h"
 #include "UI/BattleHUD.h"

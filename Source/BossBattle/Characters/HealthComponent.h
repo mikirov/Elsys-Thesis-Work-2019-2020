@@ -27,9 +27,13 @@ public:
 
 	void Heal(float HealingPower);
 
+	UFUNCTION(BlueprintCallable)
 	float GetHealth();
 
+	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth();
+
+	void ResetHealth();
 
 	FDie OnDeath;
 

@@ -22,6 +22,10 @@ UHealthComponent::UHealthComponent()
 
 }
 
+void UHealthComponent::ResetHealth() {
+	Health = MaxHealth;
+}
+
 #if WITH_EDITOR
 void UHealthComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) {
 	Super::PostEditChangeProperty(PropertyChangedEvent);

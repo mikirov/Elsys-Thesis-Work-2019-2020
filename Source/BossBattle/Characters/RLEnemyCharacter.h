@@ -1,0 +1,127 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Characters/EnemyCharacter.h"
+#include "RLEnemyCharacter.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class BOSSBATTLE_API ARLEnemyCharacter : public AEnemyCharacter
+{
+	GENERATED_BODY()
+	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateStateAction(bool bDidKill, bool bDidDie);
+	
+	void Reset() override;
+	
+	void IncrementKillScore();
+
+	UFUNCTION(BlueprintCallable)
+	int GetKills() const;
+
+	void ClearFocus();
+
+	void ShootAICharacter();
+
+	void FocusOnAICharacter();
+
+	void MoveNearAICharacter();
+
+	void ReportNoise();
+
+protected:
+	
+	void BeginPlay();
+	
+	// Does the character have the flag?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bHasFlag = false;
+
+	// Does the character hear noise?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bHearsNoise = false;
+
+	// Does the character see an enemy?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bSeeEnemy = false;
+	
+	// is the RL character hitting the AI character?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bHittingAICharacter = false;
+
+	// Is the character bumping into anything?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bBumping = false;
+
+	// Is the character taking damage?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bTakingDamage = false;
+
+	// Is the character moving?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bMoving = false;
+
+	// Distance to the enemy
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	float bEnemyDistance = 0.0;
+
+	// Is the character dead?
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	bool bDead = false;
+
+	int Kills = 0;
+
+	UFUNCTION()
+	void ClearTakingDamage();
+
+	UFUNCTION()
+	void OnHealthChanged(int CurrnetHealth);
+
+	void Die() override;
+
+	FTransform InitialTransform;
+
+	float CurrentReward = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TakingDamagePenalty = -0.1f;
+
+	FString CurrentState;
+
+	FString CurrentAction;
+
+	FString PreviousStateAction;
+
+	TArray<FString> StateStringArray;
+
+	TMap<FString, float> MaxStateValues;
+
+	TArray<FString> StateActionStrings;
+
+	TArray<float> ActionValues;
+
+	TMap<FString, float> StateTable;
+
+	UPROPERTY(EditAnywhere, blueprintReadWrite)
+	float Epsilon = 0.1f;
+
+
+	UPROPERTY(EditAnywhere, blueprintReadWrite)
+	bool bRandomAction = false;
+
+	float NextStateActionValue = 0.0f;
+
+	float DiscountFactor = 0.0f;
+
+	float LearningRate = 0.9f
+
+
+
+};

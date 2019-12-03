@@ -5,7 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "Utilities/CustomMacros.h"
-#include "Characters/EnemyCharacter.h"
+#include "Characters/AIEnemyCharacter.h"
 
 EBTNodeResult::Type UBTTask_MoveTowardsLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

@@ -7,7 +7,7 @@
 #include "Engine/DataTable.h"
 
 #include "Gamemodes/BossBattleGameMode.h"
-#include "Characters/EnemyCharacter.h"
+#include "Characters/AIEnemyCharacter.h"
 #include "Utilities/SpawnerTable.h"
 #include "Utilities/CustomMacros.h"
 
@@ -21,7 +21,7 @@ ASpawner::ASpawner()
 }
 
 
-void ASpawner::SpawnEnemy(TSubclassOf<AEnemyCharacter> EnemyTemplate, int Count) {
+void ASpawner::SpawnEnemy(TSubclassOf<AAIEnemyCharacter> EnemyTemplate, int Count) {
 	if (validate(IsValid(BoxComponent))  == false) { return; }
 	if (validate(IsValid(EnemyTemplate)) == false) { return; }
 

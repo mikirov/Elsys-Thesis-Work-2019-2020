@@ -23,7 +23,7 @@
 #include "GameModes/BossBattleGameMode.h"
 #include "UI/PlayerStatsWidget.h"
 #include "Characters/PlayerCharacterController.h"
-#include "Characters/EnemyCharacter.h"
+#include "Characters/AIEnemyCharacter.h"
 #include "Characters/HealthComponent.h"
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"

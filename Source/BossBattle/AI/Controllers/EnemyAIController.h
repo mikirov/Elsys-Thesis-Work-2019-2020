@@ -27,5 +27,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* BehaviorTreeTemplate = nullptr;
 
+	//UPROPERTY(EditDefaultsOnly)
+	//class UAIPerceptionComponent* PerceptionComponent = nullptr;
+
 
 };
