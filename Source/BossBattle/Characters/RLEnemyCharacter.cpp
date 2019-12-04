@@ -82,11 +82,11 @@ void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 	bTakingDamage ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
 	bSeeEnemy ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
 	bHearsNoise ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-	HealthComponent->GetHealth / HealthComponent->GetMaxHealth() / 3 ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
+	HealthComponent->GetHealth() < (HealthComponent->GetMaxHealth() / 3.0f) ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
 	bHittingAICharacter ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
 
 	//FIXME
-	CurrentState = FString::Join(StateStringArray, "");
+	//CurrentState = FString::Join<FString>(StateStringArray, "");
 
 	//create possible state action strings
 	CurrentState.Append(FString("0")); //TODO: check if it should return a new copy
@@ -167,14 +167,6 @@ void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 
 }
 
-void ARLEnemyCharacter::IncrementKillScore() {
-	Kills += 1;
-}
-
-int ARLEnemyCharacter::GetKills() const{
-	return Kills;
-}
-
 void ARLEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
 
@@ -188,6 +180,9 @@ void ARLEnemyCharacter::OnHealthChanged(int CurrentHealth) {
 
 	
 	bTakingDamage = true;
+	bCriticalHealth = (CurrentHealth < HealthComponent->GetMaxHealth() / 3);
+	
+
 	//TODO: make sure bDead is actually working as expected
 	if (bDead == false) {
 		UpdateStateAction(false, false);

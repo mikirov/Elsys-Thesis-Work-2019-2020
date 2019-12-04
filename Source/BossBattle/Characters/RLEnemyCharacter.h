@@ -20,11 +20,6 @@ public:
 	void UpdateStateAction(bool bDidKill, bool bDidDie);
 	
 	void Reset() override;
-	
-	void IncrementKillScore();
-
-	UFUNCTION(BlueprintCallable)
-	int GetKills() const;
 
 	void ClearFocus();
 
@@ -68,6 +63,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
 	bool bMoving = false;
 
+	// Is on critical health ?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
+	bool bCriticalHealth = false;
+
 	// Distance to the enemy
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
 	float bEnemyDistance = 0.0;
@@ -75,8 +74,6 @@ protected:
 	// Is the character dead?
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	bool bDead = false;
-
-	int Kills = 0;
 
 	UFUNCTION()
 	void ClearTakingDamage();
@@ -90,11 +87,12 @@ protected:
 
 	float CurrentReward = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	float TakingDamagePenalty = -0.1f;
 
 	FString CurrentState;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	FString CurrentAction;
 
 	FString PreviousStateAction;
@@ -112,15 +110,17 @@ protected:
 	UPROPERTY(EditAnywhere, blueprintReadWrite)
 	float Epsilon = 0.1f;
 
-
-	UPROPERTY(EditAnywhere, blueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	bool bRandomAction = false;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	float NextStateActionValue = 0.0f;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	float DiscountFactor = 0.0f;
 
-	float LearningRate = 0.9f
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	float LearningRate = 0.9f;
 
 
 

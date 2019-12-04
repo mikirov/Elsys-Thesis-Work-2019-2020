@@ -13,5 +13,13 @@ UCLASS()
 class BOSSBATTLE_API ATrainingHUD : public AHUD
 {
 	GENERATED_BODY()
+private:
+	void PostInitializeComponents() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<class UTrainingStatsWidget> TrainingStatsWidgetTemplate;
+
+	class UTrainingStatsWidget* TrainingStatsWidget = nullptr;
+
 	
 };

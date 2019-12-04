@@ -18,6 +18,14 @@ public:
 	//pure virtual
 	virtual void Reset();
 
+	UFUNCTION(BlueprintCallable)
+	int GetKills() const;
+
+	void IncrementKillScore();
+
+protected:
+
+	int Kills = 0;
 
 	
 };

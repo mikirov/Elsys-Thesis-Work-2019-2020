@@ -6,3 +6,11 @@
 void AEnemyCharacter::Reset() {
 
 }
+
+void AEnemyCharacter::IncrementKillScore() {
+	Kills += 1;
+}
+
+int AEnemyCharacter::GetKills() const {
+	return Kills;
+}
