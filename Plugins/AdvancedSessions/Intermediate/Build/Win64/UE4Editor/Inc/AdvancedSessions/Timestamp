@@ -7,6 +7,7 @@ C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Clas
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedVoiceLibrary.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\CancelFindSessionsCallbackProxy.h
+C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\CreateSessionCallbackProxyAdvanced.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\EndSessionCallbackProxy.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\FindFriendSessionCallbackProxy.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\FindSessionsCallbackProxyAdvanced.h
@@ -17,4 +18,3 @@ C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Clas
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\LogoutUserCallbackProxy.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\SendFriendInviteCallbackProxy.h
 C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\UpdateSessionCallbackProxyAdvanced.h
-C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Source\AdvancedSessions\Classes\CreateSessionCallbackProxyAdvanced.h

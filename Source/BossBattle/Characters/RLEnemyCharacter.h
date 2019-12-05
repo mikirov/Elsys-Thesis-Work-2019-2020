@@ -87,7 +87,7 @@ protected:
 
 	float CurrentReward = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float TakingDamagePenalty = -0.1f;
 
 	FString CurrentState;
@@ -107,19 +107,19 @@ protected:
 
 	TMap<FString, float> StateTable;
 
-	UPROPERTY(EditAnywhere, blueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Epsilon = 0.1f;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	bool bRandomAction = false;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float NextStateActionValue = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float DiscountFactor = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float LearningRate = 0.9f;
 
 

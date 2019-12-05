@@ -79,15 +79,14 @@ void AAIEnemyCharacter::OnTakingDamage(int CurrentHealth) {
 		BlackboardComponent->SetValueAsBool(FName("CriticalHealth"), true);
 
 	}
-	else {
-		ARLEnemyCharacter* RLCharacter =  Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
-		if (validate(IsValid(RLCharacter)) == false) return;
+	ARLEnemyCharacter* RLCharacter =  Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
+	if (validate(IsValid(RLCharacter)) == false) return;
 		
-		RLCharacter->UpdateStateAction(false, false);
+	RLCharacter->UpdateStateAction(false, false);
 
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AAIEnemyCharacter::ClearTakingHits, 0.0f, false, 0.25f);
-	}
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AAIEnemyCharacter::ClearTakingHits, 0.0f, false, 0.25f);
+	
 
 }
 
@@ -101,6 +100,7 @@ void AAIEnemyCharacter::ClearTakingHits() {
 
 void AAIEnemyCharacter::Die() {
 	Super::Die();
+	
 	
 	if (HasAuthority()) {
 		AController* EnemyController;
@@ -124,6 +124,11 @@ void AAIEnemyCharacter::Die() {
 		if (IsValid(TrainingGameMode)) {
 			//TODO: perhaps add death timer
 			TrainingGameMode->ResetCharacters(true);
+			//ARLEnemyCharacter* RLCharacter = Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
+			//if (validate(IsValid(RLCharacter)) == false) return;
+
+			//RLCharacter->UpdateStateAction(true, false);
+
 			return;
 		}
 
