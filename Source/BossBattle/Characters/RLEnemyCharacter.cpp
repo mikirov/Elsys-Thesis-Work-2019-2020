@@ -46,25 +46,27 @@ void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(AICharacter);
 	if (validate(IsValid(BlackboardComponent)) == false) return;
 
+	//TODO: set AI character taking hits in some way
 	bHittingAICharacter = BlackboardComponent->GetValueAsBool(FName("TakingHits"));
 
 	//calculate the reward to be added to previous state
-	CurrentReward = 0.0f;
-	if (bDidKill == true) {
-		CurrentReward = 1.0f;
-	}
-	else if (bDidDie == true)
-	{
-		CurrentReward = -1.0f;
-	}
-	else if (bTakingDamage == true)
-	{
-		CurrentReward = TakingDamagePenalty;
-	}
-	else if (bHittingAICharacter == true)
-	{
-		CurrentReward = -TakingDamagePenalty;
-	}
+	//CurrentReward = 0.0f;
+	//if (bDidKill == true) {
+	//	CurrentReward = 1.0f;
+	//}
+	//else if (bDidDie == true)
+	//{
+	//	CurrentReward = -1.0f;
+	//}
+	//else if (bTakingDamage == true)
+	//{
+	//	CurrentReward = TakingDamagePenalty;
+	//}
+	//else if (bHittingAICharacter == true)
+	//{
+	//	CurrentReward = -TakingDamagePenalty;
+	//}
+	CurrentReward = bDidKill ? KillReward : (bDidDie ? DeathReward : (bTakingDamage ? TakingDamageReward: (bHittingAICharacter ? DealingDamageReward : 0.0f)));
 
 	CurrentState.Append(CurrentAction);
 
@@ -140,11 +142,15 @@ void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 
 	// TD-Learning algorithm to update the value for the previous action
 
-	float FoundActionValue = *StateTable.Find(PreviousStateAction);
+	float* FoundActionValue = StateTable.Find(PreviousStateAction);
+	if (FoundActionValue != nullptr){
 
-	FoundActionValue += ((FoundActionValue - (DiscountFactor * NextStateActionValue)) + CurrentReward) * LearningRate;
-	StateTable.Add(PreviousStateAction, FoundActionValue);
+		*FoundActionValue += ((*FoundActionValue - (DiscountFactor * NextStateActionValue)) + CurrentReward) * LearningRate;
+		StateTable.Add(PreviousStateAction, *FoundActionValue);
 
+	}
+
+	
 	//performs actions
 	FTimerHandle MoveTimerHandle;
 	if (CurrentAction.Equals(FString("0"))) {

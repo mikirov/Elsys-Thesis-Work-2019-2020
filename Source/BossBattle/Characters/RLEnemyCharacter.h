@@ -88,7 +88,16 @@ protected:
 	float CurrentReward = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
-	float TakingDamagePenalty = -0.1f;
+	float KillReward = 1.0f;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
+	float DeathReward = -1.0f;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
+	float DealingDamageReward = 0.1f;
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
+	float TakingDamageReward = -0.1f;
 
 	FString CurrentState;
 

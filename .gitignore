@@ -6,7 +6,7 @@
 !/.git*
 
 # Do not ignore current project's `.uproject`.
-!/Cryowar.uproject
+!/BossBattle.uproject
 
 # Do not ignore source, config and plugins dirs.
 !/Source/**
