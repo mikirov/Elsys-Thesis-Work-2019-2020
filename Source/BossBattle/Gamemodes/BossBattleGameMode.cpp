@@ -24,6 +24,23 @@
 #include "Utilities/CustomMacros.h"
 
 
+void ABossBattleGameMode::PostLogin(APlayerController* PlayerController) {
+	
+	Super::PostLogin(PlayerController);
+
+	//do not accept connections after the maximum player number is reached
+	if (PlayerControllers.Num() == MaxPlayersCount) return;
+
+	APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(PlayerController);
+	if (validate(IsValid(PlayerCharacterController))) {
+		PlayerControllers.Add(PlayerCharacterController);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("PlayerControllers.Num(): %d"), PlayerControllers.Num())
+	if (PlayerControllers.Num() == MaxPlayersCount) {
+		SpawnEnemyWave();
+	}
+}
+
 void ABossBattleGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,35 +48,12 @@ void ABossBattleGameMode::BeginPlay()
 	PlayerTemplate = DefaultPawnClass;
 	validate(IsValid(PlayerTemplate));
 
-	TArray<AActor*>	RespawnBoxes;
+	TArray<AActor*>    RespawnBoxes;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATriggerBox::StaticClass(), RespawnBoxes);
 	if (validate(RespawnBoxes.Num() != 0) == false) return;
 	RespawnBox = Cast<ATriggerBox>(RespawnBoxes[0]);
 
-	FindPlayerControllers();
-
-	validate(MapsFolderPath.Len() > 0);
-	
-	if (validate(IsValid(SpawnerLookupTable)) == false) return;
 	WaveCount = SpawnerLookupTable->GetRowNames().Num();
-	SpawnEnemyWave();
-
-}
-
-void ABossBattleGameMode::FindPlayerControllers() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-
-	PlayerControllers.Reset();
-	TArray<AActor*> PlayerControllerActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerController::StaticClass(), PlayerControllerActors);
-
-	for (AActor* PlayerControllerActor : PlayerControllerActors) {
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerControllerActor);
-		if (validate(IsValid(PlayerController))) {
-			PlayerControllers.Add(PlayerController);
-		}
-	}
 }
 
 void ABossBattleGameMode::SpawnEnemyWave()
@@ -116,7 +110,7 @@ void ABossBattleGameMode::UpdateHUDScore(int Score) {
 }
 
 
-void ABossBattleGameMode::RespawnPlayer(APlayerController* PlayerController)
+void ABossBattleGameMode::RespawnPlayer(APlayerCharacterController* PlayerController)
 {
 	if (validate(HasAuthority()) == false) { return; }
 
@@ -150,50 +144,25 @@ void ABossBattleGameMode::RespawnPlayer(APlayerController* PlayerController)
 	ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	ABattleCharacter* PlayerActor = World->SpawnActor<ABattleCharacter>(PlayerTemplate, PlayerRespawnLocation, ActorSpawnParameters);
 	PlayerController->Possess(PlayerActor);
-}
 
+}
 
 
 void ABossBattleGameMode::WinGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Win Game!"));
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-
-	for (auto it = World->GetPlayerControllerIterator(); it; it++) {
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(it->Get());
-		if (validate(IsValid(PlayerController)) == false) { return; }
-		PlayerController->OnWinGame();
+	for (int i = 0; i < PlayerControllers.Num(); i++) {
+		PlayerControllers[i]->OnWinGame();
 	}
-
-	FTimerHandle RespawnTimerHandle; // not used anywhere
-	GetWorldTimerManager().SetTimer(
-		RespawnTimerHandle,
-		this,
-		&ABossBattleGameMode::LoadWinLevel,
-		3
-	);
+	PlayerControllers.Empty();
 }
 
 void ABossBattleGameMode::LoseGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Lose Game!"));
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-
-	for (auto it = World->GetPlayerControllerIterator(); it; it++) {
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(it->Get());
-		if (validate(IsValid(PlayerController)) == false) { return; }
-		PlayerController->OnLoseGame();
+	for (int i = 0; i < PlayerControllers.Num(); i++) {
+		PlayerControllers[i]->OnLoseGame();
 	}
-
-	FTimerHandle RespawnTimerHandle; // not used anywhere else
-	GetWorldTimerManager().SetTimer(
-		RespawnTimerHandle,
-		this,
-		&ABossBattleGameMode::RestartLevel,
-		3
-	);
+	PlayerControllers.Empty();
+	CurrentWaveIndex = 0;
 }
 
 bool ABossBattleGameMode::AreAllEnemiesDead()
@@ -223,30 +192,29 @@ void ABossBattleGameMode::DecrementEnemyCounter()
 	}
 }
 
-void ABossBattleGameMode::RestartLevel() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
 
-	World->ServerTravel(MapsFolderPath + World->GetName(), true);
-}
-
-
-void ABossBattleGameMode::LoadWinLevel() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-	if (validate(WinGameLevelName.Len() > 0) == false) { return; }
-
-	World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
-}
-
-
-void ABossBattleGameMode::OnPlayerDeath(APlayerController* PlayerController)
+void ABossBattleGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)
 {
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	int DeadPlayers = 0;
+	int AllPlayers = 0;
+	for (auto it = World->GetPlayerControllerIterator(); it; it++) {
+		APlayerCharacterController* CurrentPlayerController = Cast<APlayerCharacterController>(it->Get());
+		if (validate(IsValid(CurrentPlayerController)) == false) { return; }
+		if (CurrentPlayerController->HasEverDied()) {
+			DeadPlayers++;
+		}
+		AllPlayers++;
+	}
+	if (DeadPlayers == AllPlayers) {
+		LoseGame();
+	}
+
 	FTimerHandle DeathTimerHandle;
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ABossBattleGameMode::RespawnPlayer, PlayerController);
 
 	GetWorldTimerManager().SetTimer(DeathTimerHandle, RespawnDelegate, RespawnCooldown, false, -1.f);
-	
-	//bRespawning = true;
-
 }

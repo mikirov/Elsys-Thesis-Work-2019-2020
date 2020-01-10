@@ -18,8 +18,10 @@
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 #include "UI/BattleHUD.h"
+#include "UI/ChatWidget.h"
 #include "GameModes/BossBattleGameMode.h"
 #include "UI/PlayerStatsWidget.h"
 #include "Characters/PlayerCharacterController.h"
@@ -69,6 +71,10 @@ APlayerCharacter::APlayerCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
 
+void APlayerCharacter::SetChat(class UChatWidget* ChatWidgetToSet) {
+	ChatWidget = ChatWidgetToSet;
+}
+
 bool APlayerCharacter::IsRespawning()
 {
 	return bRespawning;
@@ -108,24 +114,37 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::ServerStopFiring);
 
 	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &APlayerCharacter::SwapCamera);
-
+	
+	PlayerInputComponent->BindAction("OpenChat", IE_Pressed, this, &APlayerCharacter::OpenChat);
 }
 
+void APlayerCharacter::OpenChat() {
+	if (validate(IsValid(ChatWidget)) == false) return;
 
-void APlayerCharacter::OnHealthChanged(int Health) {
-	if (IsLocallyControlled()) {
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		if (validate(IsValid(PlayerController)) == false) { return; }
+	ChatWidget->PlayAnimation(ChatWidget->GetChatAnimation(), 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
 
-		ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
-		if (validate(IsValid(HUD)) == false) { return; }
-
-		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
-		if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
-
-		PlayerStatsWidget->SetHealth(Health);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (validate(IsValid(PlayerController))) {
+		PlayerController->bShowMouseCursor = true;
+		UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, ChatWidget, false);
 	}
 }
+
+
+//void APlayerCharacter::OnHealthChanged(int Health) {
+//	if (IsLocallyControlled()) {
+//		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+//		if (validate(IsValid(PlayerController)) == false) { return; }
+//
+//		ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+//		if (validate(IsValid(HUD)) == false) { return; }
+//
+//		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+//		if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
+//
+//		PlayerStatsWidget->SetHealth(Health);
+//	}
+//}
 
 
 void APlayerCharacter::SwapCamera()
@@ -145,8 +164,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (validate(IsValid(HealthComponent)) == false) { return; }
-	HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
+	//if (validate(IsValid(HealthComponent)) == false) { return; }
+	//HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
 
 }
 
@@ -155,8 +174,10 @@ void APlayerCharacter::Die()
 	Super::Die();
 
 	if (IsLocallyControlled()) {
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
 		if (validate(IsValid(PlayerController)) == false) { return; }
+
+		PlayerController->SetHasEverDied(true);
 
 		DisableInput(PlayerController);
 	}
@@ -169,7 +190,7 @@ void APlayerCharacter::Respawn()
 		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
 		if (validate(IsValid(BattleGameMode)) == false) { return; }
 
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
 		if (validate(IsValid(PlayerController)) == false) { return; }
 
 		BattleGameMode->RespawnPlayer(PlayerController);
@@ -185,19 +206,14 @@ void APlayerCharacter::OnDeathAnimationEnd()
 		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
 		if (validate(IsValid(BattleGameMode)) == false) { return; }
 
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
 		if (validate(IsValid(PlayerController)) == false) { return; }
 
 		
 		BattleGameMode->OnPlayerDeath(PlayerController);
 	}
 
-
-	//FTimerHandle DeathTimerHandle;
-	//GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &APlayerCharacter::Respawn, RespawnCooldown, false, -1.f);
-	//bRespawning = true;
-
-	//Super::OnDeathAnimationEnd();
+	Super::OnDeathAnimationEnd();
 }
 
 void APlayerCharacter::PickGun(AGun* NewGun)
@@ -240,19 +256,9 @@ void APlayerCharacter::Restart()
 {
 	Super::Restart();
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (validate(IsValid(PlayerController)) == false) { return; }
-
-	ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
-	if (validate(IsValid(HUD)) == false) { return; }
-
-	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
-	if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
-
 	if (validate(IsValid(HealthComponent)) == false) { return; }
 
-	PlayerStatsWidget->SetMaxHealth(HealthComponent->GetMaxHealth());
-	PlayerStatsWidget->SetHealth(HealthComponent->GetHealth());
+	HealthComponent->ResetHealth();
 }
 
 void APlayerCharacter::MoveForward(float Value)

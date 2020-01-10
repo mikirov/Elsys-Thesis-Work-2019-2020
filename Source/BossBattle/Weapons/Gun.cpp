@@ -117,6 +117,7 @@ void AGun::Fire() {
 	}
 	else {
 		GetWorldTimerManager().ClearTimer(FireTimerHandle);
+		//TODO: ServerStartReload
 		StartReload();
 	}
 }

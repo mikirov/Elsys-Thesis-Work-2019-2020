@@ -14,11 +14,15 @@
 void UWinMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	RestartLevelName = FName(TEXT("Main"));
-	
-	MainMenuLevelName = FName(TEXT("MainMenu"));
 
+	if (ServerAddress == FName("")) {
+		ServerAddress = FName(TEXT("127.0.0.1")); // localhost
+	}
+
+	if (MainMenuLevelName == FName("")) {
+		MainMenuLevelName = FName(TEXT("MainMenu"));
+	}
+	
 	if (validate(IsValid(RestartGameButton))) {
 		RestartGameButton->OnPressed.AddDynamic(this, &UWinMenuWidget::RestartGame);
 	}
@@ -56,16 +60,13 @@ void UWinMenuWidget::RestartGame()
 {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
-
-	UGameplayStatics::OpenLevel(World, RestartLevelName);
+	UGameplayStatics::OpenLevel(World, ServerAddress);
 }
 
 void UWinMenuWidget::LoadMainMenu()
 {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	if (validate(MainMenuLevelName.ToString().Len() > 0) == false) { return; }
 
 	UGameplayStatics::OpenLevel(World, MainMenuLevelName);
 }

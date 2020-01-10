@@ -53,8 +53,6 @@ void ASpawner::SpawnEnemy(TSubclassOf<AAIEnemyCharacter> EnemyTemplate, int Coun
 	if (validate(IsValid(GameMode)) == false) { return; }
 
 	GameMode->IncrementEnemyCounter(Count);
-
-
 }
 
 

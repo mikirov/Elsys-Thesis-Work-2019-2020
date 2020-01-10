@@ -49,7 +49,7 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 void UHealthComponent::TakeDamage(float Damage) {
 	if (bDead) { return; }
 
-	Health -= Damage;
+	Health = FMath::Max(Health - Damage, 0.0f);
 	HealthDamageCheck();
 	
 	OnHealthChanged.Broadcast(Health);
@@ -57,7 +57,7 @@ void UHealthComponent::TakeDamage(float Damage) {
 
 
 void UHealthComponent::HealthDamageCheck() {
-	if (Health <= 0) {
+	if (Health <= 0.0f) {
 		bDead = true;
 		OnDeath.Broadcast();
 	}

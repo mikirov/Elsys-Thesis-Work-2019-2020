@@ -18,6 +18,8 @@ public:
 
 	void SetRespawning(bool State);
 
+	void SetChat(class UChatWidget* ChatWidget);
+
 protected:
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -44,8 +46,13 @@ protected:
 
 	void OnDeathAnimationEnd() override;
 
+	class UChatWidget* ChatWidget = nullptr;
+
 	UFUNCTION()
-	void OnHealthChanged(int Health);
+	void OpenChat();
+
+	//UFUNCTION()
+	//void OnHealthChanged(int Health);
 
 	void SwapCamera();
 

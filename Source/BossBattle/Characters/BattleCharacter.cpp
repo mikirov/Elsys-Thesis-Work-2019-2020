@@ -93,11 +93,7 @@ FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 
 void ABattleCharacter::OnDeathAnimationEnd()
 {
-	//if (IsValid(Gun)) {
-	//	Gun->Destroy();
-	//}
 	Destroy();
-	
 }
 
 void ABattleCharacter::Die()
@@ -193,7 +189,6 @@ void ABattleCharacter::PickGun(class AGun* NewGun)
 	Gun->OnPick();
 
 	GunMesh->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "GunSocket");
-
 }
 
 void ABattleCharacter::DropGun()
@@ -210,14 +205,10 @@ void ABattleCharacter::DropGun()
 void ABattleCharacter::StartReloading()
 {
 	if (bReloadingAllowed == false) { return; }
-
 	if (validate(IsValid(Gun)) == false) { return; }
 
 	bReloadingAllowed = false;
-	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::StartReloading"));
 	CharacterAnimation->Reload();
-	//CharacterAnimation->ReloadBP();
-
 }
 
 void ABattleCharacter::FinishReloading()
@@ -225,7 +216,6 @@ void ABattleCharacter::FinishReloading()
 	if (validate(IsValid(Gun)) == false) return;
 
 	bReloadingAllowed = true;
-	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::FinishReloading"))
 	Gun->FinishReload();
 }
 

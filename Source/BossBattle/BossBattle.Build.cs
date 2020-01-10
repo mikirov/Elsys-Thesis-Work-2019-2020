@@ -13,11 +13,10 @@ public class BossBattle : ModuleRules
         // Uncomment if you are using Slate UI
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
-        PublicDependencyModuleNames.AddRange(new string[] {
-            "OnlineSubsystem",
-            "OnlineSubsystemUtils"
-         });
-
-        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+        //PublicDependencyModuleNames.AddRange(new string[] {
+        //    "OnlineSubsystem",
+        //    "OnlineSubsystemUtils"
+        // });
+        
     }
 }

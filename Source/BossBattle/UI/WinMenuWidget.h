@@ -19,7 +19,7 @@ protected :
 	void NativeConstruct() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	FName RestartLevelName;
+	FName ServerAddress;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevelName;

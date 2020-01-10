@@ -7,9 +7,12 @@
 #include "Engine/Texture2D.h"
 #include "TextureResource.h"
 #include "CanvasItem.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 #include "UI/PlayerStatsWidget.h"
+#include "UI/ChatWidget.h"
 #include "Utilities/CustomMacros.h"
+#include "Characters/PlayerCharacter.h"
 
 void ABattleHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
@@ -22,15 +25,47 @@ void ABattleHUD::PostInitializeComponents() {
 	PlayerStatsWidget = Cast<UPlayerStatsWidget>(CreateWidget(World, PlayerStatsWidgetTemplate));
 	if (validate(IsValid(PlayerStatsWidget))) { 
 		PlayerStatsWidget->AddToViewport();
+		//PlayerStatsWidget->SetKeyboardFocus();
 	}
+
+	ChatWidget = Cast<UChatWidget>(CreateWidget(World, ChatWidgetTemplate));
+	if (validate(IsValid(ChatWidget))) {
+		ChatWidget->AddToViewport();
+		//APlayerController* PlayerController = GetOwningPlayerController();
+		//if (validate(IsValid(PlayerController))) {
+		//	UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, ChatWidget, false);
+		//	PlayerController->bShowMouseCursor = true;
+		//}
+	}
+	
+
 }
 
+UPlayerStatsWidget* ABattleHUD::GetPlayerStatsWidget() {
+	if (validate(IsValid(PlayerStatsWidget)) == false) { return nullptr;  }
+
+	return PlayerStatsWidget;
+}
+
+UChatWidget* ABattleHUD::GetChatWidget() {
+	if (validate(IsValid(ChatWidget)) == false) return nullptr;
+
+	return ChatWidget;
+}
 
 void ABattleHUD::DrawHUD()
 {
 	Super::DrawHUD();
 
-	
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (validate(IsValid(PlayerController))) {
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
+		if (validate(IsValid(PlayerCharacter))) {
+			PlayerCharacter->SetChat(ChatWidget);
+		}
+	}
+
+
 	if (validate(IsValid(Canvas)) == false) return;
 	if (validate(IsValid(CrosshairTex)) == false) return;
 
@@ -45,10 +80,4 @@ void ABattleHUD::DrawHUD()
 	FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 	TileItem.BlendMode = SE_BLEND_Translucent;
 	Canvas->DrawItem(TileItem);
-}
-
-UPlayerStatsWidget* ABattleHUD::GetPlayerStatsWidget() {
-	if (validate(IsValid(PlayerStatsWidget)) == false) { return nullptr;  }
-
-	return PlayerStatsWidget;
 }

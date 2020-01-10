@@ -120,8 +120,6 @@ protected:
 	bool MulticastFinishReloading_Validate();
 	void MulticastFinishReloading_Implementation();
 
-	void AttemptFiring();
-
 	FTimerHandle AttemptFiringTimerHandle;
 
 	void SpawnStartingGun();

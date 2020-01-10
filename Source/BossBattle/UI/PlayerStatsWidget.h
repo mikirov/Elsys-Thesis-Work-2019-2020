@@ -25,12 +25,6 @@ public:
 	FText LoseGameText;
 
 	UFUNCTION()
-	void SetMaxHealth(float Health);
-
-	UFUNCTION()
-	void SetHealth(float Health);
-
-	UFUNCTION()
 	void SetScore(int Score);
 
 	void SetLoseGame();
@@ -39,10 +33,15 @@ public:
 
 protected:
 
-	void NativeConstruct() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Health")
-	float MaxHealth = 100;
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UScrollBox* Chat = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UEditableTextBox* InputBox = nullptr;
+
+
+	void NativeConstruct() override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	class UProgressBar* HealthBar = nullptr;

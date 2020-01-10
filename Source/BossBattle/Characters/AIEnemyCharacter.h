@@ -20,6 +20,10 @@ public:
 
 	void Reset() override;
 
+	bool IsTakingDamage();
+
+	void SetTakingDamage(bool State);
+
 protected:
 
 	void BeginPlay();
@@ -41,4 +45,8 @@ protected:
 
 	UFUNCTION()
 	void ClearTakingHits();
+
+
+	bool bTakingDamage = false;
+
 };

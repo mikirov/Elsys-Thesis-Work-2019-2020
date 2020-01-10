@@ -52,7 +52,7 @@ protected:
 	int MaxHealth = 100;
 
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_HealthCheck, VisibleInstanceOnly)
-	int Health;
+	float Health;
 
 	bool bDead = false;
 

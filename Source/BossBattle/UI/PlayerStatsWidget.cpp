@@ -5,19 +5,13 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Containers/UnrealString.h"
+#include "Components/TextBlock.h"
+#include "Components/ScrollBox.h"
+#include "Components/EditableTextBox.h"
 
+
+#include "Gamemodes/BossBattleGameMode.h"
 #include "Utilities/CustomMacros.h"
-
-void UPlayerStatsWidget::SetMaxHealth(float Health) {
-	MaxHealth = Health;
-}
-
-void UPlayerStatsWidget::SetHealth(float Health) {
-	if (validate(IsValid(HealthBar)) == false) { return; }
-
-	HealthBar->SetPercent((float)(Health / MaxHealth));
-}
-
 
 void UPlayerStatsWidget::SetScore(int Score) {
 	if (validate(IsValid(ScoreText)) == false) { return; }
@@ -35,6 +29,7 @@ void UPlayerStatsWidget::SetLoseGame()
 		GameEndText->SetVisibility(ESlateVisibility::Visible);
 	}
 }
+
 
 void UPlayerStatsWidget::SetWinGame()
 {
@@ -54,4 +49,5 @@ void UPlayerStatsWidget::NativeConstruct()
 	if (validate(IsValid(GameEndText)) == false) { return; }
 
 	GameEndText->SetVisibility(ESlateVisibility::Collapsed);
+
 }

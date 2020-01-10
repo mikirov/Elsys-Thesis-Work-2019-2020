@@ -41,8 +41,10 @@ APlayerCharacter* UBTTask_GetClosestPlayer::GetClosestPlayerCharacter()
 	float CurrentDistance = std::numeric_limits<float>::max();
 	for (auto It = World->GetPlayerControllerIterator(); It; It++) {
 
-		APlayerController* PlayerController = It->Get();
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(It->Get());
 		if (validate(IsValid(PlayerController)) == false) { continue; }
+
+		if (PlayerController->HasEverDied()) continue;
 
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
 		if (IsValid(PlayerCharacter) == false) { continue; }

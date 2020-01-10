@@ -41,17 +41,6 @@ void AAIEnemyCharacter::Reset() {
 	//TODO:implement
 	SetActorTransform(InitialTransform);
 	HealthComponent->ResetHealth();
-
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
-	if (validate(IsValid(BlackboardComponent)) == false) return;
-
-	BlackboardComponent->ClearValue(FName("TakingHits"));
-	BlackboardComponent->ClearValue(FName("CriticalHealth"));
-	BlackboardComponent->ClearValue(FName("EnemyHeard"));
-	BlackboardComponent->ClearValue(FName("CanSeeRLCharacter"));
-	BlackboardComponent->ClearValue(FName("MoveLocation"));
-
-
 }
 
 void AAIEnemyCharacter::BeginPlay() {
@@ -71,19 +60,16 @@ void AAIEnemyCharacter::BeginPlay() {
 }
 
 void AAIEnemyCharacter::OnTakingDamage(int CurrentHealth) {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
-	if (validate(IsValid(BlackboardComponent)) == false) return;
 
-	BlackboardComponent->SetValueAsBool(FName("TakingHits"), true);
-	if (CurrentHealth < HealthComponent->GetMaxHealth() / 3) {
-		BlackboardComponent->SetValueAsBool(FName("CriticalHealth"), true);
+	bTakingDamage = true;
 
-	}
 	ARLEnemyCharacter* RLCharacter =  Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
-	if (validate(IsValid(RLCharacter)) == false) return;
+	if (IsValid(RLCharacter) == false) return;
 		
 	RLCharacter->UpdateStateAction(false, false);
 
+
+	//clear the taking hits flag after 0.25 seconds
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AAIEnemyCharacter::ClearTakingHits, 0.0f, false, 0.25f);
 	
@@ -91,11 +77,15 @@ void AAIEnemyCharacter::OnTakingDamage(int CurrentHealth) {
 }
 
 void AAIEnemyCharacter::ClearTakingHits() {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
-	if (validate(IsValid(BlackboardComponent)) == false) return;
+	bTakingDamage = false;
+}
 
-	BlackboardComponent->SetValueAsBool(FName("TakingHits"), false);
+bool AAIEnemyCharacter::IsTakingDamage() {
+	return bTakingDamage;
+}
 
+void AAIEnemyCharacter::SetTakingDamage(bool State) {
+	bTakingDamage = State;
 }
 
 void AAIEnemyCharacter::Die() {

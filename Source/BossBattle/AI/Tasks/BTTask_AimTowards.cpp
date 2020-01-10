@@ -29,7 +29,7 @@ EBTNodeResult::Type UBTTask_AimTowards::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	FRotator LookAtRotation = AICharacter->GetAimAtRotation(TargetLocation);
 
-	AICharacter->SetActorRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
+	AICharacter->SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
 
 	AIController->SetControlRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
 

@@ -14,8 +14,9 @@
 
 #include "Characters/HealthComponent.h"
 #include "Gamemodes/TrainingGameMode.h"
-#include "Utilities//CustomMacros.h"
+#include "Utilities/CustomMacros.h"
 #include "Characters/AIEnemyCharacter.h"
+#include "AI/Controllers/EnemyAIController.h"
 
 void ARLEnemyCharacter::Reset() {
 	//TODO: implement
@@ -24,7 +25,7 @@ void ARLEnemyCharacter::Reset() {
 	
 	bSeeEnemy = false;
 	bHearsNoise = false;
-	bHittingAICharacter = false;
+	bDealingDamage = false;
 	bTakingDamage = false;
 
 	ClearFocus();
@@ -36,71 +37,74 @@ void ARLEnemyCharacter::Reset() {
 }
 
 
+void ARLEnemyCharacter::MoveForward(float Value)
+{
+	if (Controller != nullptr)
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, 1.0f);
+	}
+}
+
+void ARLEnemyCharacter::MoveRight(float Value)
+{
+	if (Controller != nullptr)
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(Direction, Value);
+	}
+}
+
+
 void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 
 	//set value of hitting AI character flag
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
-	AActor* AICharacter = UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass());
 
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(AICharacter);
-	if (validate(IsValid(BlackboardComponent)) == false) return;
+	AAIEnemyCharacter* AICharacter = Cast<AAIEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass()));
+	if (validate(IsValid(AICharacter)) == false) return;
+	bDealingDamage = AICharacter->IsTakingDamage();
 
-	//TODO: set AI character taking hits in some way
-	bHittingAICharacter = BlackboardComponent->GetValueAsBool(FName("TakingHits"));
 
-	//calculate the reward to be added to previous state
-	//CurrentReward = 0.0f;
-	//if (bDidKill == true) {
-	//	CurrentReward = 1.0f;
-	//}
-	//else if (bDidDie == true)
-	//{
-	//	CurrentReward = -1.0f;
-	//}
-	//else if (bTakingDamage == true)
-	//{
-	//	CurrentReward = TakingDamagePenalty;
-	//}
-	//else if (bHittingAICharacter == true)
-	//{
-	//	CurrentReward = -TakingDamagePenalty;
-	//}
-	CurrentReward = bDidKill ? KillReward : (bDidDie ? DeathReward : (bTakingDamage ? TakingDamageReward: (bHittingAICharacter ? DealingDamageReward : 0.0f)));
+	//set reward based on current flags
+	CurrentReward = bDidKill ? KillReward : (bDidDie ? DeathReward : (bTakingDamage ? TakingDamageReward: (bDealingDamage ? DealingDamageReward : 0.0f)));
 
-	CurrentState.Append(CurrentAction);
-
-	PreviousStateAction = CurrentState;
+	PreviousStateAction = CurrentState + CurrentAction;
 
 	//Clears the CurrentState string, the StateStringArray, the MaxStateValues Map, & the ActionValues float Array
-
 	CurrentState = FString("");
 	StateStringArray.Empty();
 	MaxStateValues.Empty();
 	StateActionStrings.Empty();
 	ActionValues.Empty();
 
-	//Determines the next state by adding 1's or 0's to a string array based on whether each flag was true or false.
-	bTakingDamage ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-	bSeeEnemy ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-	bHearsNoise ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-	HealthComponent->GetHealth() < (HealthComponent->GetMaxHealth() / 3.0f) ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-	bHittingAICharacter ? StateStringArray.Add(FString("1")) : StateStringArray.Add(FString("0"));
-
-	//FIXME
-	//CurrentState = FString::Join<FString>(StateStringArray, "");
+	//Determines the next state by adding 1's or 0's to the current state based on whether each flag was true or false.
+	CurrentState += bTakingDamage ? "1" : "0";
+	CurrentState += HealthComponent->GetHealth() < (HealthComponent->GetMaxHealth() / 3.0f) ? "1" : "0";
+	CurrentState += bDealingDamage ? "1" : "0";
+	//TODO: make sure RL character can set hearing and sight flags properly
+	//CurrentState += bSeeEnemy ? "1" : "0";
+	//CurrentState += bHearsNoise ? "1" : "0";
 
 	//create possible state action strings
-	CurrentState.Append(FString("0")); //TODO: check if it should return a new copy
-	StateActionStrings.Add(CurrentState);
-
-	if (bSeeEnemy || bHearsNoise) {
-		CurrentState.Append(FString("1")); //TODO: check if it should return a new copy
-		StateActionStrings.Add(CurrentState);
-
+	//TODO: remove magic number
+	for (int i = 0; i < 6; i++) {
+		StateActionStrings.Add(CurrentState + FString::FromInt(i));
 	}
-	CurrentState.Append(FString("1")); //TODO: check if it should return a new copy
-	StateActionStrings.Add(CurrentState);
+	//StateActionStrings.Add(CurrentState + "0");
+	//StateActionStrings.Add(CurrentState + "1");
+	//StateActionStrings.Add(CurrentState + "2");
+
+	//use this state only if we can hear or see enemy
+	//if (bSeeEnemy || bHearsNoise) {
+	//	StateActionStrings.Add(CurrentState + "1");
+	//}
+
 
 	// Determines the float value of each state-action string. If there is none, create one that is set to 0.
 	for (const FString& StateAction : StateActionStrings) {
@@ -126,33 +130,79 @@ void ARLEnemyCharacter::UpdateStateAction(bool bDidKill, bool bDidDie) {
 		int OutIndex;
 		float OutValue;
 		UKismetMathLibrary::MaxOfFloatArray(ActionValues, OutIndex, OutValue);
-		MaxStateValues.Add(FString::FromInt(OutIndex), OutValue);
+		//MaxStateValues.Add(FString::FromInt(OutIndex), OutValue);
 
-		NextStateActionValue = OutValue;
+		//NextStateActionValue = OutValue;
 
-		for (int i = 0; i < ActionValues.Num(); i++) {
-			if (ActionValues[i] <= NextStateActionValue) {
-				MaxStateValues.Add(FString::FromInt(i), ActionValues[i]);
-			}
-		}
-		TArray<FString> MaxStateKeys;
-		MaxStateValues.GetKeys(MaxStateKeys);
-		CurrentAction = MaxStateKeys[UKismetMathLibrary::RandomIntegerInRange(0, MaxStateKeys.Num() - 1)];
+		//for (int i = 0; i < ActionValues.Num(); i++) {
+		//	if (ActionValues[i] <= NextStateActionValue) {
+		//		MaxStateValues.Add(FString::FromInt(i), ActionValues[i]);
+		//	}
+		//}
+		//TArray<FString> MaxStateKeys;
+		//MaxStateValues.GetKeys(MaxStateKeys);
+		//CurrentAction = MaxStateKeys[UKismetMathLibrary::RandomIntegerInRange(0, MaxStateKeys.Num() - 1)];
+		CurrentAction = FString::FromInt(OutIndex);
 	}
 
 	// TD-Learning algorithm to update the value for the previous action
 
-	float* FoundActionValue = StateTable.Find(PreviousStateAction);
-	if (FoundActionValue != nullptr){
+	float* FoundActionValuePointer = StateTable.Find(PreviousStateAction);
+	if (FoundActionValuePointer != nullptr){
 
-		*FoundActionValue += ((*FoundActionValue - (DiscountFactor * NextStateActionValue)) + CurrentReward) * LearningRate;
-		StateTable.Add(PreviousStateAction, *FoundActionValue);
+		float FoundActionValue = *FoundActionValuePointer;
+
+		FoundActionValue += (((DiscountFactor * NextStateActionValue) - FoundActionValue) + CurrentReward) * LearningRate;
+		StateTable.Add(PreviousStateAction, FoundActionValue);
 
 	}
 
 	
 	//performs actions
 	FTimerHandle MoveTimerHandle;
+
+	switch (FCString::Atoi(*CurrentAction))
+	{
+		//move forward
+		case 0:
+
+			ServerStopFiring();
+			MoveForward(1.0f);
+			break;
+		
+		//move back
+		case 1:
+			ServerStopFiring();
+			MoveForward(-1.0f);
+			break;
+
+		//move left
+		case 2:
+			ServerStopFiring();
+			MoveRight(-1.0f);
+			break;
+
+		//move right
+		case 3:
+			ServerStopFiring();
+			MoveRight(1.0f);
+			break;
+
+		//aim towards enemy
+		case 4:
+			ServerStopFiring();
+			FocusOnAICharacter();
+			break;
+
+		//shoot
+		case 5:
+			ServerStartFiring();
+			break;
+		default:
+			validate(false);
+			break;
+	}
+
 	if (CurrentAction.Equals(FString("0"))) {
 		GetWorldTimerManager().SetTimer(MoveTimerHandle, this, &ARLEnemyCharacter::MoveNearAICharacter, 0.0f, true, 1.0f);
 	}
@@ -221,8 +271,7 @@ void ARLEnemyCharacter::ShootAICharacter() {
 }
 
 void ARLEnemyCharacter::ReportNoise() {
-	this->PawnMakeNoise(1.0f, FVector(0, 0, 0), true, this);
-
+	this->PawnMakeNoise(1.0f, GetActorLocation(), true, this);
 }
 
 void ARLEnemyCharacter::MoveNearAICharacter() {
@@ -249,12 +298,23 @@ void ARLEnemyCharacter::MoveNearAICharacter() {
 void ARLEnemyCharacter::FocusOnAICharacter() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
+	
 	AActor* AICharacter = UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass());
+	if(validate(IsValid(AICharacter) == false)) return;
 
 	AAIController* AIController = UAIBlueprintHelperLibrary::GetAIController(this);
 	if (validate(IsValid(AIController)) == false) return;
 
-	AIController->SetFocus(AICharacter);
+	//AIController->SetFocus(AICharacter);
+
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(
+		GetActorLocation(),
+		AICharacter->GetActorLocation()
+	);
+
+	AICharacter->SetActorRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
+
+	AIController->SetControlRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
 }
 
 void ARLEnemyCharacter::ClearTakingDamage() {
@@ -262,24 +322,27 @@ void ARLEnemyCharacter::ClearTakingDamage() {
 	UpdateStateAction(false, false);
 }
 
-void ARLEnemyCharacter::Die() {
-	Super::Die();
-
-
+void ARLEnemyCharacter::ResetCharacters() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 
+	ATrainingGameMode* TrainingGameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
+	if (validate(IsValid(TrainingGameMode))) {
+		
+		TrainingGameMode->ResetCharacters(false);
+		return;
+	}
+
+}
+
+void ARLEnemyCharacter::Die() {
+	Super::Die();
 
 	bDead = true;
 
 	UpdateStateAction(false, true);
 
-	ATrainingGameMode* TrainingGameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
-	if (IsValid(TrainingGameMode)) {
-		//TODO: perhaps add death timer
-		TrainingGameMode->ResetCharacters(false);
-		return;
-	}
-	//TODO: implement
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ARLEnemyCharacter::ResetCharacters, 0.0f, false, 3.0f);
 
 }

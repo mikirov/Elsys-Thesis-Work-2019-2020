@@ -40,14 +40,11 @@ void UMainMenuWidget::NativeConstruct() {
 	if (validate(IsValid(MultiplayerSettingsButton))) {
 		MultiplayerSettingsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadMultiplayerMenu);
 	}
-	/*
-	if (validate(IsValid(JoinServerButton))) {
-		JoinServerButton->OnPressed.AddDynamic(this, &UMainMenuWidget::JoinServer);
+	if (validate(IsValid(RLTrainingButton))) {
+		RLTrainingButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadTrainingMap);
 	}
-	*/
-	
-}
 
+}
 
 void UMainMenuWidget::SetInputModeGameOnly()
 {
@@ -60,19 +57,37 @@ void UMainMenuWidget::SetInputModeGameOnly()
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
 }
 
+void UMainMenuWidget::SetInputModeGameAndUI() {
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
+
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	UWidgetBlueprintLibrary::SetInputMode_GameAndUI(PlayerController);
+
+}
+
 void UMainMenuWidget::StartLevel() {
+	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::StartLevel"))
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	if (validate(FirstLevelName.ToString().Len() > 0) == false) { return; }
+	//if (validate(FirstLevelName.ToString().Len() > 0) == false) { return; }
 	
-	UGameplayStatics::OpenLevel(World, FirstLevelName);
+	//UGameplayStatics::OpenLevel(World, FirstLevelName);
+	UGameplayStatics::OpenLevel(World, "127.0.0.1");
 
 	SetInputModeGameOnly();
+	//SetInputModeGameAndUI();
 
 }
 
 
+
+
 void UMainMenuWidget::LoadSettingsMenu() {
+
+	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::LoadSettingsMenu"))
 	APlayerController* PlayerController = GetOwningPlayer();
 	if (validate(IsValid(PlayerController)) == false) { return; }
 
@@ -83,6 +98,8 @@ void UMainMenuWidget::LoadSettingsMenu() {
 }
 
 void UMainMenuWidget::LoadMultiplayerMenu() {
+	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::LoadMultiplayerMenu"))
+
 	APlayerController* PlayerController = GetOwningPlayer();
 	if (validate(IsValid(PlayerController)) == false) { return; }
 
@@ -102,16 +119,17 @@ void UMainMenuWidget::QuitGame() {
 	}
 }
 
-void UMainMenuWidget::JoinServer() {
+void UMainMenuWidget::LoadTrainingMap() {
+	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::LoadTrainingMap"))
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	/*
-	if (validate(IsValid(ServerTextBox)) == false) return;
+	if (validate(TrainingLevelName.ToString().Len() > 0) == false) { return; }
 
-	FName ServerAddressName;
-	ServerAddressName = FName(*ServerTextBox->GetText().ToString());
 
-	UGameplayStatics::OpenLevel(World, ServerAddressName);
+	SetInputModeGameOnly();
 
-	*/
+	UGameplayStatics::OpenLevel(World, TrainingLevelName);
+
+
 }

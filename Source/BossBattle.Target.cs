@@ -9,7 +9,7 @@ public class BossBattleTarget : TargetRules
 	{
 		Type = TargetType.Game;
 
-        bUsesSteam = true;
+        //bUsesSteam = true;
         ExtraModuleNames.Add("BossBattle");
 
         //bLegacyPublicIncludePaths = true;

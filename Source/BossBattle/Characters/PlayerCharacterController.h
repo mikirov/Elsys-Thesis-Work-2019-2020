@@ -26,12 +26,24 @@ public:
 	bool OnLoseGame_Validate();
 	void OnLoseGame_Implementation();
 
-	bool IsRespawning();
+	bool HasEverDied();
 
-	void SetRespawning(bool State);
+	void SetHasEverDied(bool State);
 
-	
+	void LoadWinLevel();
+
+	void LoadLoseLevel();
+
 protected:
 
-	bool bRespawning = false;
+	UPROPERTY(EditDefaultsOnly)
+	FString MapsFolderPath;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString WinGameLevelName;
+
+	UPROPERTY(EditDefaultsOnly)
+	float LoadEndLevelDelay = 1.5f;
+
+	bool bHasEverDied = false;
 };

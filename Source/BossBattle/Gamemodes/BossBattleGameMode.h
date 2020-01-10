@@ -16,6 +16,7 @@ class BOSSBATTLE_API ABossBattleGameMode : public AGameModeBase
 
 	GENERATED_BODY()
 public:
+
 	
 	virtual void BeginPlay() override;
 
@@ -23,19 +24,21 @@ public:
 	void IncrementScore(const int Amount);
 
 	// Respawns the player to his initial transform
-	virtual void RespawnPlayer(APlayerController* PlayerController);
+	virtual void RespawnPlayer(class APlayerCharacterController* PlayerController);
 
 	void IncrementEnemyCounter(int EnemyCount);
 
 	void DecrementEnemyCounter();
+	
+	void OnPlayerDeath(class APlayerCharacterController* PlayerController);
 
-	void RestartLevel();
-
-	void LoadWinLevel();
-
-	void OnPlayerDeath(APlayerController* PlayerController);
 
 protected:
+
+	virtual void PostLogin(class APlayerController* PlayerController);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int MaxPlayersCount = 4;
 
 	//time in seconds that each player has to wait after death to respawn
 	UPROPERTY(EditDefaultsOnly)
@@ -49,14 +52,6 @@ protected:
 
 	void UpdateHUDScore(int Score);
 
-	void FindPlayerControllers();
-
-	UPROPERTY(EditDefaultsOnly)
-	FString MapsFolderPath;
-
-	UPROPERTY(EditDefaultsOnly)
-	FString WinGameLevelName;
-
 	UPROPERTY()
 	TSubclassOf<class APlayerCharacter> PlayerTemplate;
 
@@ -64,9 +59,8 @@ protected:
 
 	int CurrentEnemies = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<class APlayerCharacterController*> PlayerControllers;
-
 
 	class ATriggerBox* RespawnBox = nullptr;
 

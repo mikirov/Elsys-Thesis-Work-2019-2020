@@ -9,20 +9,31 @@
 /**
  * 
  */
+
+
 UCLASS()
 class BOSSBATTLE_API ABattleHUD : public AHUD
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	class UPlayerStatsWidget* GetPlayerStatsWidget();
+
+
+	UFUNCTION(BlueprintCallable)
+	class UChatWidget* GetChatWidget();
 
 protected:
 	void PostInitializeComponents() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<class UPlayerStatsWidget> PlayerStatsWidgetTemplate;
+	
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<class UChatWidget> ChatWidgetTemplate;
+
+	class UChatWidget* ChatWidget = nullptr;
 
 	class UPlayerStatsWidget* PlayerStatsWidget = nullptr;
 

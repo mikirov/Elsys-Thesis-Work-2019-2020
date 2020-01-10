@@ -11,9 +11,6 @@ AEnemyAIController::AEnemyAIController()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(FName("PerceptionComponent"));
-	//if (validate(IsValid(PerceptionComponent)) == false) return;
-
 }
 
 void AEnemyAIController::BeginPlay() {
@@ -21,4 +18,3 @@ void AEnemyAIController::BeginPlay() {
 
 	if (validate(RunBehaviorTree(BehaviorTreeTemplate)) == false) { return; }
 }
-

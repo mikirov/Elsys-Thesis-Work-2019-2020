@@ -10,6 +10,7 @@ public class BossBattleServerTarget : TargetRules
 	{
 		Type = TargetType.Server;
 		ExtraModuleNames.Add("BossBattle");
-
+        //bUsesSteam = true;
     }
+
 }

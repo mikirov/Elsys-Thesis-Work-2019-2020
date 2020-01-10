@@ -14,6 +14,8 @@ class BOSSBATTLE_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void UpdateMessages(const FText& Messages);
 
 protected:
 
@@ -21,7 +23,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName FirstLevelName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FName TrainingLevelName;
 
+	UPROPERTY(EditDefaultsOnly)
 	FName ServerAddress;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
@@ -36,17 +42,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
 	class UButton* MultiplayerSettingsButton = nullptr;
 
-
-	/*
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UButton* JoinServerButton = nullptr;
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UEditableTextBox* ServerTextBox = nullptr;
-
-	*/
+	class UButton* RLTrainingButton = nullptr;
 
 	void SetInputModeGameOnly();
+
+	void SetInputModeGameAndUI();
 
 	UFUNCTION()
 	void StartLevel();
@@ -61,5 +62,5 @@ protected:
 	void QuitGame();
 
 	UFUNCTION()
-	void JoinServer();
+	void LoadTrainingMap();
 };

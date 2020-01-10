@@ -49,19 +49,12 @@ protected:
 	
 	// is the RL character hitting the AI character?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bHittingAICharacter = false;
+	bool bDealingDamage = false;
 
-	// Is the character bumping into anything?
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bBumping = false;
 
 	// Is the character taking damage?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
 	bool bTakingDamage = false;
-
-	// Is the character moving?
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bMoving = false;
 
 	// Is on critical health ?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
@@ -116,9 +109,11 @@ protected:
 
 	TMap<FString, float> StateTable;
 
+	//random action chance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Epsilon = 0.1f;
 
+	//whether or not the character should take a random action
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	bool bRandomAction = false;
 
@@ -131,6 +126,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float LearningRate = 0.9f;
 
+	void ResetCharacters();
 
+	void MoveForward(float Value);
+
+	void MoveRight(float Value);
 
 };
