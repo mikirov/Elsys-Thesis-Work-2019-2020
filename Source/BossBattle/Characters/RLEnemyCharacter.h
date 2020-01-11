@@ -16,12 +16,7 @@ class BOSSBATTLE_API ARLEnemyCharacter : public AEnemyCharacter
 	
 public:
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateStateAction(bool bDidKill, bool bDidDie);
-	
 	void Reset() override;
-
-	void ClearFocus();
 
 	void ShootAICharacter();
 
@@ -29,28 +24,16 @@ public:
 
 	void MoveNearAICharacter();
 
-	void ReportNoise();
 
 protected:
 	
 	void BeginPlay();
 	
-	// Does the character have the flag?
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bHasFlag = false;
+	void Tick(float DeltaTime);
 
-	// Does the character hear noise?
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bHearsNoise = false;
-
-	// Does the character see an enemy?
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	bool bSeeEnemy = false;
-	
 	// is the RL character hitting the AI character?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
 	bool bDealingDamage = false;
-
 
 	// Is the character taking damage?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
@@ -60,13 +43,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
 	bool bCriticalHealth = false;
 
-	// Distance to the enemy
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RL Character")
-	float bEnemyDistance = 0.0;
-
 	// Is the character dead?
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
 	bool bDead = false;
+
+	int CurrentAction;
 
 	UFUNCTION()
 	void ClearTakingDamage();
@@ -92,23 +73,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float TakingDamageReward = -0.1f;
 
-	FString CurrentState;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "RL Character")
-	FString CurrentAction;
-
-	FString PreviousStateAction;
-
-	TArray<FString> StateStringArray;
-
-	TMap<FString, float> MaxStateValues;
-
-	TArray<FString> StateActionStrings;
-
-	TArray<float> ActionValues;
-
-	TMap<FString, float> StateTable;
-
 	//random action chance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Epsilon = 0.1f;
@@ -125,8 +89,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float LearningRate = 0.9f;
-
-	void ResetCharacters();
 
 	void MoveForward(float Value);
 

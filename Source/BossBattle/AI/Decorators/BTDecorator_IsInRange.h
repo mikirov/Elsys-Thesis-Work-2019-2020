@@ -14,6 +14,8 @@ class BOSSBATTLE_API UBTDecorator_IsInRange : public UBTDecorator_BlackboardBase
 {
 	GENERATED_BODY()
 public:
+
+	//default target distance based on which the condition is assessed
 	UPROPERTY(EditAnywhere)
 	float TargetDistance = 500.0f;
 

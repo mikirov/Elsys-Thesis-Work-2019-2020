@@ -21,9 +21,11 @@ public:
 	AEnemyAIController();
 
 protected:
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//The behavior tree template to be loaded at BeginPlay by the controller
 	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* BehaviorTreeTemplate = nullptr;
 

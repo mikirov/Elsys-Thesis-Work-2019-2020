@@ -6,9 +6,9 @@
 #include "Components/TextBlock.h"
 
 
-void UMessageWidget::SetMessage(const FText& Message, const FText& Sender) {
+void UMessageWidget::SetMessage(const FText& MessageToSet, const FText& SenderToSet) {
 
-	this->Message = Message;
+	Message = MessageToSet;
 
-	this->Sender = Sender;
+	Sender = SenderToSet;
 }

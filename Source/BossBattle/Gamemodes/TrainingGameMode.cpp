@@ -45,7 +45,6 @@ void ATrainingGameMode::ResetCharacters(bool bAICharacterDied) {
 		RLEnemyCharacter->Reset();
 		RLEnemyCharacter->IncrementKillScore();
 
-		RLEnemyCharacter->UpdateStateAction(true, false);
 	
 	}
 	else {
@@ -56,7 +55,6 @@ void ATrainingGameMode::ResetCharacters(bool bAICharacterDied) {
 
 
 		ARLEnemyCharacter* RLEnemyCharacter = Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, ARLEnemyCharacter::StaticClass()));
-		RLEnemyCharacter->UpdateStateAction(true, false);
 
 	}
 

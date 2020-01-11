@@ -51,10 +51,6 @@ void AAIEnemyCharacter::BeginPlay() {
 
 	InitialTransform = GetActorTransform();
 
-	//ATrainingGameMode* GameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
-	//if (validate(IsValid(GameMode)) == false) { return; }
-	//GameMode->SetAISpawnTransform(InitialTransform);
-
 	HealthComponent->OnHealthChanged.AddDynamic(this, &AAIEnemyCharacter::OnTakingDamage);
 
 }
@@ -63,16 +59,9 @@ void AAIEnemyCharacter::OnTakingDamage(int CurrentHealth) {
 
 	bTakingDamage = true;
 
-	ARLEnemyCharacter* RLCharacter =  Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
-	if (IsValid(RLCharacter) == false) return;
-		
-	RLCharacter->UpdateStateAction(false, false);
-
-
 	//clear the taking hits flag after 0.25 seconds
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AAIEnemyCharacter::ClearTakingHits, 0.0f, false, 0.25f);
-	
 
 }
 
@@ -112,12 +101,8 @@ void AAIEnemyCharacter::Die() {
 
 		ATrainingGameMode* TrainingGameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
 		if (IsValid(TrainingGameMode)) {
-			//TODO: perhaps add death timer
-			TrainingGameMode->ResetCharacters(true);
-			//ARLEnemyCharacter* RLCharacter = Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ARLEnemyCharacter::StaticClass()));
-			//if (validate(IsValid(RLCharacter)) == false) return;
 
-			//RLCharacter->UpdateStateAction(true, false);
+			TrainingGameMode->ResetCharacters(true);
 
 			return;
 		}
