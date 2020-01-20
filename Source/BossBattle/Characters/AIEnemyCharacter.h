@@ -17,36 +17,14 @@ public:
 	AAIEnemyCharacter();
 
 	void SetTarget(class AActor* Target);
-
-	void Reset() override;
-
-	bool IsTakingDamage();
-
-	void SetTakingDamage(bool State);
-
-protected:
+	
+	void Die() override;
 
 	void BeginPlay();
 
-	void Die() override;
-
-	// Added score when enemy dies.
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float Score = 500.0f;
+protected:
 
 	// target player used for checking collision actor
 	class AActor* Target = nullptr;
-
-
-	struct FTransform InitialTransform;
-
-	UFUNCTION()
-	void OnTakingDamage(int CurrentHealth);
-
-	UFUNCTION()
-	void ClearTakingHits();
-
-
-	bool bTakingDamage = false;
 
 };

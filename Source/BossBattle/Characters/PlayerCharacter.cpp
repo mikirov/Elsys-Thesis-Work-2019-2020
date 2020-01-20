@@ -23,6 +23,7 @@
 #include "UI/BattleHUD.h"
 #include "UI/ChatWidget.h"
 #include "GameModes/BossBattleGameMode.h"
+#include "GameModes/PlayingGameMode.h"
 #include "UI/PlayerStatsWidget.h"
 #include "Characters/PlayerCharacterController.h"
 #include "Characters/AIEnemyCharacter.h"
@@ -62,11 +63,6 @@ APlayerCharacter::APlayerCharacter()
 	TPCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	TPCamera->SetActive(true);
 
-	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCamera"));
-	FPCamera->SetupAttachment(RootComponent);
-	//FPCamera->SetRelativeLocation(FVector(30, 10, 110));
-	FPCamera->bUsePawnControlRotation = true;
-	FPCamera->SetActive(false);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -75,15 +71,6 @@ void APlayerCharacter::SetChat(class UChatWidget* ChatWidgetToSet) {
 	ChatWidget = ChatWidgetToSet;
 }
 
-bool APlayerCharacter::IsRespawning()
-{
-	return bRespawning;
-}
-
-void APlayerCharacter::SetRespawning(bool State)
-{
-	bRespawning = State;
-}
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -113,7 +100,6 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerCharacter::ServerStartFiring);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &APlayerCharacter::ServerStopFiring);
 
-	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &APlayerCharacter::SwapCamera);
 	
 	PlayerInputComponent->BindAction("OpenChat", IE_Pressed, this, &APlayerCharacter::OpenChat);
 }
@@ -126,47 +112,16 @@ void APlayerCharacter::OpenChat() {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (validate(IsValid(PlayerController))) {
 		PlayerController->bShowMouseCursor = true;
-		UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, ChatWidget, false);
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, ChatWidget);
 	}
 }
 
 
-//void APlayerCharacter::OnHealthChanged(int Health) {
-//	if (IsLocallyControlled()) {
-//		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-//		if (validate(IsValid(PlayerController)) == false) { return; }
-//
-//		ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
-//		if (validate(IsValid(HUD)) == false) { return; }
-//
-//		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
-//		if (validate(IsValid(PlayerStatsWidget)) == false) { return; }
-//
-//		PlayerStatsWidget->SetHealth(Health);
-//	}
-//}
 
-
-void APlayerCharacter::SwapCamera()
-{
-	if (validate(IsValid(FPCamera)) == false) return;
-	if (validate(IsValid(TPCamera)) == false) return;
-
-	FPCamera->ToggleActive();
-	TPCamera->ToggleActive();
-
-	//if (FPCamera->IsActive()) {
-	//	FPCamera->SetRelativeLocation(FVector(30, 10, 70));
-	//}
-}
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//if (validate(IsValid(HealthComponent)) == false) { return; }
-	//HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
-
 }
 
 void APlayerCharacter::Die()
@@ -177,42 +132,28 @@ void APlayerCharacter::Die()
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
 		if (validate(IsValid(PlayerController)) == false) { return; }
 
-		PlayerController->SetHasEverDied(true);
-
 		DisableInput(PlayerController);
 	}
-}
 
-void APlayerCharacter::Respawn()
-{
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (IsValid(GameMode)) {
-		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
-		if (validate(IsValid(BattleGameMode)) == false) { return; }
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
 
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
-		if (validate(IsValid(PlayerController)) == false) { return; }
+	APlayingGameMode* PlayingGameMode = Cast<APlayingGameMode>(World->GetAuthGameMode());
+	if (validate(IsValid(PlayingGameMode)) == false) { return; }
 
-		BattleGameMode->RespawnPlayer(PlayerController);
-	}
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
+	if (validate(IsValid(PlayerController)) == false) { return; }
 
+
+	PlayingGameMode->OnPlayerDeath(PlayerController);
 }
 
 
 void APlayerCharacter::OnDeathAnimationEnd()
 {
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (IsValid(GameMode)) {
-		ABossBattleGameMode* BattleGameMode = Cast<ABossBattleGameMode>(GameMode);
-		if (validate(IsValid(BattleGameMode)) == false) { return; }
-
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
-		if (validate(IsValid(PlayerController)) == false) { return; }
-
-		
-		BattleGameMode->OnPlayerDeath(PlayerController);
-	}
-
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
+	if (validate(IsValid(PlayerController)) == false) return;
+	PlayerController->LoadLoseLevel();
 	Super::OnDeathAnimationEnd();
 }
 
@@ -252,14 +193,6 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APlayerCharacter::Restart()
-{
-	Super::Restart();
-
-	if (validate(IsValid(HealthComponent)) == false) { return; }
-
-	HealthComponent->ResetHealth();
-}
 
 void APlayerCharacter::MoveForward(float Value)
 {

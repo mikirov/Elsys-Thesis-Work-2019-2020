@@ -14,13 +14,12 @@ class BOSSBATTLE_API APlayerCharacter : public ABattleCharacter
 public:
 	APlayerCharacter();
 
-	bool IsRespawning();
-
-	void SetRespawning(bool State);
 
 	void SetChat(class UChatWidget* ChatWidget);
 
+
 protected:
+
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -36,10 +35,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	class USpringArmComponent* SpringArm = nullptr;
 
-	/** First person camera */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
-	class UCameraComponent* FPCamera = nullptr;
-	
 	/** third person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	class UCameraComponent* TPCamera = nullptr;
@@ -54,8 +49,6 @@ protected:
 	//UFUNCTION()
 	//void OnHealthChanged(int Health);
 
-	void SwapCamera();
-
 	UFUNCTION()
 	void PlayCameraShake();
 	
@@ -63,15 +56,8 @@ protected:
 
 	void Die() override;
 
-	void Respawn();
-	
-	float RespawnCooldown = 5.0f;
-
-	bool bRespawning = false;
-
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);
-
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -83,13 +69,8 @@ protected:
 
 	void LookUpAtRate(float Rate);
 
-	void Restart() override;
-
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void SmoothRotation();
-
 
 };
 

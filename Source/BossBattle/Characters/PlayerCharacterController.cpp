@@ -51,6 +51,17 @@ void APlayerCharacterController::LoadWinLevel() {
 }
 
 
+void APlayerCharacterController::LoadLoseLevel()
+{
+	validate(MapsFolderPath.Len() > 0);
+
+	if (validate(LoseGameLevelName.Len() > 0) == false) { return; }
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+	World->ServerTravel(MapsFolderPath + LoseGameLevelName, true);
+}
+
 bool APlayerCharacterController::OnLoseGame_Validate() {
 	return true;
 }
@@ -64,34 +75,5 @@ void APlayerCharacterController::OnLoseGame_Implementation() {
 	if (validate(IsValid(PlayerStatsWidget))) {
 		PlayerStatsWidget->SetLoseGame();
 	}
-	
-	FTimerHandle RespawnTimerHandle; // not used anywhere
-	GetWorldTimerManager().SetTimer(
-		RespawnTimerHandle,
-		this,
-		&APlayerCharacterController::LoadLoseLevel,
-		LoadEndLevelDelay
-	);
-	
-}
 
-void APlayerCharacterController::LoadLoseLevel() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-
-	validate(MapsFolderPath.Len() > 0);
-
-	if (validate(WinGameLevelName.Len() > 0) == false) { return; }
-
-	World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
-}
-
-bool APlayerCharacterController::HasEverDied()
-{
-	return bHasEverDied;
-}
-
-void APlayerCharacterController::SetHasEverDied(bool State)
-{
-	bHasEverDied = State;
 }

@@ -26,10 +26,6 @@ public:
 	bool OnLoseGame_Validate();
 	void OnLoseGame_Implementation();
 
-	bool HasEverDied();
-
-	void SetHasEverDied(bool State);
-
 	void LoadWinLevel();
 
 	void LoadLoseLevel();
@@ -43,7 +39,9 @@ protected:
 	FString WinGameLevelName;
 
 	UPROPERTY(EditDefaultsOnly)
-	float LoadEndLevelDelay = 1.5f;
+	FString LoseGameLevelName;
 
-	bool bHasEverDied = false;
+	UPROPERTY(EditDefaultsOnly)
+	float LoadEndLevelDelay = 3.0f;
+
 };

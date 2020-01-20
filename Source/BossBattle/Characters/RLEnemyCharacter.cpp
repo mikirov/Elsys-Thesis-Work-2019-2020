@@ -11,24 +11,14 @@
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 
-#include "Characters/HealthComponent.h"
+
 #include "Gamemodes/TrainingGameMode.h"
 #include "Utilities/CustomMacros.h"
 #include "Characters/AIEnemyCharacter.h"
 #include "AI/Controllers/EnemyAIController.h"
-
-void ARLEnemyCharacter::Reset() {
-
-	SetActorTransform(InitialTransform);
-	HealthComponent->ResetHealth();
-
-	ServerStopFiring();
-
-	bDead = false;
-
-}
-
+#include "Utilities/Spawner.h"
 
 void ARLEnemyCharacter::MoveForward(float Value)
 {
@@ -37,7 +27,7 @@ void ARLEnemyCharacter::MoveForward(float Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, 1.0f);
+		AddMovementInput(Direction, Value);
 	}
 }
 
@@ -52,85 +42,19 @@ void ARLEnemyCharacter::MoveRight(float Value)
 	}
 }
 
-void ARLEnemyCharacter::BeginPlay() {
+
+void ARLEnemyCharacter::BeginPlay()
+{
 	Super::BeginPlay();
 
-	InitialTransform = GetActorTransform();
-
-	HealthComponent->OnHealthChanged.AddDynamic(this, &ARLEnemyCharacter::OnHealthChanged);
-	
 }
 
-void ARLEnemyCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//TODO: get dealing damage flag
-
-	//TODO: call python neural network and give it the 3 flags as input
-
-	//TOOD: get result from NN and take action
-
-	//CurrentAction = some_result
-	bRandomAction = FMath::RandRange(0.0f, 1.0f) < Epsilon;
-
-	if (bRandomAction) {
-		CurrentAction = FMath::RandRange(0, 5);
-	}
-	else {
-
-	}
-
-	switch (CurrentAction)
-	{
-	case 0:
-		MoveForward(1.0f);
-		break;
-	case 1:
-		MoveForward(-1.0f);
-		break;
-	case 2:
-		MoveRight(1.0f);
-		break;
-	case 3:
-
-		MoveRight(-1.0f);
-		break;
-	case 4:
-		FocusOnAICharacter();
-		break;
-	case 5:
-		ShootAICharacter();
-
-	default:
-		break;
-	}
-
-}
-
-void ARLEnemyCharacter::OnHealthChanged(int CurrentHealth) {
-
-	
-	bTakingDamage = true;
-	bCriticalHealth = (CurrentHealth < HealthComponent->GetMaxHealth() / 3);
-	
-
-	//TODO: make sure bDead is actually working as expected
-	if (bDead == false) {
-
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &ARLEnemyCharacter::ClearTakingDamage, 0.0f, false, 0.25f);
-
-	}
-
-}
-
-void ARLEnemyCharacter::ShootAICharacter() {
+void ARLEnemyCharacter::ShootEnemy() {
 	//focus on AI character
-	FocusOnAICharacter();
+	FocusOnEnemy();
 
 	//Move near AI character
-	MoveNearAICharacter();
+	MoveNearEnemy();
 
 	//Shoot Weapon
 	ServerStartFiring();
@@ -138,11 +62,12 @@ void ARLEnemyCharacter::ShootAICharacter() {
 
 }
 
-void ARLEnemyCharacter::MoveNearAICharacter() {
-
+void ARLEnemyCharacter::MoveNearEnemy() {
+	
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
-	AActor* AICharacter = UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass());
+
+	AActor* AICharacter = GetClosestEnemy();
 
 	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(World);
 	if (validate(IsValid(NavigationSystem)) == false) return;
@@ -155,11 +80,11 @@ void ARLEnemyCharacter::MoveNearAICharacter() {
 	if (validate(IsValid(AIController)) == false) return;
 
 	AIController->MoveToLocation(Result);
-	
 
 }
 
-void ARLEnemyCharacter::FocusOnAICharacter() {
+
+void ARLEnemyCharacter::FocusOnEnemy() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	
@@ -176,29 +101,18 @@ void ARLEnemyCharacter::FocusOnAICharacter() {
 		AICharacter->GetActorLocation()
 	);
 
-	AICharacter->SetActorRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
+	AICharacter->SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
 
-	AIController->SetControlRotation(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0));
+	AIController->SetControlRotation(FRotator(0, LookAtRotation.Yaw, 0));
 }
 
-void ARLEnemyCharacter::ClearTakingDamage() {
-	bTakingDamage = false;
-}
-
-
-void ARLEnemyCharacter::Die() {
+void ARLEnemyCharacter::Die()
+{
 	Super::Die();
-
-	bDead = true;
-
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-
-	ATrainingGameMode* TrainingGameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
-	if (validate(IsValid(TrainingGameMode))) {
-
-		TrainingGameMode->ResetCharacters(false);
-		return;
-	}
-
 }
+
+AActor* ARLEnemyCharacter::GetClosestEnemy()
+{
+	return nullptr;
+}
+

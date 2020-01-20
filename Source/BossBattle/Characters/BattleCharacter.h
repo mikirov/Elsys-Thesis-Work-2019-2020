@@ -63,9 +63,6 @@ public:
 protected:
 
 
-	UPROPERTY(VisibleAnywhere, Category = Character)
-	bool bRotateSmooth = false;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
 	TSubclassOf<class AGun> StartingGunTemplate = nullptr;
 
@@ -123,8 +120,6 @@ protected:
 	FTimerHandle AttemptFiringTimerHandle;
 
 	void SpawnStartingGun();
-
-	void SmoothRotation();
 
 private:
 
