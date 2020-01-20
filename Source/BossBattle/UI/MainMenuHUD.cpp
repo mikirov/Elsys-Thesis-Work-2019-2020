@@ -10,6 +10,8 @@
 #include "UI/SettingsWidget.h"
 #include "UI/MainMenuWidget.h"
 #include "UI/MultiplayerWidget.h"
+#include "UI/TrainingWidget.h"
+
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"
 #include "Utilities/SettingsSaveGame.h"
@@ -80,6 +82,23 @@ void AMainMenuHUD::LoadMultiplayerMenu() {
 }
 
 
+void AMainMenuHUD::LoadTrainingMenu()
+{
+	if (validate(IsValid(TrainingWidgetTemplate)) == false) { return; }
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	TrainingWidget = Cast<UTrainingWidget>(CreateWidget(World, TrainingWidgetTemplate));
+	if (validate(IsValid(TrainingWidget)) == false) { return; }
+
+	TrainingWidget->AddToViewport();
+
+	if (IsValid(MainMenuWidget)) {
+		MainMenuWidget->RemoveFromViewport();
+	}
+}
+
 void AMainMenuHUD::LoadMainMenu() {
 	if (validate(IsValid(MainMenuWidgetTemplate)) == false) { return; }
 
@@ -95,6 +114,9 @@ void AMainMenuHUD::LoadMainMenu() {
 
 	if (IsValid(MultiplayerWidget)) {
 		MultiplayerWidget->RemoveFromViewport();
+	}
+	if (IsValid(TrainingWidget)) {
+		TrainingWidget->RemoveFromViewport();
 	}
 
 	MainMenuWidget->AddToViewport();

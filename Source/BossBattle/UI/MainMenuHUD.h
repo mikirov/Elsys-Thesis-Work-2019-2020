@@ -24,6 +24,8 @@ public:
 
 	void LoadMultiplayerMenu();
 
+	void LoadTrainingMenu();
+
 	UFUNCTION(BlueprintCallable)
 	void SaveSettings();
 
@@ -40,9 +42,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UMultiplayerWidget> MultiplayerWidgetTemplate;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UTrainingWidget> TrainingWidgetTemplate;
+
 	class UUserWidget* MainMenuWidget = nullptr;
 
 	class USettingsWidget* SettingsWidget = nullptr;
 
 	class UMultiplayerWidget* MultiplayerWidget = nullptr;
+
+	class UTrainingWidget* TrainingWidget = nullptr;
 };

@@ -7,6 +7,8 @@
 #include "UI/TrainingStatsWidget.h"
 #include "Utilities/CustomMacros.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
+
 void ATrainingHUD::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 
@@ -19,5 +21,12 @@ void ATrainingHUD::PostInitializeComponents() {
 	if (validate(IsValid(TrainingStatsWidget))) {
 		TrainingStatsWidget->AddToViewport();
 	}
-}
 
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	PlayerController->bShowMouseCursor = true;
+
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
+
+}

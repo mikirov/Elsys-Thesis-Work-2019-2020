@@ -22,10 +22,7 @@ protected:
 	void NativeConstruct() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	FName FirstLevelName;
-	
-	UPROPERTY(EditDefaultsOnly)
-	FName TrainingLevelName;
+	FName WeaponsLevelName;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName ServerAddress;
@@ -43,11 +40,18 @@ protected:
 	class UButton* MultiplayerSettingsButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UButton* RLTrainingButton = nullptr;
+	class UButton* TrainingButton = nullptr;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	class UButton* WeaponsButton = nullptr;
 
 	void SetInputModeGameOnly();
 
 	void SetInputModeGameAndUI();
+
+	UFUNCTION()
+	void LoadWeaponsLevel();
 
 	UFUNCTION()
 	void StartLevel();
@@ -62,5 +66,5 @@ protected:
 	void QuitGame();
 
 	UFUNCTION()
-	void LoadTrainingMap();
+	void LoadTrainingWidget();
 };

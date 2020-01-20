@@ -18,9 +18,6 @@
 void UMainMenuWidget::NativeConstruct() {
 	Super::NativeConstruct();
 
-	if (FirstLevelName.IsNone()) {
-		FirstLevelName = FName("Main");
-	}
 	if (ServerAddress.IsNone()) {
 		ServerAddress = FName("127.0.0.1"); // local host
 	}
@@ -40,8 +37,11 @@ void UMainMenuWidget::NativeConstruct() {
 	if (validate(IsValid(MultiplayerSettingsButton))) {
 		MultiplayerSettingsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadMultiplayerMenu);
 	}
-	if (validate(IsValid(RLTrainingButton))) {
-		RLTrainingButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadTrainingMap);
+	if (validate(IsValid(TrainingButton))) {
+		TrainingButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadTrainingWidget);
+	}
+	if (validate(IsValid(WeaponsButton))) {
+		WeaponsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadWeaponsLevel);
 	}
 
 }
@@ -64,22 +64,29 @@ void UMainMenuWidget::SetInputModeGameAndUI() {
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
-	UWidgetBlueprintLibrary::SetInputMode_GameAndUI(PlayerController);
+	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController);
+
+}
+
+void UMainMenuWidget::LoadWeaponsLevel()
+{
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+	if (validate(WeaponsLevelName.ToString().Len() > 0) == false) { return; }
+
+
+	SetInputModeGameOnly();
+	UGameplayStatics::OpenLevel(World, WeaponsLevelName);
 
 }
 
 void UMainMenuWidget::StartLevel() {
-	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::StartLevel"))
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	//if (validate(FirstLevelName.ToString().Len() > 0) == false) { return; }
-	
-	//UGameplayStatics::OpenLevel(World, FirstLevelName);
-	UGameplayStatics::OpenLevel(World, "127.0.0.1");
 
 	SetInputModeGameOnly();
-	//SetInputModeGameAndUI();
-
+	UGameplayStatics::OpenLevel(World, "127.0.0.1");
 }
 
 
@@ -119,17 +126,13 @@ void UMainMenuWidget::QuitGame() {
 	}
 }
 
-void UMainMenuWidget::LoadTrainingMap() {
-	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::LoadTrainingMap"))
+void UMainMenuWidget::LoadTrainingWidget() {
+	APlayerController* PlayerController = GetOwningPlayer();
+	if (validate(IsValid(PlayerController)) == false) { return; }
 
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-	if (validate(TrainingLevelName.ToString().Len() > 0) == false) { return; }
+	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(MainMenuHUD)) == false) { return; }
 
-
-	SetInputModeGameOnly();
-
-	UGameplayStatics::OpenLevel(World, TrainingLevelName);
-
+	MainMenuHUD->LoadTrainingMenu();
 
 }
