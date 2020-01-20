@@ -5,73 +5,67 @@
 #include "Utilities/CustomMacros.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
-#include "Characters/RLEnemyCharacter.h"
+
+#include "Characters/RLTrainingCharacter.h"
 #include "Characters/AIEnemyCharacter.h"
+#include "Utilities/Spawner.h"
 
-void ATrainingGameMode::RespawnRLCharacter() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
+void ATrainingGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 
-	World->SpawnActor<ARLEnemyCharacter>(RLEnemyTemplate.Get(), RLSpawnTransform, FActorSpawnParameters());
-
-}
-
-void ATrainingGameMode::RespawnAICharacter() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
-
-	AAIEnemyCharacter* AICharacter = World->SpawnActor<AAIEnemyCharacter>(AIEnemyTemplate.Get(), AISpawnTransform, FActorSpawnParameters());
-	
-
-}
-
-int ATrainingGameMode::GetAIKills() const {
-	return AIKills;
-}
-
-int ATrainingGameMode::GetRLKills() const {
-	return RLKills;
-}
-
-void ATrainingGameMode::ResetCharacters(bool bAICharacterDied) {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 
 
-	if (bAICharacterDied) {
-		
-		ARLEnemyCharacter* RLEnemyCharacter = Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, ARLEnemyCharacter::StaticClass()));
-		RLEnemyCharacter->Reset();
-		RLEnemyCharacter->IncrementKillScore();
+	Spawner =  Cast<ASpawner>(UGameplayStatics::GetActorOfClass(World, ASpawner::StaticClass()));
+	if (validate(IsValid(Spawner)) == false) return;
 
-	
+	Spawner->SpawnEnemy(RLEnemyTemplate, 1);
+
+}
+
+
+
+void ATrainingGameMode::DecrementEnemyCounter()
+{
+	Super::DecrementEnemyCounter();
+
+	if (AreAllEnemiesDead()) {
+		ResetCharacters();
 	}
-	else {
+}
 
-		AAIEnemyCharacter* AIEnemyCharacter = Cast<AAIEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass()));
-		AIEnemyCharacter->Reset();
-		AIEnemyCharacter->IncrementKillScore();
+void ATrainingGameMode::AddInitialTransform(const FTransform InitialTransform)
+{
+	InitialTransforms.Add(InitialTransform);
+}
 
+void ATrainingGameMode::ResetCharacters() {
+	
+	UE_LOG(LogTemp, Warning, TEXT("ATrainingGameMode::ResetCharacters"))
 
-		ARLEnemyCharacter* RLEnemyCharacter = Cast<ARLEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, ARLEnemyCharacter::StaticClass()));
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
 
+	Spawner->SpawnEnemy(RLEnemyTemplate, 1);
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(World, AAIEnemyCharacter::StaticClass(), OutActors);
+	for (auto& Actor : OutActors) {
+		AAIEnemyCharacter* AIEnemy = Cast<AAIEnemyCharacter>(Actor);
+		AIEnemy->Destroy();
 	}
 
-}
+	for (FTransform InitialTransform : InitialTransforms) {
 
-FTransform  ATrainingGameMode::GetRLSpawnTransform() const{
-	return RLSpawnTransform;
-}
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		World->SpawnActor<AAIEnemyCharacter>(AAIEnemyCharacter::StaticClass(), InitialTransform, SpawnParameters);
 
-FTransform  ATrainingGameMode::GetAISpawnTransform() const {
-	return AISpawnTransform;
-}
-
-void ATrainingGameMode::SetRLSpawnTransform(const FTransform& Transform) {
-	RLSpawnTransform = Transform;
-}
-
-void ATrainingGameMode::SetAISpawnTransform(const FTransform& Transform) {
-	AISpawnTransform = Transform;
+	}
+	
+	
 }

@@ -3,53 +3,36 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "Gamemodes/BossBattleGameMode.h"
 #include "TrainingGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BOSSBATTLE_API ATrainingGameMode : public AGameModeBase
+class BOSSBATTLE_API ATrainingGameMode : public ABossBattleGameMode
 {
 	GENERATED_BODY()
 	
 public:
-	
-	void SetRLSpawnTransform(const FTransform& Transform);
 
-	 FTransform GetRLSpawnTransform() const;
+	UFUNCTION()
+	void ResetCharacters();
 
-	void SetAISpawnTransform(const FTransform& Transform);
+	void BeginPlay() override;
 
-	FTransform GetAISpawnTransform() const;
-	
-	void RespawnRLCharacter();
+	void DecrementEnemyCounter() override;
 
-	void RespawnAICharacter();
+	void AddInitialTransform(const FTransform InitialTransform);
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AAIEnemyCharacter> AIEnemyTemplate;
-
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARLEnemyCharacter> RLEnemyTemplate;
 
-	void ResetCharacters(bool bAICharacterDied);
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AAIEnemyCharacter> AIEnemyTemplate;	
+
+	class ASpawner* Spawner = nullptr;
 	
-	UFUNCTION(BlueprintCallable)
-	int GetAIKills() const;
-
-	UFUNCTION(BlueprintCallable)
-	int GetRLKills() const;
-
-private:
-
-	FTransform AISpawnTransform;
-
-	FTransform RLSpawnTransform;
-
-	int AIKills = 0;
-
-	int RLKills = 0;
-
+	TArray<FTransform> InitialTransforms;
 };
