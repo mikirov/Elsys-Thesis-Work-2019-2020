@@ -11,6 +11,7 @@
 
 #include "Characters/PlayerCharacter.h"
 #include "Characters/PlayerCharacterController.h"
+#include "Gamemodes/PlayingGameMode.h"
 #include "Utilities/CustomMacros.h"
 
 EBTNodeResult::Type UBTTask_GetClosestPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -39,12 +40,13 @@ APlayerCharacter* UBTTask_GetClosestPlayer::GetClosestPlayerCharacter()
 
 	APlayerCharacter* ChosenPlayerCharacter = nullptr;
 	float CurrentDistance = std::numeric_limits<float>::max();
-	for (auto It = World->GetPlayerControllerIterator(); It; It++) {
 
-		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(It->Get());
+	APlayingGameMode* GameMode = Cast<APlayingGameMode>(World->GetAuthGameMode());
+	if (validate(IsValid(GameMode)) == false) return nullptr;
+
+	TArray<APlayerCharacterController*> Controllers = GameMode->GetPlayerControllers();
+	for (APlayerCharacterController* PlayerController : Controllers) {
 		if (validate(IsValid(PlayerController)) == false) { continue; }
-
-		if (PlayerController->HasEverDied()) continue;
 
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
 		if (IsValid(PlayerCharacter) == false) { continue; }
@@ -55,6 +57,7 @@ APlayerCharacter* UBTTask_GetClosestPlayer::GetClosestPlayerCharacter()
 			CurrentDistance = DistanceToPlayer;
 		}
 	}
+
 
 	return ChosenPlayerCharacter;
 }
