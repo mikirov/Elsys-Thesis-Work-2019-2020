@@ -15,7 +15,7 @@ struct FSpawnerInfo {
 	int EnemyCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AAIEnemyCharacter> EnemyAsset;
+	TSubclassOf<class AEnemyCharacter> EnemyAsset;
 };
 
 USTRUCT(BlueprintType, Meta=(DisplayName="SpawnerInfoArray"))

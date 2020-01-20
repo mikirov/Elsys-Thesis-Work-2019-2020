@@ -18,7 +18,7 @@ public:
 
 
 	//Spawn specified number of enemies inside the box component
-	void SpawnEnemy(TSubclassOf<class AAIEnemyCharacter> EnemyTemplate, int Count);
+	void SpawnEnemy(TSubclassOf<class AEnemyCharacter> EnemyTemplate, int Count);
 
 private:
 
