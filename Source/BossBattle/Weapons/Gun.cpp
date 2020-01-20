@@ -95,7 +95,7 @@ void AGun::ReleaseTrigger() {
 void AGun::Fire() {
 	if (validate(WeaponData != nullptr) == false) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentClipAmmo)
+	//UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentClipAmmo)
 
 	if (HasAmmo(WeaponData->BulletsPerShot)) {
 		PlayFireSound();
