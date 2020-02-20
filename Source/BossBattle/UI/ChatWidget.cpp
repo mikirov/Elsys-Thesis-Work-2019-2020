@@ -17,6 +17,8 @@
 void UChatWidget::NativeConstruct() {
 
 	Super::NativeConstruct();
+
+	bOpen = false;
 	if (validate(IsValid(CloseButton))) {
 		CloseButton->OnClicked.AddDynamic(this, &UChatWidget::Close);
 
@@ -26,7 +28,6 @@ void UChatWidget::NativeConstruct() {
 	}
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 
-	bOpen = false;
 
 }
 
@@ -69,6 +70,8 @@ void UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type Com
 }
 
 void UChatWidget::Close() {
+
+	bOpen = false;
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 
 	APlayerController* PlayerController = GetOwningPlayer();
@@ -77,7 +80,6 @@ void UChatWidget::Close() {
 		PlayerController->bShowMouseCursor = false;
 	}
 
-	bOpen = false;
 }
 
 bool UChatWidget::IsOpen()
@@ -88,6 +90,8 @@ bool UChatWidget::IsOpen()
 void UChatWidget::Open()
 {
 
+
+	bOpen = true;
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetOwningPlayer());
@@ -98,5 +102,4 @@ void UChatWidget::Open()
 
 	}
 
-	bOpen = true;
 }

@@ -46,7 +46,7 @@ protected:
 	UFUNCTION()
 	void OpenChat();
 
-	//quit current level or chat if open
+	//quit current level
 	UFUNCTION()
 	void Close();
 

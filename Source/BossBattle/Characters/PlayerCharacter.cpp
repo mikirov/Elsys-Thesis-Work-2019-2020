@@ -107,7 +107,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::HandleCrouch);
 
-	PlayerInputComponent->BindAction("Quit", IE_Pressed, this, &APlayerCharacter::Close);
+	PlayerInputComponent->BindAction("Close", IE_Pressed, this, &APlayerCharacter::Close);
 }
 
 void APlayerCharacter::OpenChat() {
@@ -121,17 +121,9 @@ void APlayerCharacter::OpenChat() {
 
 void APlayerCharacter::Close()
 {
-	if (validate(IsValid(ChatWidget)) == false) return;
+	UE_LOG(LogTemp, Warning, TEXT(" APlayerCharacter::Close()"))
 
-	if (ChatWidget->IsOpen()) {
-		ChatWidget->Close();
-	}
-	//TODO: check if the gamemode is mltiplayer and if so break the session
-	else {
-
-		UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
-	}
-
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 }
 
 void APlayerCharacter::BeginPlay()
