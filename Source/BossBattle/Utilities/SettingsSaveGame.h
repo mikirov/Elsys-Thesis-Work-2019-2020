@@ -21,9 +21,30 @@ class BOSSBATTLE_API USettingsSaveGame : public USaveGame
 public:
 	USettingsSaveGame();
 
-	//type of input device used to play the game
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Setup")
-	InputType Type;
+
+	//graphical quality setting index
+	UPROPERTY()
+	int GraphicalIndex;
+
+	//post processing setting index
+	UPROPERTY()
+	int PPIndex;
+
+	//main setting index
+	UPROPERTY()
+	int MainSettings;
+
+	//anti-alliasing settign index
+	UPROPERTY()
+	int AAIndex;
+
+	//fps setting index
+	UPROPERTY()
+	int FPSIndex;
+
+	//shadow setting index
+	UPROPERTY()
+	int ShadownIndex;
 
 	//get the name of the save point
 	FString GetSaveSlotName();

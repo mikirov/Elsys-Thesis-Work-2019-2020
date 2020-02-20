@@ -5,7 +5,7 @@
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
-MoveBackwardAction::MoveBackwardAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+MoveBackwardAction::MoveBackwardAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 }
 

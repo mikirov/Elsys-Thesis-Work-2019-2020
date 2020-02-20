@@ -12,16 +12,14 @@ class BOSSBATTLE_API Action
 {
 public:
 	
-	Action(int Id, class ARLEnemyCharacter* CharacterToSet);
+	Action(class ARLEnemyCharacter* CharacterToSet);
 
-	int GetId();
-
-	//pure virtual
-	virtual void Execute() = 0;
+	//execute method overriten by every action
+	virtual void Execute();
 
 protected:
-	int Id;
 	
+	//character that executes the action
 	class ARLEnemyCharacter* EnemyCharacter = nullptr;
 
 };

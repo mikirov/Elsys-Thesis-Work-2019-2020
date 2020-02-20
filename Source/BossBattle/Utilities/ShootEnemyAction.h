@@ -10,6 +10,6 @@
 class BOSSBATTLE_API ShootEnemyAction : public Action
 {
 public:
-	ShootEnemyAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	ShootEnemyAction(ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

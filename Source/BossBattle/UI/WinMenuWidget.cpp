@@ -15,7 +15,11 @@ void UWinMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ServerAddress == FName("")) {
+	if (RestartLevelName.IsNone()) {
+		RestartLevelName = FName("MainMap");
+	}
+
+	if (ServerAddress.IsNone()) {
 		ServerAddress = FName(TEXT("127.0.0.1")); // localhost
 	}
 
@@ -58,9 +62,12 @@ void UWinMenuWidget::QuitGame()
 
 void UWinMenuWidget::RestartGame()
 {
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	UGameplayStatics::OpenLevel(World, ServerAddress);
+	if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
+
+	UGameplayStatics::OpenLevel(World, RestartLevelName);
 }
 
 void UWinMenuWidget::LoadMainMenu()

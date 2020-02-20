@@ -46,6 +46,9 @@ AGun::AGun()
 	ArrowComponent->SetupAttachment(ProjectileSpawnTransform);
 
 
+	bReplicates = true;
+	bReplicateMovement = true;
+
 	this->Tags.Add(FName("Weapon"));
 }
 
@@ -125,6 +128,8 @@ void AGun::Fire() {
 
 void AGun::OnDrop()
 {
+
+	if (HasAuthority() == false) return;
 	SetActorRotation(FRotator(0, 0, 0));
 	FVector ActorLocation = GetActorLocation();
 	SetActorLocation(FVector(ActorLocation.X, ActorLocation.Y, 100));
@@ -133,6 +138,7 @@ void AGun::OnDrop()
 
 void AGun::OnPick()
 {
+	if (HasAuthority() == false) return;
 	SetActorRotation(FRotator(0, 0, 0));
 	GunState = EGunState::Picked;
 }
@@ -140,6 +146,7 @@ void AGun::OnPick()
 void AGun::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
+	if (HasAuthority() == false) return;
 	switch (GunState)
 	{
 		case Dropped:

@@ -18,12 +18,8 @@
 void UMainMenuWidget::NativeConstruct() {
 	Super::NativeConstruct();
 
-	if (ServerAddress.IsNone()) {
-		ServerAddress = FName("127.0.0.1"); // local host
-	}
-
 	if (validate(IsValid(StartGameButton))) {
-		StartGameButton->OnPressed.AddDynamic(this, &UMainMenuWidget::StartLevel);
+		StartGameButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadGamemodeMenu);
 	}
 
 	if (validate(IsValid(SettingsButton))) {
@@ -34,16 +30,12 @@ void UMainMenuWidget::NativeConstruct() {
 		QuitButton->OnPressed.AddDynamic(this, &UMainMenuWidget::QuitGame);
 	}
 
-	if (validate(IsValid(MultiplayerSettingsButton))) {
-		MultiplayerSettingsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadMultiplayerMenu);
-	}
 	if (validate(IsValid(TrainingButton))) {
 		TrainingButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadTrainingWidget);
 	}
 	if (validate(IsValid(WeaponsButton))) {
 		WeaponsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadWeaponsLevel);
 	}
-
 }
 
 void UMainMenuWidget::SetInputModeGameOnly()
@@ -55,17 +47,6 @@ void UMainMenuWidget::SetInputModeGameOnly()
 	if (validate(IsValid(PlayerController)) == false) return;
 
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
-}
-
-void UMainMenuWidget::SetInputModeGameAndUI() {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (validate(IsValid(PlayerController)) == false) return;
-
-	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController);
-
 }
 
 void UMainMenuWidget::LoadWeaponsLevel()
@@ -80,13 +61,15 @@ void UMainMenuWidget::LoadWeaponsLevel()
 
 }
 
-void UMainMenuWidget::StartLevel() {
+void UMainMenuWidget::LoadGamemodeMenu() {
 
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
+	APlayerController* PlayerController = GetOwningPlayer();
+	if (validate(IsValid(PlayerController)) == false) { return; }
 
-	SetInputModeGameOnly();
-	UGameplayStatics::OpenLevel(World, "127.0.0.1");
+	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(MainMenuHUD))) {
+		MainMenuHUD->LoadGamemomeMenu();
+	}
 }
 
 
@@ -101,18 +84,6 @@ void UMainMenuWidget::LoadSettingsMenu() {
 	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
 	if (validate(IsValid(MainMenuHUD))) {
 		MainMenuHUD->LoadSettingsMenu();
-	}
-}
-
-void UMainMenuWidget::LoadMultiplayerMenu() {
-	UE_LOG(LogTemp, Warning, TEXT("UMainMenuWidget::LoadMultiplayerMenu"))
-
-	APlayerController* PlayerController = GetOwningPlayer();
-	if (validate(IsValid(PlayerController)) == false) { return; }
-
-	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
-	if (validate(IsValid(MainMenuHUD))) {
-		MainMenuHUD->LoadMultiplayerMenu();
 	}
 }
 

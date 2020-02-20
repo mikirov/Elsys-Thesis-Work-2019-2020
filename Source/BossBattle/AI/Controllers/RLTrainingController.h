@@ -14,9 +14,17 @@ UCLASS()
 class BOSSBATTLE_API ARLTrainingController : public ARLController
 {
 	GENERATED_BODY()
+public:
+
+	//resets the q-table
+	void ResetTable();
+
+	ARLTrainingController();
+
 	
 protected:
 
+	//updates the action and episode values
 	void UpdateStepAndEpisode();
 
 	//counter for the current number of steps taken this episode
@@ -24,25 +32,23 @@ protected:
 
 	// number of steps before updating the episode
 	int StepsPerEpisode = 1000;
-
+	 
 	// episode number
 	int Episode = 0;
 
 	float GetReward();
 
-	void BeginPlay();
+	//called when the actor is destroyed or the game ends
+	void EndPlay
+	(
+		const EEndPlayReason::Type EndPlayReason
+	) override;
 
-	void Tick(float DeltaTime);
+	void OnPossess(APawn* InPawn) override;
 
-	void ShowTable();
+	void Tick(float DeltaTime) override;
 
-	void SaveTable(int Episode);
-
-	void OnTableSaved(const FString& SlotName, const int32 UserIndex, bool bSuccess);
-
-	TArray<bool> StateArray; // array of boolean flags given as state
-
-	int StateCount = 3; // current number of states
+	void ShowTable(float** Table);
 
 	float CurrentReward = 0.0f; //reward this tick
 

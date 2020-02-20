@@ -11,6 +11,6 @@
 class BOSSBATTLE_API InteractAction : public Action
 {
 public:
-	InteractAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	InteractAction(ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

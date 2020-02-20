@@ -6,12 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
-enum EProjectileSpawnRotation : uint8
+
+//enum indicating whether the projectile should spawn in the direction dictated by the forward vector of the control rotation
+UENUM(BlueprintType)
+enum class EProjectileSpawnRotation : uint8
 {
-	GunForwardVector, // Less precise but looks better
-	ControlRotation // Most precise but doesn't respect actor rotation limits.
+	GunForwardVector UMETA("ForwardVector"), // Less precise but looks better
+	ControlRotation UMETA("ControlRotation")// Most precise but doesn't respect actor rotation limits.
 };
 
+//enum indicating the possible states of the gun
 enum EGunState
 {
 	Picked,
@@ -51,7 +55,7 @@ public:
 	bool IsFiring();
 
 	//setter for the projectile initial rotation mode
-	void SetProjectileSpawnRotationMode(EProjectileSpawnRotation NewSpawnRotation);
+	void SetProjectileSpawnRotationMode(enum EProjectileSpawnRotation NewSpawnRotation);
 
 	//event emitted on fire
 	FFire OnFire;
@@ -106,6 +110,7 @@ protected:
 	//current weapon ammunitions in this clip
 	int CurrentClipAmmo = 0;
 
+	UPROPERTY(EditAnywhere)
 	//specifies how the projectile will get its initial rotation
 	EProjectileSpawnRotation SpawnRotationMode = EProjectileSpawnRotation::ControlRotation;
 

@@ -27,6 +27,9 @@ void AWinMenuHUD::PostInitializeComponents()
 
 	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, WinMenuWidget, EMouseLockMode::DoNotLock);
 
+
+	PlayerController->bShowMouseCursor = true;
+
 }
 
 void AWinMenuHUD::LoadWinMenuWidget()

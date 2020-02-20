@@ -11,6 +11,7 @@
 #include "UI/MainMenuWidget.h"
 #include "UI/MultiplayerWidget.h"
 #include "UI/TrainingWidget.h"
+#include "UI/GamemodeSelectionWidget.h"
 
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"
@@ -28,24 +29,10 @@ void AMainMenuHUD::PostInitializeComponents() {
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
-	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, MainMenuWidget, EMouseLockMode::DoNotLock);
-}
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
 
 
-void AMainMenuHUD::SaveSettings() {
-	USettingsSaveGame* SaveGameInstance = Cast<USettingsSaveGame>(
-		UGameplayStatics::CreateSaveGameObject(USettingsSaveGame::StaticClass())
-	);
-
-	// Dont't use validate. Expected behaviour!
-	if (IsValid(SaveGameInstance)) {
-		
-		UGameplayStatics::SaveGameToSlot(
-			SaveGameInstance,
-			SaveGameInstance->GetSaveSlotName(),
-			SaveGameInstance->GetUserIndex()
-		);
-	}
+	PlayerController->bShowMouseCursor = true;
 }
 
 
@@ -79,6 +66,7 @@ void AMainMenuHUD::LoadMultiplayerMenu() {
 	if (IsValid(MainMenuWidget)) {
 		MainMenuWidget->RemoveFromViewport();
 	}
+
 }
 
 
@@ -93,6 +81,24 @@ void AMainMenuHUD::LoadTrainingMenu()
 	if (validate(IsValid(TrainingWidget)) == false) { return; }
 
 	TrainingWidget->AddToViewport();
+
+	if (IsValid(MainMenuWidget)) {
+		MainMenuWidget->RemoveFromViewport();
+	}
+
+}
+
+void AMainMenuHUD::LoadGamemomeMenu()
+{
+	if (validate(IsValid(GamemodeWidgetTemplate)) == false) { return; }
+
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) { return; }
+
+	GamemodeWidget = Cast<UGamemodeSelectionWidget>(CreateWidget(World, GamemodeWidgetTemplate));
+	if (validate(IsValid(GamemodeWidget)) == false) { return; }
+
+	GamemodeWidget->AddToViewport();
 
 	if (IsValid(MainMenuWidget)) {
 		MainMenuWidget->RemoveFromViewport();
@@ -117,6 +123,9 @@ void AMainMenuHUD::LoadMainMenu() {
 	}
 	if (IsValid(TrainingWidget)) {
 		TrainingWidget->RemoveFromViewport();
+	}
+	if (IsValid(GamemodeWidget)) {
+		GamemodeWidget->RemoveFromViewport();
 	}
 
 	MainMenuWidget->AddToViewport();

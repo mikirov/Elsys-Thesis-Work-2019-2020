@@ -6,7 +6,7 @@
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
 
-FocusOnEnemyAction::FocusOnEnemyAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+FocusOnEnemyAction::FocusOnEnemyAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 
 }

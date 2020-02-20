@@ -10,6 +10,6 @@
 class BOSSBATTLE_API MoveRightAction : public Action
 {
 public:
-	MoveRightAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	MoveRightAction( ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

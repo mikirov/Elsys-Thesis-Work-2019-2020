@@ -17,63 +17,39 @@
 #include "Characters/RLEnemyCharacter.h"
 #include "Gamemodes/TrainingGameMode.h"
 #include "Utilities/CustomMacros.h"
+#include "Utilities/Action.h"
 #include "Characters/AIEnemyCharacter.h"
 #include "AI/Controllers/EnemyAIController.h"
-#include "Utilities/TableSaveGame.h"
 
-void ARLTrainingController::ShowTable()
+
+
+void ARLTrainingController::ShowTable(float** Table)
 {
-	FString Result = "QTable:\n==========";
+	//UE_LOG(LogTemp, Warning, TEXT("QTable:\n==========\n"));
 
-		for (auto& Pair : QTable)
-		{
-			Result += "{State:" + FString::FromInt(Pair.Key) + " Actions : [";
-			for (auto& Value : Pair.Value.ActionValues) {
-				Result += FString::SanitizeFloat(Value) + ", ";
-			}
-			Result += "]\n";
-			
-		}
-		Result += "==========";
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *Result)
+	//for (int i = 0; i < StateCount; i++)
+	//{
+	//	for (int j = 0; j < Actions.size(); j++) {
 
+	//		UE_LOG(LogTemp, Warning, TEXT("State: %d, Action: %f\n"), i, Table[i][j])
+	//	}
+
+	//}
+	//UE_LOG(LogTemp, Warning, TEXT("==========\n"));
 }
-
-
-void ARLTrainingController::SaveTable(int EpisodeToSet)
-{
-	UTableSaveGame* SaveGameInstance = Cast<UTableSaveGame>(UGameplayStatics::CreateSaveGameObject(UTableSaveGame::StaticClass()));
-	if (validate(IsValid(SaveGameInstance)) == false) return;
-
-	FAsyncSaveGameToSlotDelegate SavedDelegate;
-	// USomeUObjectClass::SaveGameDelegateFunction is a void function that takes the following parameters: const FString& SlotName, const int32 UserIndex, bool bSuccess
-	SavedDelegate.BindUObject(this, &ARLTrainingController::OnTableSaved);
-
-	// Set data on the save game object.
-	SaveGameInstance->QTable = QTable;
-	SaveGameInstance->Episode = EpisodeToSet;
-
-	// Start async save process.
-	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, FString::FromInt(0), 0, SavedDelegate);
-
-}
-
 
 void ARLTrainingController::UpdateStepAndEpisode()
 {
 	StepsThisEpisode++;
 	if (StepsThisEpisode == StepsPerEpisode) {
 		Episode++;
-		SaveTable(Episode);
+
+		SerializeTable(QTable);
+
 		StepsThisEpisode = 0;
 	}
 }
 
-
-void ARLTrainingController::OnTableSaved(const FString& SlotName, const int32 UserIndex, bool bSuccess)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ARLEnemyCharacter::OnTableSaved"))
-}
 
 float ARLTrainingController::GetReward()
 {
@@ -94,27 +70,46 @@ float ARLTrainingController::GetReward()
 	return Reward;
 }
 
-void ARLTrainingController::BeginPlay()
+void ARLTrainingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::BeginPlay();
+	Super::EndPlay(EndPlayReason);
 
-	UTableSaveGame* LoadedTable = Cast<UTableSaveGame>(UGameplayStatics::LoadGameFromSlot(FString::FromInt(0), 0));
-	if (validate(IsValid(LoadedTable))) {
-		QTable = LoadedTable->QTable;
-		Episode = LoadedTable->Episode;
+	UE_LOG(LogTemp, Warning, TEXT("  ARLController::EndPlay"))
+
+		SerializeTable(QTable);
+
+	for (int i = 0; i < StateCount; i++) {
+		delete[] QTable[i];
+	}
+	delete[] QTable;
+
+	for (int i = 0; i < Actions.size(); i++) {
+		delete Actions[i];
 	}
 
-	else {
-		//Q-table initialization
-		for (int i = 0; i < StateCount; i++) {
-			TArray<float> ActionArray;
-			for (int j = 0; j < Actions.Num(); j++) {
-				ActionArray.Add(0.0f); // set all initial action values to 0
-			}
-			QTable.Add(i, ActionArray);
+
+}
+
+void ARLTrainingController::ResetTable()
+{
+	for (int i = 0; i < StateCount; i++) {
+		for (int j = 0; j < Actions.size(); j++) {
+			QTable[i][j] = 0.0f;
 		}
-
 	}
+
+	SerializeTable(QTable);
+}
+
+ARLTrainingController::ARLTrainingController() : ARLController()
+{
+}
+
+void ARLTrainingController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	ShowTable(QTable);
 
 }
 
@@ -133,7 +128,7 @@ void ARLTrainingController::Tick(float DeltaTime)
 	CurrentReward = GetReward();
 
 	CurrentStateIndex = GetState();
-	validate(CurrentStateIndex >= 0);
+	if (validate(CurrentStateIndex >= 0) == false) return;
 
 	// choosing current action based on the current state. We either take a random action or the best action from the q-table for this step
 	// if we don't set a custom epsilon value the random action chance is determined by the episode number
@@ -147,22 +142,20 @@ void ARLTrainingController::Tick(float DeltaTime)
 	else {
 
 		GetBestAction(CurrentStateIndex, CurrentActionIndex, CurrentActionValue);
-		validate(CurrentActionIndex >= 0);
+		if (validate(CurrentActionIndex >= 0 && CurrentActionIndex < Actions.size()) == false) return;
+
 	}
 
 	//find the previous action value
-	struct FActionValues* PreviousActionValuesPointer = QTable.Find(PreviousStateIndex);
-	if (validate(PreviousActionValuesPointer != nullptr) == false) return;
-	//float PreviousActionValue = (*PreviousActionValuesPointer)[PreviousActionIndex];
-	float PreviousActionValue = PreviousActionValuesPointer->ActionValues[PreviousActionIndex];
+	if (validate(PreviousActionIndex >= 0 && PreviousActionIndex < Actions.size()) == false) return;
+	float PreviousActionValue = QTable[PreviousStateIndex][PreviousActionIndex];
 
 	//update the previous action value
 	PreviousActionValue = PreviousActionValue + LearningRate * (CurrentReward + (DiscountFactor * CurrentActionValue) - PreviousActionValue);
 
-	PreviousActionValuesPointer->ActionValues[PreviousActionIndex] = PreviousActionValue;
-	QTable.Add(PreviousStateIndex, *PreviousActionValuesPointer);
+	QTable[PreviousStateIndex][PreviousActionIndex] = PreviousActionValue;
 
-	ShowTable();
+	ShowTable(QTable);
 
 	//taking the current action
 	TakeAction(CurrentActionIndex);

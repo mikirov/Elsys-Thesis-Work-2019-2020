@@ -5,17 +5,13 @@
 
 #include "Kismet/GameplayStatics.h"
 
-#include "Utilities/TableSaveGame.h"
 #include "Utilities/CustomMacros.h"
 
 void ARLGameController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UTableSaveGame* LoadedTable = Cast<UTableSaveGame>(UGameplayStatics::LoadGameFromSlot(FString::FromInt(0), 0));
-	if (validate(IsValid(LoadedTable))) {
-		QTable = LoadedTable->QTable;
-	}
+	DeserializeTable(QTable);
 }
 
 void ARLGameController::Tick(float DeltaTime)

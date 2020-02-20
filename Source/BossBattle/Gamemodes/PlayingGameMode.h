@@ -22,33 +22,21 @@ public:
 
 	void DecrementEnemyCounter() override;
 
-	void OnPlayerDeath(class APlayerCharacterController* PlayerController);
+	virtual TArray<class APlayerCharacterController*> GetPlayerControllers();
 
-	TArray<class APlayerCharacterController*> GetPlayerControllers();
-
+	virtual void OnPlayerDeath(class APlayerCharacterController* PlayerController);
 
 protected:
-
-
-
-	virtual void PostLogin(class APlayerController* PlayerController);
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	int MaxPlayersCount = 4;
-
-	bool bPlaying = false;
 
 	virtual void WinGame();
 
 	
-	void UpdateHUDScore(int Score);
+	virtual void UpdateHUDScore(int Score);
 
 	int CurrentScore = 0;
 
 	int CurrentEnemies = 0;
 
-	UPROPERTY(BlueprintReadWrite)
-	TArray<class APlayerCharacterController*> PlayerControllers;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	const class UDataTable* SpawnerLookupTable = nullptr;

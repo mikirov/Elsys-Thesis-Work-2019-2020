@@ -25,6 +25,16 @@ void ATrainingGameMode::BeginPlay()
 
 	Spawner->SpawnEnemy(RLEnemyTemplate, 1);
 
+	for (FTransform InitialTransform : InitialTransforms) {
+
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AAIEnemyCharacter* Enemy = World->SpawnActor<AAIEnemyCharacter>(AIEnemyTemplate, InitialTransform, SpawnParameters);
+		if (validate(IsValid(Enemy)) == false) return;
+
+	}
+
+
 }
 
 
@@ -36,11 +46,6 @@ void ATrainingGameMode::DecrementEnemyCounter()
 	if (AreAllEnemiesDead()) {
 		ResetCharacters();
 	}
-}
-
-void ATrainingGameMode::AddInitialTransform(const FTransform InitialTransform)
-{
-	InitialTransforms.Add(InitialTransform);
 }
 
 void ATrainingGameMode::ResetCharacters() {
@@ -63,7 +68,7 @@ void ATrainingGameMode::ResetCharacters() {
 
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		World->SpawnActor<AAIEnemyCharacter>(AAIEnemyCharacter::StaticClass(), InitialTransform, SpawnParameters);
+		World->SpawnActor<AAIEnemyCharacter>(AIEnemyTemplate, InitialTransform, SpawnParameters);
 
 	}
 	

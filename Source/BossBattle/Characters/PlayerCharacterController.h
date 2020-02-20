@@ -30,7 +30,12 @@ public:
 
 	void LoadLoseLevel();
 
+
+
 protected:
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bChatOpen = false;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString MapsFolderPath;

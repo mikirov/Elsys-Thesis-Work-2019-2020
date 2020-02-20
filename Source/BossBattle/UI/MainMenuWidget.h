@@ -14,57 +14,59 @@ class BOSSBATTLE_API UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-public:
-	void UpdateMessages(const FText& Messages);
-
-protected:
+private:
 
 	void NativeConstruct() override;
 
+	//the name of the weapons showcase map
 	UPROPERTY(EditDefaultsOnly)
 	FName WeaponsLevelName;
 
-	UPROPERTY(EditDefaultsOnly)
-	FName ServerAddress;
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//start game button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* StartGameButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//settings button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* SettingsButton = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//quit game button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//multiplayer settings button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* MultiplayerSettingsButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//training menu button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* TrainingButton = nullptr;
 
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//weapon showcase map button
+	UPROPERTY(meta = (BindWidget))
 	class UButton* WeaponsButton = nullptr;
 
+
+	//changes the input mode from UI only to game only
 	void SetInputModeGameOnly();
 
-	void SetInputModeGameAndUI();
-
+	//loads the weapon showcase level
 	UFUNCTION()
 	void LoadWeaponsLevel();
 
-	UFUNCTION()
-	void StartLevel();
-
+	//loads the settings menu
 	UFUNCTION()
 	void LoadSettingsMenu();
 
+	//loads the multiplayer options menu
 	UFUNCTION()
-	void LoadMultiplayerMenu();
+	void LoadGamemodeMenu();
 
+	//quits the game
 	UFUNCTION()
 	void QuitGame();
 
+	//loads the training settings menu
 	UFUNCTION()
 	void LoadTrainingWidget();
 };

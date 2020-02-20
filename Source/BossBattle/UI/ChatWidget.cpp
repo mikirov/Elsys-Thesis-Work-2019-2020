@@ -26,6 +26,8 @@ void UChatWidget::NativeConstruct() {
 	}
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 
+	bOpen = false;
+
 }
 
 void UChatWidget::AddMessageWidget(const FText& Message, const FText& Sender) {
@@ -43,6 +45,11 @@ void UChatWidget::AddMessageWidget(const FText& Message, const FText& Sender) {
 	ScrollBox->AddChild(MessageWidget);
 }
 
+class UEditableTextBox* UChatWidget::GetInputBox()
+{
+	return TextBox;
+}
+
 void UChatWidget::Tick(FGeometry MyGeometry, float InDeltaTime) {
 	Super::Tick(MyGeometry, InDeltaTime);
 
@@ -50,9 +57,9 @@ void UChatWidget::Tick(FGeometry MyGeometry, float InDeltaTime) {
 
 void UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod) {
 
-	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)"))
+	//UE_LOG(LogTemp, Warning, TEXT("UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)"))
 	if (CommitMethod == ETextCommit::OnEnter && !Text.EqualTo(FText::FromString(""))) {
-		UE_LOG(LogTemp, Warning, TEXT("CommitMethod == ETextCommit::OnEnter && !Text.EqualTo(FText::FromString(""))"))
+		//UE_LOG(LogTemp, Warning, TEXT("CommitMethod == ETextCommit::OnEnter && !Text.EqualTo(FText::FromString(""))"))
 		ABattlePlayerState* PlayerState = Cast<ABattlePlayerState>(GetOwningPlayerState());
 		if (validate(IsValid(PlayerState))) {
 			PlayerState->ServerSendMessage(Text, FText::FromString(PlayerState->GetPlayerName()));
@@ -69,11 +76,27 @@ void UChatWidget::Close() {
 		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
 		PlayerController->bShowMouseCursor = false;
 	}
+
+	bOpen = false;
 }
 
-UWidgetAnimation* UChatWidget::GetChatAnimation() const {
-	if (validate(IsValid(OpenCloseAnimation))) {
-		return OpenCloseAnimation;
+bool UChatWidget::IsOpen()
+{
+	return bOpen;
+}
+
+void UChatWidget::Open()
+{
+
+	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetOwningPlayer());
+	if (validate(IsValid(PlayerController))) {
+		PlayerController->bShowMouseCursor = true;
+
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, TextBox);
+
 	}
-	return nullptr;
+
+	bOpen = true;
 }

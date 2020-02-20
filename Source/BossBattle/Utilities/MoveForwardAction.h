@@ -11,6 +11,6 @@
 class BOSSBATTLE_API MoveForwardAction : public Action
 {
 public:
-	MoveForwardAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	MoveForwardAction(ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

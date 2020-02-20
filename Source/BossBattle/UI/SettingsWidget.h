@@ -17,37 +17,34 @@ class BOSSBATTLE_API USettingsWidget : public UUserWidget
 	
 protected:
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UButton* BackButton = nullptr;
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* GraphicalIncrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* GraphicalDecrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* PPIncrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* PPDecrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* AAIncrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* AADecrementButton = nullptr;
-	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* ShadowIncrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* ShadowDecrementButton = nullptr;
-	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* FPSIncrementButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* FPSDecrementButton = nullptr;
 
 
@@ -75,22 +72,22 @@ protected:
 	TArray<FText> FPSCommands;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	int GraphicalIndex = 2;
+	int GraphicalIndex;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	int ShadowIndex = 2;
+	int ShadowIndex;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	int PPIndex = 2;
+	int PPIndex;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	int AAIndex = 2;
+	int AAIndex;
 
 	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	int FPSIndex = 2;
+	int FPSIndex;
 
-	UFUNCTION()
-	void Back();
+	UFUNCTION(BlueprintCallable)
+	void SaveSettings();
 
 	UFUNCTION()
 	void IncrementGraphical();

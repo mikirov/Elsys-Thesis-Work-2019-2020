@@ -16,43 +16,52 @@ class BOSSBATTLE_API UMultiplayerWidget : public UUserWidget
 	
 protected:
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//button to create a server
+	UPROPERTY(meta = (BindWidget))
 	class UButton* CreateServerMenuButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//button to search for a server already created
+	UPROPERTY(meta = (BindWidget))
 	class UButton* FindServerMenuButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//button to join a server
+	UPROPERTY(meta = (BindWidget))
 	class UButton* JoinServerMenuButton = nullptr;
 
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//button to go back to the main menu
+	UPROPERTY(meta = (BindWidget))
 	class UButton* BackButton = nullptr;
 	
 
-	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//widget box showing create server UI
+	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* CreateServerBox = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//widget box for showing find server UI
+	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* FindServerBox = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//widget box for showing join server UI
+	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* JoinServerBox = nullptr;
 	
 
 
 	void NativeConstruct() override;
 
+	//go back to main menu
 	UFUNCTION()
 	void Back();
 
+	//shows the find server UI
 	UFUNCTION()
 	void OpenFindServerBox();
 
+	//shows the create server UI
 	UFUNCTION()
 	void OpenCreateServerBox();
 
+	//shows the join server UI
 	UFUNCTION()
 	void OpenJoinServerBox();
 };

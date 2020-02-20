@@ -44,17 +44,6 @@ void AAIEnemyCharacter::Die()
 void AAIEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (HasAuthority()) {
-		UWorld* World = GetWorld();
-		if (validate(IsValid(World)) == false) { return; }
-
-		ATrainingGameMode* TrainingGameMode = Cast<ATrainingGameMode>(World->GetAuthGameMode());
-		if (IsValid(TrainingGameMode)) {
-			TrainingGameMode->AddInitialTransform(GetActorTransform());
-		}
-		
-	}
 	
 }
 

@@ -5,7 +5,7 @@
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
-ShootEnemyAction::ShootEnemyAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+ShootEnemyAction::ShootEnemyAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 }
 

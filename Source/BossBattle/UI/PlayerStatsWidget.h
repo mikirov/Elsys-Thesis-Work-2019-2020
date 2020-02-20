@@ -15,37 +15,38 @@ class BOSSBATTLE_API UPlayerStatsWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	//widget containing the end game text
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* GameEndText = nullptr;
 
+	//text to show when the playerrs win the game
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	FText WinGameText;
 
+	//text to show when the players lose the game
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	FText LoseGameText;
 
+	//score
 	UFUNCTION()
 	void SetScore(int Score);
 
+	//lose game text handler
 	void SetLoseGame();
 
+	//win game text handler
 	void SetWinGame();
 
-protected:
-
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UScrollBox* Chat = nullptr;
-
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	class UEditableTextBox* InputBox = nullptr;
+private:
 
 
 	void NativeConstruct() override;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Setup")
+	//health bar of the current player
+	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Setup")
+	//score of the current team
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ScoreText = nullptr;
 };

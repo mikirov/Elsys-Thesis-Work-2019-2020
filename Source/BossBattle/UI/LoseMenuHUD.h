@@ -16,11 +16,14 @@ class BOSSBATTLE_API ALoseMenuHUD : public AHUD
 protected:
 	void PostInitializeComponents() override;
 
+	//lose menu widget template
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class ULoseMenuWidget> LoseMenuWidgetTemplate;
 
+	//lose menu widget instance
 	class ULoseMenuWidget* LoseMenuWidget = nullptr;
 
+	//loads the lose menu
 	void LoadLoseMenuWidget();
 
 };

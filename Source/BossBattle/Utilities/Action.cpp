@@ -4,13 +4,13 @@
 #include "Action.h"
 #include "Characters/RLEnemyCharacter.h"
 
-Action::Action(int IdToSet, ARLEnemyCharacter* CharacterToSet)
+Action::Action( ARLEnemyCharacter* CharacterToSet)
 {
-	Id = IdToSet;
 	EnemyCharacter = CharacterToSet;
 }
 
-int Action::GetId()
+
+void Action::Execute()
 {
-	return Id;
+	UE_LOG(LogTemp, Warning, TEXT("Action::Execute()"))
 }

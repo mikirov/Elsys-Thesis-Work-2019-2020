@@ -16,9 +16,11 @@ class BOSSBATTLE_API ATrainingHUD : public AHUD
 private:
 	void PostInitializeComponents() override;
 
+	//training stats widget
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<class UTrainingStatsWidget> TrainingStatsWidgetTemplate;
 
+	//training stats widget template
 	class UTrainingStatsWidget* TrainingStatsWidget = nullptr;
 
 	

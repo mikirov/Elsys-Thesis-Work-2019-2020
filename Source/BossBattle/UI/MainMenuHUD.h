@@ -17,39 +17,58 @@ class BOSSBATTLE_API AMainMenuHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	//loads the main menu
 	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
 
+	//loads the settings menu
 	void LoadSettingsMenu();
 
+	//loads the multiplayer settings menu
 	void LoadMultiplayerMenu();
 
+	//loads the training menu
 	void LoadTrainingMenu();
 
-	UFUNCTION(BlueprintCallable)
-	void SaveSettings();
+	//loads the gamemode selection menu
+	void LoadGamemomeMenu();
 
 protected:
 
 	void PostInitializeComponents() override;
 
+	//main menu widget template
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UMainMenuWidget> MainMenuWidgetTemplate;
 
+	//settings menu widget template
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class USettingsWidget> SettingsWidgetTemplate;
 	
+	//multiplayer menu widget template
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UMultiplayerWidget> MultiplayerWidgetTemplate;
 
+	//training menu widget template
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UTrainingWidget> TrainingWidgetTemplate;
 
-	class UUserWidget* MainMenuWidget = nullptr;
+	//gamemode menu widget template
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UGamemodeSelectionWidget> GamemodeWidgetTemplate;
 
+	//gamemode menu instance
+	class UGamemodeSelectionWidget* GamemodeWidget = nullptr;
+
+	//main menu wiwdget instance
+	class UMainMenuWidget* MainMenuWidget = nullptr;
+
+	//settings widget instance
 	class USettingsWidget* SettingsWidget = nullptr;
 
+	//multiplayer widget instance
 	class UMultiplayerWidget* MultiplayerWidget = nullptr;
 
+	//training widget instance
 	class UTrainingWidget* TrainingWidget = nullptr;
 };

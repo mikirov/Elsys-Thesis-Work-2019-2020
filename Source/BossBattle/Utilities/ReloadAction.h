@@ -11,6 +11,6 @@
 class BOSSBATTLE_API ReloadAction : public Action
 {
 public:
-	ReloadAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	ReloadAction(ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

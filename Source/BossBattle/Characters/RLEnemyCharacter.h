@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Characters/EnemyCharacter.h"
-#include "Utilities/TableSaveGame.h"
 
 #include "RLEnemyCharacter.generated.h"
 

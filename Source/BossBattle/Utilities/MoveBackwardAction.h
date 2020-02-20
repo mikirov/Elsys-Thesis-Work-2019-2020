@@ -11,7 +11,7 @@
 class BOSSBATTLE_API MoveBackwardAction : public Action
 {
 public:
-	MoveBackwardAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	MoveBackwardAction(ARLEnemyCharacter* CharacterToSet);
 
 	void Execute() override;
 };

@@ -24,13 +24,17 @@ protected :
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevelName;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(EditDefaultsOnly)
+	FName RestartLevelName;
+
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UPROPERTY(meta = (BindWidget))
 	class UButton* RestartGameButton = nullptr;
-	
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* MainMenuButton = nullptr;
 
 	void SetInputModeGameOnly();

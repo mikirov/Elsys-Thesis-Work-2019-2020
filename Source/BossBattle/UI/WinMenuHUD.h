@@ -17,11 +17,14 @@ class BOSSBATTLE_API AWinMenuHUD : public AHUD
 protected:
 	void PostInitializeComponents() override;
 
+	//win menu widget
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UWinMenuWidget> WinMenuWidgetTemplate;
 
+	//win menu widget instance
 	class UWinMenuWidget* WinMenuWidget = nullptr;
 
+	//loads the win menu widget
 	void LoadWinMenuWidget();
 	
 };

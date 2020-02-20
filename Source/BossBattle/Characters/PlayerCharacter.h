@@ -46,6 +46,10 @@ protected:
 	UFUNCTION()
 	void OpenChat();
 
+	//quit current level or chat if open
+	UFUNCTION()
+	void Close();
+
 	//UFUNCTION()
 	//void OnHealthChanged(int Health);
 
@@ -58,6 +62,9 @@ protected:
 
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);
+
+	UFUNCTION()
+	void HandleCrouch();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);

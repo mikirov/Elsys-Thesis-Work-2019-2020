@@ -24,33 +24,13 @@
 #include "Utilities/SpawnerTable.h"
 #include "Utilities/CustomMacros.h"
 
-
-void APlayingGameMode::PostLogin(APlayerController* PlayerController) {
-
-	Super::PostLogin(PlayerController);
-
-
-	if (bPlaying == true) return;
-
-	//do not accept connections after the maximum player number is reached
-	if (PlayerControllers.Num() == MaxPlayersCount) return;
-
-	APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(PlayerController);
-	if (validate(IsValid(PlayerCharacterController))) {
-		PlayerControllers.Add(PlayerCharacterController);
-	}
-	UE_LOG(LogTemp, Warning, TEXT("PlayerControllers.Num(): %d"), PlayerControllers.Num());
-	if (PlayerControllers.Num() == MaxPlayersCount && bPlaying == false) {
-		SpawnEnemyWave();
-		bPlaying = true;
-	}
-}
-
 void APlayingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
 	WaveCount = SpawnerLookupTable->GetRowNames().Num();
+
+	SpawnEnemyWave();
 }
 
 void APlayingGameMode::SpawnEnemyWave()
@@ -93,17 +73,20 @@ void APlayingGameMode::IncrementScore(const int Amount)
 }
 
 void APlayingGameMode::UpdateHUDScore(int Score) {
-	for (APlayerCharacterController* PlayerController : PlayerControllers) {
-		if (validate(IsValid(PlayerController)) == false) { continue; }
 
-		ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
-		if (validate(IsValid(HUD)) == false) { continue; }
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(World, 0));
+	if (validate(IsValid(PlayerController)) == false) return;
 
-		UPlayerStatsWidget* PlayerStats = HUD->GetPlayerStatsWidget();
-		if (validate(IsValid(PlayerStats))) {
-			PlayerStats->SetScore(Score);
-		}
+	ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(HUD)) == false) { return; }
+
+	UPlayerStatsWidget* PlayerStats = HUD->GetPlayerStatsWidget();
+	if (validate(IsValid(PlayerStats))) {
+		PlayerStats->SetScore(Score);
 	}
+	
 }
 
 
@@ -111,11 +94,11 @@ void APlayingGameMode::UpdateHUDScore(int Score) {
 
 void APlayingGameMode::WinGame()
 {
-	for (int i = 0; i < PlayerControllers.Num(); i++) {
-		PlayerControllers[i]->OnWinGame();
-	}
-	PlayerControllers.Empty();
-	bPlaying = false;
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
+	APlayerCharacterController* PlayerController =  Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(World, 0));
+	if (validate(IsValid(PlayerController)) == false) return;
+	PlayerController->OnWinGame();
 }
 
 
@@ -139,20 +122,21 @@ void APlayingGameMode::DecrementEnemyCounter()
 }
 
 
-void APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)
-{
-	if (validate(IsValid(PlayerController)) == false) return;
-	PlayerControllers.Remove(PlayerController);
-	if (PlayerControllers.Num() == 0) {
-		bPlaying = false;
-	}
-
-	PlayerController->OnLoseGame();
-	
-
-}
-
 TArray<class APlayerCharacterController*> APlayingGameMode::GetPlayerControllers()
 {
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return TArray<APlayerCharacterController*>();
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(World, 0));
+	if (validate(IsValid(PlayerController)) == false) return TArray<APlayerCharacterController*>();
+
+	TArray<APlayerCharacterController*> PlayerControllers;
+	PlayerControllers.Add(PlayerController);
 	return PlayerControllers;
 }
+
+void APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)
+{
+	PlayerController->OnLoseGame();
+	
+}
+

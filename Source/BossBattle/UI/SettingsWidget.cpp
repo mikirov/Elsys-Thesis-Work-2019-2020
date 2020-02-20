@@ -5,14 +5,39 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 
-#include "Utilities/InputType.h"
+#include "Utilities/SettingsSaveGame.h"
 #include "Utilities/CustomMacros.h"
 #include "UI/MainMenuHUD.h"
 
+#include "Kismet/GameplayStatics.h"
 
 void USettingsWidget::NativeConstruct() {
 	Super::NativeConstruct();
-	
+
+	FString SaveSlotName = "Settings";
+
+	USettingsSaveGame* LoadedGame = Cast<USettingsSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+	if (validate(LoadedGame) != false) {
+
+		FPSIndex = LoadedGame->FPSIndex;
+		AAIndex = LoadedGame->AAIndex;
+		GraphicalIndex = LoadedGame->GraphicalIndex;
+		ShadowIndex = LoadedGame->ShadownIndex;
+
+		// The operation was successful, so LoadedGame now contains the data we saved earlier.
+		UE_LOG(LogTemp, Warning, TEXT("USettingsSaveGame* LoadedGame = Cast<USettingsSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0)"), );
+
+	}
+	else {
+		//set initial values
+		FPSIndex = 2;
+		AAIndex = 2;
+		GraphicalIndex = 2;
+		ShadowIndex = 2;
+
+		SaveSettings();
+	}
+
 	MainSettings.Add(FText::FromString("LOW"));
 	MainSettings.Add(FText::FromString("MEDIUM"));
 	MainSettings.Add(FText::FromString("HIGH"));
@@ -49,10 +74,6 @@ void USettingsWidget::NativeConstruct() {
 	FPSCommands.Add(FText::FromString("t.MaxFPS 144"));
 	
 
-	//if (validate(IsValid(BackButton))) {
-	//	BackButton->OnPressed.AddDynamic(this, &USettingsWidget::Back);
-	//}
-
 	if (validate(IsValid(GraphicalIncrementButton))) {
 		GraphicalIncrementButton->OnPressed.AddDynamic(this, &USettingsWidget::IncrementGraphical);
 	}
@@ -83,7 +104,7 @@ void USettingsWidget::NativeConstruct() {
 
 
 	if (validate(IsValid(FPSIncrementButton))) {
-		ShadowIncrementButton->OnPressed.AddDynamic(this, &USettingsWidget::IncrementFPS);
+		FPSIncrementButton->OnPressed.AddDynamic(this, &USettingsWidget::IncrementFPS);
 	}
 	if (validate(IsValid(FPSDecrementButton))) {
 		FPSDecrementButton->OnPressed.AddDynamic(this, &USettingsWidget::DecrementFPS);
@@ -92,23 +113,29 @@ void USettingsWidget::NativeConstruct() {
 }
 
 
-void USettingsWidget::Back() {
-	APlayerController* PlayerController = GetOwningPlayer();
-	if (validate(IsValid(PlayerController)) == false) { return; }
+void USettingsWidget::SaveSettings()
+{
+	USettingsSaveGame* SaveGameInstance = Cast<USettingsSaveGame>(UGameplayStatics::CreateSaveGameObject(USettingsSaveGame::StaticClass()));
+	if (validate(IsValid(SaveGameInstance)) == false) return;
 
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
+	// Set data on the savegame object.
+	SaveGameInstance->FPSIndex = FPSIndex;
+	SaveGameInstance->AAIndex = AAIndex;
+	SaveGameInstance->GraphicalIndex = GraphicalIndex;
+	SaveGameInstance->ShadownIndex = ShadowIndex;
 
-	World->Exec(World, *GraphicalCommands[GraphicalIndex].ToString());
-	World->Exec(World, *AACommands[AAIndex].ToString());
-	World->Exec(World, *AACommands[PPIndex].ToString());
-	World->Exec(World, *FPSCommands[FPSIndex].ToString());
-	World->Exec(World, *ShadowCommands[ShadowIndex].ToString());
 
-	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
-	if (validate(IsValid(MainMenuHUD)) == false) { return; }
+	FString SaveSlotName = "Settings";
+	// Save the data immediately.
+	if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0)"))
+			// Save succeeded.
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0) == false"))
 
-	MainMenuHUD->LoadMainMenu();
+	}
 }
 
 void USettingsWidget::IncrementGraphical() {

@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "Utilities/TableSaveGame.h"
+#include <vector>
 #include "RLController.generated.h"
-
 /**
  * 
  */
@@ -18,33 +17,53 @@ class BOSSBATTLE_API ARLController : public AAIController
 	
 protected:
 
-	void BeginPlay();
+	ARLController();
 
+	//function called when the controller posesses the RL pawn
+	void OnPossess(APawn* InPawn) override;
+
+	//taking a certain action
 	void TakeAction(int ActionIndex);
 
+	//returns the state of the game as an integer
 	int GetState();
 
+	//decides on the best action based on the current state
 	void GetBestAction(const int CurrentStateIndex, int& OutCurrentActionIndex, float& OutCurrentActionValue);
 
-	TMap<int, struct FActionValues> QTable; // QTable containing a mapping between each state and a list of all action values
+	//saves the current Q-table into a file
+	void DeserializeTable(float** Table);
 
-	TArray<class Action*> Actions;
+	//loads the Q-table from a file
+	void SerializeTable(float** Table);
+
+	// QTable containing a mapping between each state and a list of all action values
+	float** QTable; 
+	
+	//array of actions that can be taken by the agent
+	std::vector<class Action*> Actions;
+
+	//number of states of the game
+	int StateCount = 8; // current number of states
 
 
-	UPROPERTY(BlueprintReadOnly)
 	//index of the current state
+	UPROPERTY(BlueprintReadOnly)
 	int CurrentStateIndex = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+
 	//index of the previous state
+	UPROPERTY(BlueprintReadOnly)
 	int PreviousStateIndex = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+
 	//index of the current action
+	UPROPERTY(BlueprintReadOnly)
 	int CurrentActionIndex = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+
 	//expected reward from the current action
+	UPROPERTY(BlueprintReadOnly)
 	float CurrentActionValue = 0.0f;
 
 };

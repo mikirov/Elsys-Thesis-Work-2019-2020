@@ -20,9 +20,11 @@ public:
 
 protected:
 
+	//message to be displayed
 	UPROPERTY(BlueprintReadOnly, Category = UI)
 	FText Message;
 
+	//sender of the message
 	UPROPERTY(BlueprintReadOnly, Category = UI)
 	FText Sender;
 

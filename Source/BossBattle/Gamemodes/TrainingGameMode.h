@@ -23,8 +23,6 @@ public:
 
 	void DecrementEnemyCounter() override;
 
-	void AddInitialTransform(const FTransform InitialTransform);
-
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ARLEnemyCharacter> RLEnemyTemplate;
@@ -34,5 +32,6 @@ protected:
 
 	class ASpawner* Spawner = nullptr;
 	
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FTransform> InitialTransforms;
 };

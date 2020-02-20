@@ -31,6 +31,8 @@
 #include "Utilities/InputType.h"
 #include "Utilities/CustomMacros.h"
 #include "Weapons/Gun.h"
+#include "Components/EditableTextBox.h"
+
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -102,22 +104,35 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	
 	PlayerInputComponent->BindAction("OpenChat", IE_Pressed, this, &APlayerCharacter::OpenChat);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::HandleCrouch);
+
+	PlayerInputComponent->BindAction("Quit", IE_Pressed, this, &APlayerCharacter::Close);
 }
 
 void APlayerCharacter::OpenChat() {
 	if (validate(IsValid(ChatWidget)) == false) return;
 
-	ChatWidget->PlayAnimation(ChatWidget->GetChatAnimation(), 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
-
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (validate(IsValid(PlayerController))) {
-		PlayerController->bShowMouseCursor = true;
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, ChatWidget);
-	}
+	ChatWidget->Open();
 }
 
 
 
+
+void APlayerCharacter::Close()
+{
+	if (validate(IsValid(ChatWidget)) == false) return;
+
+	if (ChatWidget->IsOpen()) {
+		ChatWidget->Close();
+	}
+	//TODO: check if the gamemode is mltiplayer and if so break the session
+	else {
+
+		UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+	}
+
+}
 
 void APlayerCharacter::BeginPlay()
 {
@@ -162,6 +177,15 @@ void APlayerCharacter::PickGun(AGun* NewGun)
 
 	Super::PickGun(NewGun);
 	NewGun->OnFire.AddDynamic(this, &APlayerCharacter::PlayCameraShake);
+}
+
+void APlayerCharacter::HandleCrouch()
+{
+	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
+	if (validate(IsValid(CharacterMovementComponent)) == false) return;
+	bool bCrouching = CharacterMovementComponent->IsCrouching();
+
+	bCrouching ? UnCrouch() : Crouch();
 }
 
 void APlayerCharacter::PlayCameraShake() {

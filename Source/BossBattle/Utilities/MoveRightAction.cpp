@@ -6,7 +6,7 @@
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
-MoveRightAction::MoveRightAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+MoveRightAction::MoveRightAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 
 }

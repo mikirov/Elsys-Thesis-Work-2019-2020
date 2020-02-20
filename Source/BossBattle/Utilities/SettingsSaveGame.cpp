@@ -7,8 +7,6 @@
 USettingsSaveGame::USettingsSaveGame() {
 	
 
-	//defaults
-	Type = InputType::PC;
 	SaveSlotName = "Settings";
 	UserIndex = 0;
 }

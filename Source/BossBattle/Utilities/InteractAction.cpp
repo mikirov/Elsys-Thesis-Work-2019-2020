@@ -5,7 +5,7 @@
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
 
-InteractAction::InteractAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+InteractAction::InteractAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 
 }

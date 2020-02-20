@@ -16,7 +16,7 @@ void ULoseMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	RestartLevelName = FName(TEXT("Main"));
+	RestartLevelName = FName(TEXT("MainMap"));
 
 	MainMenuLevelName = FName(TEXT("MainMenu"));
 
@@ -55,12 +55,18 @@ void ULoseMenuWidget::QuitGame()
 
 void ULoseMenuWidget::RestartGame()
 {
+	
 	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-	//if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
+	if (validate(IsValid(World)) == false) return;
+	if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
 
-	//UGameplayStatics::OpenLevel(World, RestartLevelName);
-	UGameplayStatics::OpenLevel(World, "127.0.0.1");
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+	PlayerController->bShowMouseCursor = false;
+
+	UGameplayStatics::OpenLevel(World, RestartLevelName);
 }
 
 void ULoseMenuWidget::LoadMainMenu()
@@ -68,6 +74,13 @@ void ULoseMenuWidget::LoadMainMenu()
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 	if (validate(MainMenuLevelName.ToString().Len() > 0) == false) { return; }
+
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	PlayerController->bShowMouseCursor = true;
+
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
 
 	UGameplayStatics::OpenLevel(World, MainMenuLevelName);
 }

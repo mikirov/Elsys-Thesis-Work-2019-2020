@@ -27,6 +27,8 @@ void ALoseMenuHUD::PostInitializeComponents()
 
 	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, LoseMenuWidget, EMouseLockMode::DoNotLock);
 
+	PlayerController->bShowMouseCursor = true;
+
 }
 
 void ALoseMenuHUD::LoadLoseMenuWidget()

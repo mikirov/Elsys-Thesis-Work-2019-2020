@@ -14,15 +14,18 @@
 
 void UTrainingWidget::NativeConstruct()
 {
+
+	Super::NativeConstruct();
+
 	if (validate(IsValid(BackButton))) {
 		BackButton->OnClicked.AddDynamic(this, &UTrainingWidget::Back);
 	}
 	if (validate(IsValid(AITrainingButton))) {
 		AITrainingButton->OnClicked.AddDynamic(this, &UTrainingWidget::LoadAITraining);
 	}
-	if (validate(IsValid(RLTrainingButton))) {
-		RLTrainingButton->OnClicked.AddDynamic(this, &UTrainingWidget::LoadRLTraining);
-	}
+	//if (validate(IsValid(RLTrainingButton))) {
+	//	RLTrainingButton->OnClicked.AddDynamic(this, &UTrainingWidget::LoadRLTraining);
+	//}
 
 }
 

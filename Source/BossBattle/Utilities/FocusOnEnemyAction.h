@@ -10,6 +10,6 @@
 class BOSSBATTLE_API FocusOnEnemyAction : public Action
 {
 public:
-	FocusOnEnemyAction(int Id, ARLEnemyCharacter* CharacterToSet);
+	FocusOnEnemyAction( ARLEnemyCharacter* CharacterToSet);
 	void Execute() override;
 };

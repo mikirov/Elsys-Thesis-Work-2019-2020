@@ -176,6 +176,8 @@ void ABattleCharacter::InteractWithWeapon()
 
 void ABattleCharacter::PickGun(class AGun* NewGun)
 {
+	if (HasAuthority() == false) return;
+
 	if (validate(IsValid(NewGun)) == false) { return; }
 	if (validate(IsValid(CharacterMesh)) == false) { return; }
 	if (validate(CharacterMesh->DoesSocketExist("GunSocket")) == false) { return; }
@@ -193,6 +195,9 @@ void ABattleCharacter::PickGun(class AGun* NewGun)
 
 void ABattleCharacter::DropGun()
 {
+	if (HasAuthority() == false) return;
+
+
 	if (validate(IsValid(Gun)) == false) return;
 
 	Gun->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false));
@@ -222,6 +227,8 @@ void ABattleCharacter::FinishReloading()
 
 void ABattleCharacter::SpawnStartingGun()
 {
+	if (HasAuthority() == false) return;
+
 	// No validate because player may not have a starting gun.
 	if (IsValid(StartingGunTemplate.Get()) == false) { return; }
 

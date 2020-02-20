@@ -5,7 +5,7 @@
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/RLEnemyCharacter.h"
-ReloadAction::ReloadAction(int Id, ARLEnemyCharacter* CharacterToSet) : Action(Id, CharacterToSet)
+ReloadAction::ReloadAction(ARLEnemyCharacter* CharacterToSet) : Action(CharacterToSet)
 {
 
 }

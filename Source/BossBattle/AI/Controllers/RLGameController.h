@@ -15,8 +15,11 @@ class BOSSBATTLE_API ARLGameController : public ARLController
 	GENERATED_BODY()
 	
 protected:
+
+	//loads the trained q-table
 	void BeginPlay();
 
+	//choses an action based on the q-tale values
 	void Tick(float DeltaTime);
 
 };
