@@ -18,8 +18,7 @@ public:
 
 	//resets the q-table
 	void ResetTable();
-
-	ARLTrainingController();
+	
 
 	
 protected:

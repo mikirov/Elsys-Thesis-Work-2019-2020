@@ -25,17 +25,17 @@
 
 void ARLTrainingController::ShowTable(float** Table)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("QTable:\n==========\n"));
+	UE_LOG(LogTemp, Warning, TEXT("QTable:\n==========\n"));
 
-	//for (int i = 0; i < StateCount; i++)
-	//{
-	//	for (int j = 0; j < Actions.size(); j++) {
+	for (int i = 0; i < StateCount; i++)
+	{
+		for (int j = 0; j < Actions.size(); j++) {
 
-	//		UE_LOG(LogTemp, Warning, TEXT("State: %d, Action: %f\n"), i, Table[i][j])
-	//	}
+			UE_LOG(LogTemp, Warning, TEXT("State: %d, Action: %f\n"), i, Table[i][j])
+		}
 
-	//}
-	//UE_LOG(LogTemp, Warning, TEXT("==========\n"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("==========\n"));
 }
 
 void ARLTrainingController::UpdateStepAndEpisode()
@@ -101,9 +101,6 @@ void ARLTrainingController::ResetTable()
 	SerializeTable(QTable);
 }
 
-ARLTrainingController::ARLTrainingController() : ARLController()
-{
-}
 
 void ARLTrainingController::OnPossess(APawn* InPawn)
 {

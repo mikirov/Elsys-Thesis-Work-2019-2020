@@ -27,28 +27,12 @@
 #include "Paths.h"
 #include "HAL/FileManager.h"
 
-#include <fstream>
-#include <iostream>
-
-
-ARLController::ARLController()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ARLController::ARLController()"))
-	QTable = new float*[StateCount];
-
-	for (int i = 0; i < StateCount; i++) {
-		QTable[i] = new float[Actions.size()];
-		for (int j = 0; j < Actions.size(); j++) {
-			QTable[i][j] = 0.0f;
-		}
-	}
-
-}
-
 
 void ARLController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	
 
 	ARLTrainingCharacter* RLCharacter = Cast<ARLTrainingCharacter>(InPawn);
 	if (validate(IsValid(RLCharacter)) == false) return;
@@ -62,6 +46,14 @@ void ARLController::OnPossess(APawn* InPawn)
 	Actions.push_back(new InteractAction(RLCharacter));
 	Actions.push_back(new ReloadAction(RLCharacter));
 
+	QTable = new float*[StateCount];
+
+	for (int i = 0; i < StateCount; i++) {
+		QTable[i] = new float[Actions.size()];
+		for (int j = 0; j < Actions.size(); j++) {
+			QTable[i][j] = 0.0f;
+		}
+	}
 
 	DeserializeTable(QTable);
 
@@ -102,7 +94,7 @@ int ARLController::GetState()
 
 void ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionIndex, float& OutCurrentActionValue)
 {
-	if (validate(CurrentState <= StateCount) == false) return;
+	if (validate(CurrentState < StateCount) == false) return;
 	//get current action values for this state
 
 	//get the action value that gives us the highest reward from our array
@@ -116,7 +108,7 @@ void ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionI
 		}
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentState: %d, CurrentActionIndex: %d, CurrentActionValue: %d"), CurrentState, OutCurrentActionIndex, OutCurrentActionValue)
+	UE_LOG(LogTemp, Warning, TEXT("CurrentState: %d, CurrentActionIndex: %d, CurrentActionValue: %d"), CurrentState, OutCurrentActionIndex, OutCurrentActionValue)
 }
 
 void ARLController::DeserializeTable(float** Table)
@@ -128,13 +120,13 @@ void ARLController::DeserializeTable(float** Table)
 	////if (validate(bSuccess) == false || File.Num() <= StateCount * Actions.size()) {
 	//if (validate(bSuccess) == false) return;
 
-	////validate(File.Num() == StateCount);
+	//validate(File.Num() == StateCount);
 	//for (int i = 0; i < File.Num(); i++)
 	//{
 	//	FString Temp = File[i];
 	//	TArray<FString> Values;
 	//	Temp.ParseIntoArray(Values, TEXT(","), false);
-	//	//validate(Values.Num() == Actions.size());
+	//	validate(Values.Num() == Actions.size());
 	//	for (int j = 0; j < Values.Num(); j++) {
 	//		Table[i][j] = FCString::Atof(*Values[j]);
 	//	}

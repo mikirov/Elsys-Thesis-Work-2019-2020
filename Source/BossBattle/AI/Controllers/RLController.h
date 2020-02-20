@@ -17,8 +17,6 @@ class BOSSBATTLE_API ARLController : public AAIController
 	
 protected:
 
-	ARLController();
-
 	//function called when the controller posesses the RL pawn
 	void OnPossess(APawn* InPawn) override;
 
