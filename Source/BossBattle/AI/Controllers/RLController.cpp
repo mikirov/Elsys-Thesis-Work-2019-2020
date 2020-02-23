@@ -113,25 +113,25 @@ void ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionI
 
 void ARLController::DeserializeTable(float** Table)
 {
-	//TArray<FString> File;
+	TArray<FString> File;
 
-	//FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
-	//bool bSuccess = FFileHelper::LoadANSITextFileToStrings(*FilePath, &IFileManager::Get(), File);
-	////if (validate(bSuccess) == false || File.Num() <= StateCount * Actions.size()) {
-	//if (validate(bSuccess) == false) return;
+	FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
+	bool bSuccess = FFileHelper::LoadANSITextFileToStrings(*FilePath, &IFileManager::Get(), File);
+	//if (validate(bSuccess) == false || File.Num() <= StateCount * Actions.size()) {
+	if (validate(bSuccess) == false) return;
 
-	//validate(File.Num() == StateCount);
-	//for (int i = 0; i < File.Num(); i++)
-	//{
-	//	FString Temp = File[i];
-	//	TArray<FString> Values;
-	//	Temp.ParseIntoArray(Values, TEXT(","), false);
-	//	validate(Values.Num() == Actions.size());
-	//	for (int j = 0; j < Values.Num(); j++) {
-	//		Table[i][j] = FCString::Atof(*Values[j]);
-	//	}
+	validate(File.Num() == StateCount);
+	for (int i = 0; i < File.Num(); i++)
+	{
+		FString Temp = File[i];
+		TArray<FString> Values;
+		Temp.ParseIntoArray(Values, TEXT(","), false);
+		validate(Values.Num() == Actions.size());
+		for (int j = 0; j < Values.Num(); j++) {
+			Table[i][j] = FCString::Atof(*Values[j]);
+		}
 
-	//}
+	}
 
 
 }
@@ -139,19 +139,19 @@ void ARLController::DeserializeTable(float** Table)
 void ARLController::SerializeTable(float** Table)
 {
 
-	//FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
+	FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
 
-	//FString FileContent;
-	//for (int i = 0; i < StateCount; i++) {
-	//	for (int j = 0; j < Actions.size() - 1; j++) {
-	//		FileContent.Append(FString::SanitizeFloat(Table[i][j]));
-	//		FileContent.Append(",");
-	//	}
-	//	FileContent.Append(FString::SanitizeFloat(Table[i][Actions.size() - 1]));
-	//	FileContent.Append("\n");
+	FString FileContent;
+	for (int i = 0; i < StateCount; i++) {
+		for (int j = 0; j < Actions.size() - 1; j++) {
+			FileContent.Append(FString::SanitizeFloat(Table[i][j]));
+			FileContent.Append(",");
+		}
+		FileContent.Append(FString::SanitizeFloat(Table[i][Actions.size() - 1]));
+		FileContent.Append("\n");
 
-	//}
-	////TODO: maybe tweak flags
-	//bool bSuccess = FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
-	//if (validate(bSuccess) == false) return;
+	}
+	//TODO: maybe tweak flags
+	bool bSuccess = FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
+	if (validate(bSuccess) == false) return;
 }

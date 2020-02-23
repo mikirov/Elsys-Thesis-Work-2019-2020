@@ -20,20 +20,28 @@ void AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* Playe
 		UWorld* World = GetWorld();
 		if (validate(IsValid(World)) == false) return;
 
-		World->ServerTravel(LobbyMapName, true, true);
+		World->ServerTravel(LobbyMapName);
 	}
 	Super::OnPlayerDeath(PlayerController);
 }
 
+void AMultiplayerGameMode::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+	CurrentPlayers--;
+
+	if (CurrentPlayers == 0) {
+		UWorld* World = GetWorld();
+		if (validate(IsValid(World)) == false) return;
+
+		World->ServerTravel(LobbyMapName);
+
+	}
+}
+
 void AMultiplayerGameMode::BeginPlay()
 {
-
-	//Super::BeginPlay();
-	
 	WaveCount = SpawnerLookupTable->GetRowNames().Num();
-
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
 
 }
 
@@ -48,6 +56,7 @@ void AMultiplayerGameMode::WinGame()
 	UWorld* World = GetWorld();
 	if (validate(World) == false) return;
 
+	World->ServerTravel(LobbyMapName);
 
 }
 

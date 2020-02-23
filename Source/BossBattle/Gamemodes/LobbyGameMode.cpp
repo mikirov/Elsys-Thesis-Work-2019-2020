@@ -14,11 +14,11 @@ void ALobbyGameMode::BeginPlay()
 	if (validate(MainMapName.Len() > 0) == false) return;
 	if (validate(LobbyMapName.Len() > 0) == false) return;
 
-	UWorld* World = GetWorld();
-	if (validate(World) == false) return;
+	//UWorld* World = GetWorld();
+	//if (validate(World) == false) return;
 	
-	World->ServerTravel(LobbyMapName, true, true);
-	UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode::BeginPlay()"))
+	//World->ServerTravel(LobbyMapName);
+	//UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode::BeginPlay()"))
 }
 
 void ALobbyGameMode::PostLogin(class APlayerController* PlayerController)
@@ -34,7 +34,7 @@ void ALobbyGameMode::PostLogin(class APlayerController* PlayerController)
 
 		if (validate(MainMapName.Len() > 0) == false) return;
 
-		World->ServerTravel(MainMapName, true, true);
+		World->ServerTravel(MainMapName);
 
 	}
 }

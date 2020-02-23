@@ -22,6 +22,8 @@ public:
 
 protected:
 
+	void Logout(AController* Exiting) override;
+
 	UPROPERTY(BlueprintReadWrite)
 	FString LobbyMapName = "Weapons";
 
