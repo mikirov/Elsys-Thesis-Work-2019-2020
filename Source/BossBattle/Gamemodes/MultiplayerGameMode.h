@@ -18,36 +18,19 @@ public:
 
 	void OnPlayerDeath(class APlayerCharacterController* PlayerController) override;
 
-	TArray<class APlayerCharacterController*> GetPlayerControllers() override;
-
+	
 
 protected:
+
+	UPROPERTY(BlueprintReadWrite)
+	FString LobbyMapName = "Weapons";
 
 	void BeginPlay() override;
 
 	void WinGame() override;
 
-	void PostLogin(class APlayerController* PlayerController) override;
-	
-	void PreLogin
-	(
-		const FString & Options,
-		const FString & Address,
-		const FUniqueNetIdRepl & UniqueId,
-		FString & ErrorMessage
-	) override;
-
-	void Logout(AController* Exiting) override;
-
-	int CurrentPlayers = 0;
-
 	void UpdateHUDScore(int Score) override;
 
-	UPROPERTY(BlueprintReadWrite)
-	TArray<class APlayerCharacterController*> PlayerControllers;
+	int CurrentPlayers = 4;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	int MaxPlayersCount = 4;
-
-	bool bPlaying = false;
 };
