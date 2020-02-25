@@ -173,9 +173,9 @@ void APlayerCharacter::PickGun(AGun* NewGun)
 
 void APlayerCharacter::HandleCrouch()
 {
-	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
-	if (validate(IsValid(CharacterMovementComponent)) == false) return;
-	bool bCrouching = CharacterMovementComponent->IsCrouching();
+	UCharacterMovementComponent* PlayerCharacterMovementComponent = GetCharacterMovement();
+	if (validate(IsValid(PlayerCharacterMovementComponent)) == false) return;
+	bool bCrouching = PlayerCharacterMovementComponent->IsCrouching();
 
 	bCrouching ? UnCrouch() : Crouch();
 }

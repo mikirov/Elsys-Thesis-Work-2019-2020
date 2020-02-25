@@ -10,7 +10,8 @@
 #include "Components/EditableTextBox.h"
 
 
-#include "Gamemodes/BossBattleGameMode.h"
+#include "Characters/PlayerCharacter.h"
+#include "Characters/HealthComponent.h"
 #include "Utilities/CustomMacros.h"
 
 void UPlayerStatsWidget::SetScore(int Score) {
@@ -40,6 +41,21 @@ void UPlayerStatsWidget::SetWinGame()
 		GameEndText->SetColorAndOpacity(FSlateColor(FColor::Green));
 		GameEndText->SetVisibility(ESlateVisibility::Visible);
 	}
+}
+
+float UPlayerStatsWidget::GetHealthPercent()
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+	if (validate(IsValid(PlayerCharacter)) == false) return 0.0f;
+
+	UHealthComponent* HealthComponent = PlayerCharacter->GetHealthComponent();
+	if (validate(IsValid(HealthComponent)) == false) return 0.0f;
+
+	float Health = HealthComponent->GetHealth() / HealthComponent->GetMaxHealth();
+
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatsWidget::GetHealthPercent: %d"), Health);
+
+	return Health;
 }
 
 void UPlayerStatsWidget::NativeConstruct()

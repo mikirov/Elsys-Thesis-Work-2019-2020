@@ -15,10 +15,6 @@ class BOSSBATTLE_API UPlayerStatsWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	//widget containing the end game text
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* GameEndText = nullptr;
-
 	//text to show when the playerrs win the game
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	FText WinGameText;
@@ -37,6 +33,9 @@ public:
 	//win game text handler
 	void SetWinGame();
 
+	UFUNCTION(BlueprintCallable)
+	float GetHealthPercent();
+
 private:
 
 
@@ -49,4 +48,9 @@ private:
 	//score of the current team
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ScoreText = nullptr;
+
+
+	//widget containing the end game text
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* GameEndText = nullptr;
 };

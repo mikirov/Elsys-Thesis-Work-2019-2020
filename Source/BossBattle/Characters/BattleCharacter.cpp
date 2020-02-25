@@ -137,6 +137,11 @@ void ABattleCharacter::StopFiring() {
 	Gun->ReleaseTrigger();
 }
 
+class UHealthComponent* ABattleCharacter::GetHealthComponent()
+{
+	return HealthComponent;
+}
+
 void ABattleCharacter::InteractWithWeapon()
 {
 	AGun* OldGun = nullptr;

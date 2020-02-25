@@ -59,6 +59,8 @@ public:
 
 	void StopFiring();
 
+	
+	class UHealthComponent* GetHealthComponent();
 
 protected:
 
@@ -72,10 +74,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Character")
 	class USkeletalMeshComponent* CharacterMesh = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Character")
 	class UHealthComponent* HealthComponent = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Instanced, Category = "Base Character")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Character")
 	class UAudioComponent* DeathSoundComponent = nullptr;
 
 	class UCharacterAnimInstance* CharacterAnimation = nullptr;
