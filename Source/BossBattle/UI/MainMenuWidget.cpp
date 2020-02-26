@@ -33,8 +33,8 @@ void UMainMenuWidget::NativeConstruct() {
 	if (validate(IsValid(TrainingButton))) {
 		TrainingButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadTrainingWidget);
 	}
-	if (validate(IsValid(WeaponsButton))) {
-		WeaponsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadWeaponsLevel);
+	if (validate(IsValid(MultiplayerSettingsButton))) {
+		MultiplayerSettingsButton->OnPressed.AddDynamic(this, &UMainMenuWidget::LoadMultiplayerSettings);
 	}
 }
 
@@ -49,16 +49,15 @@ void UMainMenuWidget::SetInputModeGameOnly()
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
 }
 
-void UMainMenuWidget::LoadWeaponsLevel()
+void UMainMenuWidget::LoadMultiplayerSettings()
 {
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-	if (validate(WeaponsLevelName.ToString().Len() > 0) == false) { return; }
+	APlayerController* PlayerController = GetOwningPlayer();
+	if (validate(IsValid(PlayerController)) == false) { return; }
 
-
-	SetInputModeGameOnly();
-	UGameplayStatics::OpenLevel(World, WeaponsLevelName);
-
+	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(MainMenuHUD))) {
+		MainMenuHUD->LoadMultiplayerMenu();
+	}
 }
 
 void UMainMenuWidget::LoadGamemodeMenu() {

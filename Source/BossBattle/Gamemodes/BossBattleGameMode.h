@@ -28,6 +28,8 @@ public:
 
 protected:
 
+	void BeginPlay() override;
+
 	bool AreAllEnemiesDead();
 
 	int CurrentScore = 0;

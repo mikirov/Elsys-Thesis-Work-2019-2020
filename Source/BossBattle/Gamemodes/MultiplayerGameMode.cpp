@@ -44,7 +44,7 @@ void AMultiplayerGameMode::LoadLobby()
 void AMultiplayerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	bUseSeamlessTravel = true;
 }
 
 void AMultiplayerGameMode::WinGame()

@@ -28,6 +28,7 @@ void APlayingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	bUseSeamlessTravel = true;
 	WaveCount = SpawnerLookupTable->GetRowNames().Num();
 
 	SpawnEnemyWave();

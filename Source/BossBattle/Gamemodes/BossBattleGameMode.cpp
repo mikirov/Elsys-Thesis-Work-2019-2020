@@ -27,6 +27,12 @@ void ABossBattleGameMode::IncrementScore(const int Amount)
 }
 
 
+void ABossBattleGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	bUseSeamlessTravel = true;
+}
+
 bool ABossBattleGameMode::AreAllEnemiesDead()
 {
 	return CurrentEnemies <= 0;

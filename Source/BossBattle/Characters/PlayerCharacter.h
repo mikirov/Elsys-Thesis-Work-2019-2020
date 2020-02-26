@@ -17,9 +17,13 @@ public:
 
 	void SetChat(class UChatWidget* ChatWidget);
 
+	AGun* GetGun();
 
 protected:
 
+
+	UFUNCTION()
+	void OnHealthChanged(int Value);
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -38,6 +42,10 @@ protected:
 	/** third person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	class UCameraComponent* TPCamera = nullptr;
+
+	//healthbar widget
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* WidgetComponent = nullptr;
 
 	void OnDeathAnimationEnd() override;
 

@@ -23,21 +23,22 @@ void ABattleHUD::PostInitializeComponents() {
 	if (validate(IsValid(World)) == false) { return; }
 
 	PlayerStatsWidget = Cast<UPlayerStatsWidget>(CreateWidget(World, PlayerStatsWidgetTemplate));
-	if (validate(IsValid(PlayerStatsWidget))) { 
-		PlayerStatsWidget->AddToViewport();
-		//PlayerStatsWidget->SetKeyboardFocus();
-	}
+	if (validate(IsValid(PlayerStatsWidget)) == false) return;
+	PlayerStatsWidget->AddToViewport();
+
 
 	ChatWidget = Cast<UChatWidget>(CreateWidget(World, ChatWidgetTemplate));
-	if (validate(IsValid(ChatWidget))) {
-		ChatWidget->AddToViewport();
-		//APlayerController* PlayerController = GetOwningPlayerController();
-		//if (validate(IsValid(PlayerController))) {
-		//	UWidgetBlueprintLibrary::SetInputMode_UIOnly(PlayerController, ChatWidget, false);
-		//	PlayerController->bShowMouseCursor = true;
-		//}
-	}
-	
+	if (validate(IsValid(ChatWidget)) == false) return;
+	ChatWidget->AddToViewport();
+
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
+	if (validate(IsValid(PlayerCharacter)) == false) return;
+	PlayerCharacter->SetChat(ChatWidget);
+
+
 
 }
 
@@ -56,15 +57,6 @@ UChatWidget* ABattleHUD::GetChatWidget() {
 void ABattleHUD::DrawHUD()
 {
 	Super::DrawHUD();
-
-	APlayerController* PlayerController = GetOwningPlayerController();
-	if (validate(IsValid(PlayerController))) {
-		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
-		if (validate(IsValid(PlayerCharacter))) {
-			PlayerCharacter->SetChat(ChatWidget);
-		}
-	}
-
 
 	if (validate(IsValid(Canvas)) == false) return;
 	if (validate(IsValid(CrosshairTex)) == false) return;

@@ -26,8 +26,8 @@ void UGamemodeSelectionWidget::SetInputModeGameOnly()
 void UGamemodeSelectionWidget::NativeConstruct()
 {
 
-	if (ServerAddress.IsNone()) {
-		ServerAddress = FName("127.0.0.1"); // local host
+	if (ServerAddress.IsEmpty()) {
+		ServerAddress = FString("127.0.0.1"); // local host
 	}
 	if (validate(IsValid(SingleplayerButton))) {
 		SingleplayerButton->OnPressed.AddDynamic(this, &UGamemodeSelectionWidget::LoadSingleplayer);
@@ -73,5 +73,5 @@ void UGamemodeSelectionWidget::LoadMultiplayer()
 	if (validate(IsValid(PlayerController)) == false) return;
 
 	//multiplayer joins local server @ 127.0.0.1
-	PlayerController->ClientTravel("127.0.0.1", ETravelType::TRAVEL_Absolute);
+	PlayerController->ClientTravel(ServerAddress, ETravelType::TRAVEL_Absolute);
 }

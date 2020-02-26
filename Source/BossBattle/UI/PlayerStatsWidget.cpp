@@ -12,6 +12,7 @@
 
 #include "Characters/PlayerCharacter.h"
 #include "Characters/HealthComponent.h"
+#include "UI/BattleHUD.h"
 #include "Utilities/CustomMacros.h"
 
 void UPlayerStatsWidget::SetScore(int Score) {
@@ -43,19 +44,10 @@ void UPlayerStatsWidget::SetWinGame()
 	}
 }
 
-float UPlayerStatsWidget::GetHealthPercent()
+
+void UPlayerStatsWidget::SetHealth(float Value)
 {
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
-	if (validate(IsValid(PlayerCharacter)) == false) return 0.0f;
-
-	UHealthComponent* HealthComponent = PlayerCharacter->GetHealthComponent();
-	if (validate(IsValid(HealthComponent)) == false) return 0.0f;
-
-	float Health = HealthComponent->GetHealth() / HealthComponent->GetMaxHealth();
-
-	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatsWidget::GetHealthPercent: %d"), Health);
-
-	return Health;
+	Health = Value;
 }
 
 void UPlayerStatsWidget::NativeConstruct()
@@ -65,5 +57,6 @@ void UPlayerStatsWidget::NativeConstruct()
 	if (validate(IsValid(GameEndText)) == false) { return; }
 
 	GameEndText->SetVisibility(ESlateVisibility::Collapsed);
+
 
 }

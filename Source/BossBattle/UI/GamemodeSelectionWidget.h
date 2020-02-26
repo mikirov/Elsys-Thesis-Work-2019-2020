@@ -21,7 +21,7 @@ private:
 
 	//address of the server to connect by default
 	UPROPERTY(EditDefaultsOnly)
-	FName ServerAddress;
+	FString ServerAddress;
 
 	//the name of the single player level
 	UPROPERTY(EditDefaultsOnly)

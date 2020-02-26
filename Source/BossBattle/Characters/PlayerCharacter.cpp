@@ -32,6 +32,7 @@
 #include "Utilities/CustomMacros.h"
 #include "Weapons/Gun.h"
 #include "Components/EditableTextBox.h"
+#include "Components/WidgetComponent.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -67,12 +68,18 @@ APlayerCharacter::APlayerCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
 }
 
 void APlayerCharacter::SetChat(class UChatWidget* ChatWidgetToSet) {
 	ChatWidget = ChatWidgetToSet;
 }
 
+
+AGun* APlayerCharacter::GetGun()
+{
+	return Gun;
+}
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -129,6 +136,10 @@ void APlayerCharacter::Close()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (validate(IsValid(HealthComponent))) {
+		HealthComponent->OnHealthChanged.AddDynamic(this, &APlayerCharacter::OnHealthChanged);
+	}
 }
 
 void APlayerCharacter::Die()
@@ -155,6 +166,21 @@ void APlayerCharacter::Die()
 	PlayingGameMode->OnPlayerDeath(PlayerController);
 }
 
+
+void APlayerCharacter::OnHealthChanged(int Value)
+{
+	
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
+	if (validate(IsValid(PlayerController)) == false) return;
+
+	ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+	if (validate(IsValid(HUD)) == false) return;
+
+	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+	if (validate(IsValid(PlayerStatsWidget)) == false) return;
+
+	PlayerStatsWidget->SetHealth(Value / HealthComponent->GetMaxHealth());
+}
 
 void APlayerCharacter::OnDeathAnimationEnd()
 {

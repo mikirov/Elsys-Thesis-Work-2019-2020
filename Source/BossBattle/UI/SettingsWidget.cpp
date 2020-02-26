@@ -21,6 +21,7 @@ void USettingsWidget::NativeConstruct() {
 
 		FPSIndex = LoadedGame->FPSIndex;
 		AAIndex = LoadedGame->AAIndex;
+		PPIndex = LoadedGame->PPIndex;
 		GraphicalIndex = LoadedGame->GraphicalIndex;
 		ShadowIndex = LoadedGame->ShadownIndex;
 
@@ -32,6 +33,7 @@ void USettingsWidget::NativeConstruct() {
 		//set initial values
 		FPSIndex = 2;
 		AAIndex = 2;
+		PPIndex = 2;
 		GraphicalIndex = 2;
 		ShadowIndex = 2;
 
@@ -121,6 +123,7 @@ void USettingsWidget::SaveSettings()
 	// Set data on the savegame object.
 	SaveGameInstance->FPSIndex = FPSIndex;
 	SaveGameInstance->AAIndex = AAIndex;
+	SaveGameInstance->PPIndex = PPIndex;
 	SaveGameInstance->GraphicalIndex = GraphicalIndex;
 	SaveGameInstance->ShadownIndex = ShadowIndex;
 

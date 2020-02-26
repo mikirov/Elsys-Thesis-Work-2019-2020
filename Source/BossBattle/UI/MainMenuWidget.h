@@ -42,17 +42,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* TrainingButton = nullptr;
 
-	//weapon showcase map button
-	UPROPERTY(meta = (BindWidget))
-	class UButton* WeaponsButton = nullptr;
-
-
 	//changes the input mode from UI only to game only
 	void SetInputModeGameOnly();
 
-	//loads the weapon showcase level
+	//loads the multiplayer settings menu
 	UFUNCTION()
-	void LoadWeaponsLevel();
+	void LoadMultiplayerSettings();
 
 	//loads the settings menu
 	UFUNCTION()
