@@ -14,6 +14,8 @@ AEnemyAIController::AEnemyAIController()
 }
 
 void AEnemyAIController::BeginPlay() {
+	
+	UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController::BeginPlay()"))
 	Super::BeginPlay();
 
 	if (validate(RunBehaviorTree(BehaviorTreeTemplate)) == false) { return; }

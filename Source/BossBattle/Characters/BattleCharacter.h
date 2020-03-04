@@ -59,6 +59,7 @@ public:
 
 	void StopFiring();
 
+	bool IsDead();
 	
 	class UHealthComponent* GetHealthComponent();
 
@@ -123,6 +124,9 @@ protected:
 
 	void SpawnStartingGun();
 
+
+
 private:
 
+	bool bDead = false;
 };

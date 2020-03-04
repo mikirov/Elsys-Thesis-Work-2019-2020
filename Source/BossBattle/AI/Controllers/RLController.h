@@ -26,6 +26,9 @@ protected:
 	//returns the state of the game as an integer
 	int GetState();
 
+
+	void ShowTable(float** Table);
+
 	//decides on the best action based on the current state
 	void GetBestAction(const int CurrentStateIndex, int& OutCurrentActionIndex, float& OutCurrentActionValue);
 
@@ -35,8 +38,18 @@ protected:
 	//loads the Q-table from a file
 	void SerializeTable(float** Table);
 
+	//weather or not the controller has already possessed a pawn or not
+	bool bPossessed = false;
+
+
+	//called when the actor is destroyed or the game ends
+	void EndPlay
+	(
+		const EEndPlayReason::Type EndPlayReason
+	) override;
+
 	// QTable containing a mapping between each state and a list of all action values
-	float** QTable; 
+	float** QTable = nullptr;
 	
 	//array of actions that can be taken by the agent
 	std::vector<class Action*> Actions;
@@ -44,7 +57,13 @@ protected:
 	//number of states of the game
 	int StateCount = 8; // current number of states
 
+	//number of frames to wait to do a certain action
+	UPROPERTY(BlueprintReadWrite)
+	int FrameCount = 1;
 
+	//current waiting frame
+	int CurrentFrame = 0;
+	
 	//index of the current state
 	UPROPERTY(BlueprintReadOnly)
 	int CurrentStateIndex = 0;

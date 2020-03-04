@@ -17,6 +17,8 @@
 void UChatWidget::NativeConstruct() {
 
 	Super::NativeConstruct();
+	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::NativeConstruct()"))
+
 
 	bOpen = false;
 	if (validate(IsValid(CloseButton))) {
@@ -26,12 +28,14 @@ void UChatWidget::NativeConstruct() {
 	if (validate(IsValid(TextBox))) {
 		TextBox->OnTextCommitted.AddDynamic(this, &UChatWidget::HandleOnTextCommitted);
 	}
-	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
-
+	Close();
 
 }
 
 void UChatWidget::AddMessageWidget(const FText& Message, const FText& Sender) {
+	
+	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::AddMessageWidget(const FText& Message, const FText& Sender)"))
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	
@@ -58,7 +62,7 @@ void UChatWidget::Tick(FGeometry MyGeometry, float InDeltaTime) {
 
 void UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod) {
 
-	//UE_LOG(LogTemp, Warning, TEXT("UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)"))
+	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)"))
 	if (CommitMethod == ETextCommit::OnEnter && !Text.EqualTo(FText::FromString(""))) {
 		//UE_LOG(LogTemp, Warning, TEXT("CommitMethod == ETextCommit::OnEnter && !Text.EqualTo(FText::FromString(""))"))
 		ABattlePlayerState* PlayerState = Cast<ABattlePlayerState>(GetOwningPlayerState());
@@ -71,6 +75,8 @@ void UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type Com
 
 void UChatWidget::Close() {
 
+
+	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::Close()"))
 	bOpen = false;
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 
@@ -84,12 +90,14 @@ void UChatWidget::Close() {
 
 bool UChatWidget::IsOpen()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("bool UChatWidget::IsOpen()"))
 	return bOpen;
 }
 
 void UChatWidget::Open()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::Open()"))
 
 	bOpen = true;
 	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);

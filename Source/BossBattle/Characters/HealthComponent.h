@@ -8,7 +8,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDie);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChange, int, Health);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChange, float, Health);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -49,7 +49,7 @@ protected:
 	void BeginPlay() override;
 	
 	UPROPERTY(EditDefaultsOnly)
-	int MaxHealth = 100;
+	float MaxHealth = 100.0f;
 
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_HealthCheck, VisibleInstanceOnly)
 	float Health;

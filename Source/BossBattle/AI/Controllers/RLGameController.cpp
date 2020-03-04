@@ -7,23 +7,44 @@
 
 #include "Utilities/CustomMacros.h"
 
-void ARLGameController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	DeserializeTable(QTable);
-}
 
 void ARLGameController::Tick(float DeltaTime)
 {
+	if (bPossessed == false) return;
+
+	//only take an action every FrameCount frames
+	if (CurrentFrame != FrameCount) {
+		CurrentFrame++;
+		return;
+	}
+	else {
+		CurrentFrame = 0;
+	}
+
 	Super::Tick(DeltaTime);
 
 	CurrentStateIndex = GetState();
-	validate(CurrentStateIndex >= 0);
+	if (validate(CurrentStateIndex >= 0 && CurrentStateIndex < StateCount) == false) return;
 
 	GetBestAction(CurrentStateIndex, CurrentActionIndex, CurrentActionValue);
-	validate(CurrentActionIndex >= 0);
+	if (validate(CurrentActionIndex >= 0 && CurrentActionIndex < Actions.size()) == false) return;
 
 	TakeAction(CurrentActionIndex);
 
+
+}
+
+void ARLGameController::OnPossess(APawn* InPawn)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingController::OnPossess(APawn* InPawn)"))
+
+	Super::OnPossess(InPawn);
+
+}
+
+void ARLGameController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARLGameController::EndPlay"))
+
+	Super::EndPlay(EndPlayReason);
 }

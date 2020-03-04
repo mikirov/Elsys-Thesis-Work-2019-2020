@@ -31,14 +31,6 @@ void ABattleHUD::PostInitializeComponents() {
 	if (validate(IsValid(ChatWidget)) == false) return;
 	ChatWidget->AddToViewport();
 
-	APlayerController* PlayerController = GetOwningPlayerController();
-	if (validate(IsValid(PlayerController)) == false) return;
-
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
-	if (validate(IsValid(PlayerCharacter)) == false) return;
-	PlayerCharacter->SetChat(ChatWidget);
-
-
 
 }
 
@@ -57,6 +49,17 @@ UChatWidget* ABattleHUD::GetChatWidget() {
 void ABattleHUD::DrawHUD()
 {
 	Super::DrawHUD();
+
+	if (bChatSet == false) {
+		APlayerController* PlayerController = GetOwningPlayerController();
+		if (validate(IsValid(PlayerController)) == false) return;
+
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
+		if (validate(IsValid(PlayerCharacter)) == false) return;
+		PlayerCharacter->SetChat(ChatWidget);
+
+		bChatSet = true;
+	}
 
 	if (validate(IsValid(Canvas)) == false) return;
 	if (validate(IsValid(CrosshairTex)) == false) return;

@@ -36,7 +36,10 @@ void UHealthComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 void UHealthComponent::BeginPlay() {
 	Super::BeginPlay();
 
+	Health = MaxHealth;
+
 	validate(MaxHealth > 0);
+	validate(Health > 0);
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const {
@@ -50,6 +53,9 @@ void UHealthComponent::TakeDamage(float Damage) {
 	if (bDead) { return; }
 
 	Health = FMath::Max(Health - Damage, 0.0f);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("UHealthComponent::TakeDamage(float Damage); %f, Health: %f"), Damage, Health)
 	HealthDamageCheck();
 	
 	OnHealthChanged.Broadcast(Health);

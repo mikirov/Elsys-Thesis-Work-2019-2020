@@ -46,6 +46,8 @@ protected:
 	/** Primary draw call for the HUD */
 	virtual void DrawHUD() override;
 
+	bool bChatSet = false;
+
 	/** Crosshair asset pointer */
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	class UTexture2D* CrosshairTex = nullptr;

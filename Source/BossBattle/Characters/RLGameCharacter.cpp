@@ -50,4 +50,16 @@ void ARLGameCharacter::Die()
 {
 	Super::Die();
 
+	if (HasAuthority()) {
+		UWorld* World = GetWorld();
+		if (validate(IsValid(World)) == false) { return; }
+
+
+		ABossBattleGameMode* GameMode = Cast<ABossBattleGameMode>(World->GetAuthGameMode());
+		if (validate(IsValid(GameMode))) {
+			GameMode->DecrementEnemyCounter();
+			return;
+		}
+	}
+
 }

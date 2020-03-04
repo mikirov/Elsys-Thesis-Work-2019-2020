@@ -23,7 +23,7 @@ protected:
 
 
 	UFUNCTION()
-	void OnHealthChanged(int Value);
+	void OnHealthChanged(float Value);
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)

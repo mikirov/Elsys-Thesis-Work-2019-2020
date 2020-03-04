@@ -5,6 +5,8 @@
 
 
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
+
 
 #include "AI/Controllers/RLTrainingController.h"
 #include "Utilities/CustomMacros.h"
@@ -24,13 +26,17 @@ void UTrainingStatsWidget::NativeConstruct()
 
 void UTrainingStatsWidget::Back()
 {
-	APlayerController* PlayerController = GetOwningPlayer();
-	if (validate(IsValid(PlayerController)) == false) { return; }
+	//APlayerController* PlayerController = GetOwningPlayer();
+	//if (validate(IsValid(PlayerController)) == false) { return; }
 
-	AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
-	if (validate(IsValid(MainMenuHUD)) == false) { return; }
+	//AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
+	//if (validate(IsValid(MainMenuHUD)) == false) { return; }
 
-	MainMenuHUD->LoadMainMenu();
+	//MainMenuHUD->LoadMainMenu();
+	UWorld* World = GetWorld();
+	if (validate(IsValid(World)) == false) return;
+
+	UGameplayStatics::OpenLevel(World, "MainMenu");
 }
 
 void UTrainingStatsWidget::Reset()

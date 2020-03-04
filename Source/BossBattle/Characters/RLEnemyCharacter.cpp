@@ -17,7 +17,7 @@
 #include "Gamemodes/TrainingGameMode.h"
 #include "Utilities/CustomMacros.h"
 #include "Characters/AIEnemyCharacter.h"
-#include "AI/Controllers/EnemyAIController.h"
+#include "AI/Controllers/RLController.h"
 #include "Utilities/Spawner.h"
 
 void ARLEnemyCharacter::MoveForward(float Value)
@@ -49,61 +49,25 @@ void ARLEnemyCharacter::BeginPlay()
 
 }
 
-void ARLEnemyCharacter::ShootEnemy() {
-	//focus on AI character
-	FocusOnEnemy();
-
-	//Move near AI character
-	MoveNearEnemy();
-
-	//Shoot Weapon
-	ServerStartFiring();
-
-
-}
-
-void ARLEnemyCharacter::MoveNearEnemy() {
-	
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) return;
-
-	AActor* AICharacter = GetClosestEnemy();
-
-	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(World);
-	if (validate(IsValid(NavigationSystem)) == false) return;
-
-	//FVector Result = NavigationSystem->GetRandomPointInNavigableRadius(World, AICharacter->GetActorLocation(), 600);
-	FNavLocation Result;
-	NavigationSystem->GetRandomPointInNavigableRadius(AICharacter->GetActorLocation(), 600, Result);
-	
-	AAIController* AIController = UAIBlueprintHelperLibrary::GetAIController(this);
-	if (validate(IsValid(AIController)) == false) return;
-
-	AIController->MoveToLocation(Result);
-
-}
-
 
 void ARLEnemyCharacter::FocusOnEnemy() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	
-	AActor* AICharacter = UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass());
-	if(validate(IsValid(AICharacter) == false)) return;
 
-	AAIController* AIController = UAIBlueprintHelperLibrary::GetAIController(this);
-	if (validate(IsValid(AIController)) == false) return;
+	AActor* OtherCharacter = GetClosestEnemy();
+	if(validate(IsValid(OtherCharacter) == false)) return;
 
-	//AIController->SetFocus(AICharacter);
+	ARLController* RLController = Cast<ARLController>(GetController());
 
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(
 		GetActorLocation(),
-		AICharacter->GetActorLocation()
+		OtherCharacter->GetActorLocation()
 	);
 
-	AICharacter->SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
 
-	AIController->SetControlRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	RLController->SetControlRotation(FRotator(0, LookAtRotation.Yaw, 0));
 }
 
 void ARLEnemyCharacter::Die()

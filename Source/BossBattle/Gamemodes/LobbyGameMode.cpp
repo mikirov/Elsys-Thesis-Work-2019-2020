@@ -32,7 +32,7 @@ void ALobbyGameMode::GetSeamlessTravelActorList(bool bToTransition, TArray< AAct
 void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	bUseSeamlessTravel = true;
+	//bUseSeamlessTravel = true;
 
 	if (validate(MainMapName.Len() > 0) == false) return;
 	if (validate(LobbyMapName.Len() > 0) == false) return;

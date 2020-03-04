@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Characters/AIEnemyCharacter.h"
-#include "Characters/RLTrainingCharacter.h"
+#include "Characters/RLEnemyCharacter.h"
 #include "Utilities/CustomMacros.h"
 
 #include "Utilities/MoveForwardAction.h"
@@ -30,11 +30,11 @@
 
 void ARLController::OnPossess(APawn* InPawn)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::OnPossess(APawn* InPawn)"))
 	Super::OnPossess(InPawn);
 
-	
-
-	ARLTrainingCharacter* RLCharacter = Cast<ARLTrainingCharacter>(InPawn);
+	ARLEnemyCharacter* RLCharacter = Cast<ARLEnemyCharacter>(InPawn);
 	if (validate(IsValid(RLCharacter)) == false) return;
 
 	Actions.push_back(new MoveForwardAction(RLCharacter));
@@ -55,6 +55,10 @@ void ARLController::OnPossess(APawn* InPawn)
 		}
 	}
 
+	ShowTable(QTable);
+
+	bPossessed = true;
+
 	DeserializeTable(QTable);
 
 	UE_LOG(LogTemp, Warning, TEXT("Actions: %d"), Actions.size())
@@ -62,11 +66,15 @@ void ARLController::OnPossess(APawn* InPawn)
 
 void ARLController::TakeAction(int ActionIndex)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::TakeAction(int ActionIndex)"))
 	Actions[ActionIndex]->Execute();
 }
 
 int ARLController::GetState()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::GetState()"))
 	// taking current state
 	//get dealing damage flag, the other two flags are calculated on taking damage event
 	UWorld* World = GetWorld();
@@ -92,9 +100,28 @@ int ARLController::GetState()
 	return CurrentState;
 }
 
+void ARLController::ShowTable(float** Table)
+{
+	UE_LOG(LogTemp, Warning, TEXT("QTable:\n==========\n"));
+
+	for (int i = 0; i < StateCount; i++)
+	{
+		for (int j = 0; j < Actions.size(); j++) {
+
+			UE_LOG(LogTemp, Warning, TEXT("State: %d, Action: %f\n"), i, Table[i][j])
+		}
+
+	}
+	UE_LOG(LogTemp, Warning, TEXT("==========\n"));
+}
+
 void ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionIndex, float& OutCurrentActionValue)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionIndex, float& OutCurrentActionValue)"))
+
 	if (validate(CurrentState < StateCount) == false) return;
+	if (validate(QTable != nullptr) == false) return;
 	//get current action values for this state
 
 	//get the action value that gives us the highest reward from our array
@@ -113,6 +140,8 @@ void ARLController::GetBestAction(const int CurrentState, int& OutCurrentActionI
 
 void ARLController::DeserializeTable(float** Table)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::DeserializeTable(float** Table)"))
+
 	TArray<FString> File;
 
 	FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
@@ -139,6 +168,8 @@ void ARLController::DeserializeTable(float** Table)
 void ARLController::SerializeTable(float** Table)
 {
 
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::SerializeTable(float** Table)"))
+
 	FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()) + TEXT("/table.csv");
 
 	FString FileContent;
@@ -155,3 +186,23 @@ void ARLController::SerializeTable(float** Table)
 	bool bSuccess = FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get());
 	if (validate(bSuccess) == false) return;
 }
+
+
+void ARLController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLController::EndPlay"))
+
+
+	for (int i = 0; i < StateCount; i++) {
+		delete[] QTable[i];
+	}
+	delete[] QTable;
+
+	for (int i = 0; i < Actions.size(); i++) {
+		delete Actions[i];
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+

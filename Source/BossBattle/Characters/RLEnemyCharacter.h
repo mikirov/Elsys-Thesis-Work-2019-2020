@@ -17,11 +17,7 @@ class BOSSBATTLE_API ARLEnemyCharacter : public AEnemyCharacter
 	
 public:
 
-	void ShootEnemy();
-
 	void FocusOnEnemy();
-
-	void MoveNearEnemy();
 
 	//action binding function. Moves the character forwards or backwards
 	void MoveForward(float Value);
@@ -29,7 +25,7 @@ public:
 	//action binding function. Moves the character left or right
 	void MoveRight(float Value);
 
-	void BeginPlay();
+	void BeginPlay() override;
 
 protected:
 

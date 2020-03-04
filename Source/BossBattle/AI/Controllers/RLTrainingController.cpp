@@ -23,23 +23,10 @@
 
 
 
-void ARLTrainingController::ShowTable(float** Table)
-{
-	UE_LOG(LogTemp, Warning, TEXT("QTable:\n==========\n"));
-
-	for (int i = 0; i < StateCount; i++)
-	{
-		for (int j = 0; j < Actions.size(); j++) {
-
-			UE_LOG(LogTemp, Warning, TEXT("State: %d, Action: %f\n"), i, Table[i][j])
-		}
-
-	}
-	UE_LOG(LogTemp, Warning, TEXT("==========\n"));
-}
-
 void ARLTrainingController::UpdateStepAndEpisode()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingController::UpdateStepAndEpisode()"))
 	StepsThisEpisode++;
 	if (StepsThisEpisode == StepsPerEpisode) {
 		Episode++;
@@ -51,8 +38,18 @@ void ARLTrainingController::UpdateStepAndEpisode()
 }
 
 
+void ARLTrainingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	SerializeTable(QTable);
+
+	Super::EndPlay(EndPlayReason);
+
+}
+
 float ARLTrainingController::GetReward()
 {
+
+	//UE_LOG(LogTemp, Warning, TEXT("ARLTrainingController::GetReward()"))
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return 0.0f;
 
@@ -70,28 +67,11 @@ float ARLTrainingController::GetReward()
 	return Reward;
 }
 
-void ARLTrainingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	UE_LOG(LogTemp, Warning, TEXT("  ARLController::EndPlay"))
-
-		SerializeTable(QTable);
-
-	for (int i = 0; i < StateCount; i++) {
-		delete[] QTable[i];
-	}
-	delete[] QTable;
-
-	for (int i = 0; i < Actions.size(); i++) {
-		delete Actions[i];
-	}
-
-
-}
-
 void ARLTrainingController::ResetTable()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingController::ResetTable"))
+
 	for (int i = 0; i < StateCount; i++) {
 		for (int j = 0; j < Actions.size(); j++) {
 			QTable[i][j] = 0.0f;
@@ -104,15 +84,29 @@ void ARLTrainingController::ResetTable()
 
 void ARLTrainingController::OnPossess(APawn* InPawn)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingController::OnPossess(APawn* InPawn)"))
+
 	Super::OnPossess(InPawn);
 
-	ShowTable(QTable);
+	//ShowTable(QTable);
 
 }
 
 //we will use the tick method for every step 
 void ARLTrainingController::Tick(float DeltaTime)
 {
+
+	if (bPossessed == false) return;
+
+	//only take an action every FrameCount frames
+	if (CurrentFrame != FrameCount) {
+		CurrentFrame++;
+		return;
+	}
+	else {
+		CurrentFrame = 0;
+	}
+
 	Super::Tick(DeltaTime);
 
 	UpdateStepAndEpisode();

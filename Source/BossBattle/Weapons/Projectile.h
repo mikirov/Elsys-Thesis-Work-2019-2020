@@ -22,6 +22,8 @@ protected:
 	//self destroy projectile after a given period of time
 	void SelfDestroy();
 
+	bool bHasOverlapped = false;
+
 	//event called when the projectile overlaps with another object that has collision enabled
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent * OverlappedComp,

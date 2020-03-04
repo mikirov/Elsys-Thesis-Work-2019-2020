@@ -25,6 +25,8 @@ void AAIEnemyCharacter::SetTarget(AActor* TargetToSet) {
 
 void AAIEnemyCharacter::Die()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AAIEnemyCharacter::Die()"))
+
 	Super::Die();
 
 	if (HasAuthority()) {

@@ -28,7 +28,8 @@ void APlayingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bUseSeamlessTravel = true;
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::BeginPlay()"))
+	//bUseSeamlessTravel = true;
 	WaveCount = SpawnerLookupTable->GetRowNames().Num();
 
 	SpawnEnemyWave();
@@ -36,6 +37,8 @@ void APlayingGameMode::BeginPlay()
 
 void APlayingGameMode::SpawnEnemyWave()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::SpawnEnemyWave"))
 	if (CurrentWaveIndex == WaveCount) {
 		WinGame();
 		return;
@@ -69,12 +72,16 @@ void APlayingGameMode::SpawnEnemyWave()
 
 void APlayingGameMode::IncrementScore(const int Amount)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::IncrementScore(const int Amount)"))
 	Super::IncrementScore(Amount);
 	UpdateHUDScore(CurrentScore);
 }
 
 void APlayingGameMode::UpdateHUDScore(int Score) {
 
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::UpdateHUDScore(int Score)"))
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(World, 0));
@@ -95,6 +102,8 @@ void APlayingGameMode::UpdateHUDScore(int Score) {
 
 void APlayingGameMode::WinGame()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::WinGame()"))
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	APlayerCharacterController* PlayerController =  Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(World, 0));
@@ -106,6 +115,8 @@ void APlayingGameMode::WinGame()
 
 void APlayingGameMode::DecrementEnemyCounter()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::DecrementEnemyCounter()"))
 	Super::DecrementEnemyCounter();
 
 	if (AreAllEnemiesDead()) {
@@ -137,6 +148,8 @@ TArray<class APlayerCharacterController*> APlayingGameMode::GetPlayerControllers
 
 void APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)"))
 	PlayerController->OnLoseGame();
 	
 }

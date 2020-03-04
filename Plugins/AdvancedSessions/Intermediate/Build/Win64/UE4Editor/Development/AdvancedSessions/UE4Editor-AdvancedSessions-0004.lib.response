@@ -6,9 +6,9 @@
 /NAME:"UE4Editor-AdvancedSessions-0004.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Repos\elsys-thesis-work\Intermediate\Build\Win64\BossBattleEditor\Development\Engine\SharedPCH.Engine.h.obj"
+"C:\Users\misho\Documents\UnrealEngine\Engine\Intermediate\Build\Win64\UE4Editor\Development\Engine\SharedPCH.Engine.h.obj"
 "C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.cpp.obj"
 "C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.gen.cpp.obj"
-"C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Default.rc2.res"
+"C:\Users\misho\Documents\UnrealEngine\Engine\Intermediate\Build\Win64\UE4Editor\Development\Default.rc2.res"
 /OUT:"C:\Repos\elsys-thesis-work\Plugins\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\UE4Editor-AdvancedSessions-0004.lib"
 /INCLUDE:IMPLEMENT_MODULE_AdvancedSessions

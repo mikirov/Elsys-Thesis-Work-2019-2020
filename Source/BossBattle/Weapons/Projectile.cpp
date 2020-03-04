@@ -79,7 +79,6 @@ void AProjectile::SelfDestroy()
 
 void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
 	if (OtherActor == this) return;
 	for (FName Tag : OtherActor->Tags) {
 		if (ProjectileData->TagsToIgnore.Contains(Tag)) {
@@ -88,11 +87,16 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	}
 
 
+	if (bHasOverlapped) return;
+
 	if (HasAuthority()) {
+
 		if (validate(IsValid(OtherActor)) == false) { return; }
 
 		UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
 		if (IsValid(HealthComponent)) {
+			UE_LOG(LogTemp, Warning, TEXT("void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)"))
+
 			HealthComponent->TakeDamage(ProjectileData->Damage);
 		}
 	}
@@ -118,6 +122,7 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 		}
 
 	}
+	bHasOverlapped = true;
 	Destroy();
 }
 

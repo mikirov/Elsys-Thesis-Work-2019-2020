@@ -30,7 +30,7 @@ void ABossBattleGameMode::IncrementScore(const int Amount)
 void ABossBattleGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	bUseSeamlessTravel = true;
+	//bUseSeamlessTravel = true;
 }
 
 bool ABossBattleGameMode::AreAllEnemiesDead()

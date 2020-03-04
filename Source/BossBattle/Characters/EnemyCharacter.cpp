@@ -63,6 +63,7 @@ void AEnemyCharacter::Die()
 		ABossBattleGameMode* BossBattleGameMode = Cast<ABossBattleGameMode>(World->GetAuthGameMode());
 		if (IsValid(BossBattleGameMode)) {
 			BossBattleGameMode->IncrementScore(Score);
+			//BossBattleGameMode->DecrementEnemyCounter();
 			return;
 		}
 		
@@ -79,7 +80,7 @@ void AEnemyCharacter::ClearTakingDamage() {
 	bTakingDamage = false;
 }
 
-void AEnemyCharacter::OnTakingDamage(int CurrentHealth)
+void AEnemyCharacter::OnTakingDamage(float CurrentHealth)
 {
 	bTakingDamage = true;
 	bCriticalHealth = (CurrentHealth < HealthComponent->GetMaxHealth() / 3);

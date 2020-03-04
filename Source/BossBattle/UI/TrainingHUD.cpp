@@ -22,7 +22,7 @@ void ATrainingHUD::PostInitializeComponents() {
 		TrainingStatsWidget->AddToViewport();
 	}
 
-	APlayerController* PlayerController = World->GetFirstPlayerController();
+	APlayerController* PlayerController = GetOwningPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
 	PlayerController->bShowMouseCursor = true;

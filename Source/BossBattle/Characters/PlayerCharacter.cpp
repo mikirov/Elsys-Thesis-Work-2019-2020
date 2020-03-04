@@ -167,7 +167,7 @@ void APlayerCharacter::Die()
 }
 
 
-void APlayerCharacter::OnHealthChanged(int Value)
+void APlayerCharacter::OnHealthChanged(float Value)
 {
 	
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
@@ -179,7 +179,10 @@ void APlayerCharacter::OnHealthChanged(int Value)
 	UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
 	if (validate(IsValid(PlayerStatsWidget)) == false) return;
 
-	PlayerStatsWidget->SetHealth(Value / HealthComponent->GetMaxHealth());
+	float Percent = Value / HealthComponent->GetMaxHealth();
+
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OnHealthChanged(float Value): %f"), Percent);
+	PlayerStatsWidget->SetHealth(Percent);
 }
 
 void APlayerCharacter::OnDeathAnimationEnd()

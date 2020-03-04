@@ -44,7 +44,7 @@ protected:
 	bool bCriticalHealth = false;
 
 	UFUNCTION()
-	void OnTakingDamage(int Amount);
+	void OnTakingDamage(float Amount);
 	
 	UFUNCTION()
 	void ClearTakingDamage();

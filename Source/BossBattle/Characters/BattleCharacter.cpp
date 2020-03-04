@@ -26,6 +26,7 @@
 // Sets default values
 ABattleCharacter::ABattleCharacter()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter()"))
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -33,6 +34,7 @@ ABattleCharacter::ABattleCharacter()
 	DeathSoundComponent->bAutoActivate = false;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
+
 	HealthComponent->OnDeath.AddDynamic(this, &ABattleCharacter::Die);
 	HealthComponent->SetIsReplicated(true);
 
@@ -51,7 +53,10 @@ ABattleCharacter::ABattleCharacter()
 // Called when the game starts or when spawned
 void ABattleCharacter::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter()"))
 	Super::BeginPlay();
+
+
 
 	CharacterMesh = GetMesh();
 	if (validate(IsValid(CharacterMesh)) == false) return;
@@ -98,7 +103,7 @@ void ABattleCharacter::OnDeathAnimationEnd()
 
 void ABattleCharacter::Die()
 {
-	
+	bDead = true;
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 
@@ -137,6 +142,11 @@ void ABattleCharacter::StopFiring() {
 	Gun->ReleaseTrigger();
 }
 
+bool ABattleCharacter::IsDead()
+{
+	return bDead;
+}
+
 class UHealthComponent* ABattleCharacter::GetHealthComponent()
 {
 	return HealthComponent;
@@ -144,6 +154,7 @@ class UHealthComponent* ABattleCharacter::GetHealthComponent()
 
 void ABattleCharacter::InteractWithWeapon()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::InteractWithWeapon"))
 	AGun* OldGun = nullptr;
 	if (IsValid(Gun)) {
 		OldGun = Gun;
@@ -157,7 +168,7 @@ void ABattleCharacter::InteractWithWeapon()
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 
-	DrawDebugSphere(World, GetActorLocation(), InteractionDistance, 50, FColor::Yellow, false, 1.0f);
+	//DrawDebugSphere(World, GetActorLocation(), InteractionDistance, 50, FColor::Yellow, false, 1.0f);
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);
@@ -183,6 +194,7 @@ void ABattleCharacter::PickGun(class AGun* NewGun)
 {
 	if (HasAuthority() == false) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::PickGun(class AGun* NewGun)"))
 	if (validate(IsValid(NewGun)) == false) { return; }
 	if (validate(IsValid(CharacterMesh)) == false) { return; }
 	if (validate(CharacterMesh->DoesSocketExist("GunSocket")) == false) { return; }
@@ -202,6 +214,7 @@ void ABattleCharacter::DropGun()
 {
 	if (HasAuthority() == false) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::DropGun()"))
 
 	if (validate(IsValid(Gun)) == false) return;
 

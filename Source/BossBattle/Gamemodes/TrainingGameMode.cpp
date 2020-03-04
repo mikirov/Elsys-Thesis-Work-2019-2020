@@ -16,7 +16,7 @@ void ATrainingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bUseSeamlessTravel = true;
+	//bUseSeamlessTravel = true;
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 

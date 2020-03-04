@@ -16,10 +16,15 @@ class BOSSBATTLE_API ARLGameController : public ARLController
 	
 protected:
 
-	//loads the trained q-table
-	void BeginPlay();
-
 	//choses an action based on the q-tale values
-	void Tick(float DeltaTime);
+	void Tick(float DeltaTime) override;
+
+	void OnPossess(APawn* InPawn) override;
+
+	//called when the actor is destroyed or the game ends
+	void EndPlay
+	(
+		const EEndPlayReason::Type EndPlayReason
+	) override;
 
 };

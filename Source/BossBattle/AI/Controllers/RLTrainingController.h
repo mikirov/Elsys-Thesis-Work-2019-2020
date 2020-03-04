@@ -35,19 +35,18 @@ protected:
 	// episode number
 	int Episode = 0;
 
-	float GetReward();
-
 	//called when the actor is destroyed or the game ends
 	void EndPlay
 	(
 		const EEndPlayReason::Type EndPlayReason
 	) override;
 
+	float GetReward();
+
+
 	void OnPossess(APawn* InPawn) override;
 
 	void Tick(float DeltaTime) override;
-
-	void ShowTable(float** Table);
 
 	float CurrentReward = 0.0f; //reward this tick
 
