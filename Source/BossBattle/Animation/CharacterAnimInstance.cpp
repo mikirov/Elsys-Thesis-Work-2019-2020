@@ -30,7 +30,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 	FVector Velocity = CharacterPawn->GetVelocity();
 	Speed = Velocity.Size();
 
-	//MovementDirection = CalculateDirection(Velocity, CharacterPawn->GetControlRotation());
+	MovementDirection = CalculateDirection(Velocity, CharacterPawn->GetControlRotation());
 
 
 	//AimingDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
@@ -41,7 +41,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 	//
 	UPawnMovementComponent* CharacterMovement = CharacterPawn->GetMovementComponent();
 	if (validate(IsValid(CharacterMovement)) == false) return;
-	bCrouching = CharacterMovement->IsCrouching();
+	//bCrouching = CharacterMovement->IsCrouching();
 	bInAir = CharacterMovement->IsFalling();
 
 	//FRotator RotationDelta = CharacterPawn->GetControlRotation() - CharacterPawn->GetActorRotation();
@@ -68,5 +68,10 @@ void UCharacterAnimInstance::OnDeathAnimationEnd()
 void UCharacterAnimInstance::Die() {
 	AnimationState = EAnimationState::Dead;
 	
+}
+
+void UCharacterAnimInstance::SetCrouching(bool State)
+{
+	bCrouching = State;
 }
 

@@ -24,4 +24,11 @@ public:
 	bool MulticastSendMessage_Validate(const FText& Message, const FText& Sender);
 	void MulticastSendMessage_Implementation(const FText& Message, const FText& Sender);
 
+	UFUNCTION(Exec)
+	void StartGame();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SendStartCommand(const FString& Command);
+	bool SendStartCommand_Validate(const FString& Command);
+	void SendStartCommand_Implementation(const FString& Command);
 };

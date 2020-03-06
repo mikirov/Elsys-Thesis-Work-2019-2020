@@ -70,7 +70,14 @@ void UChatWidget::HandleOnTextCommitted(const FText& Text, ETextCommit::Type Com
 			PlayerState->ServerSendMessage(Text, FText::FromString(PlayerState->GetPlayerName()));
 
 		}
+		if (validate(IsValid(TextBox))) {
+			FText TextToSet;
+			TextBox->SetText(TextToSet);
+		}
 	}
+
+	if (validate(IsValid(ScrollBox)) == false) return;
+	ScrollBox->ScrollToEnd();
 }
 
 void UChatWidget::Close() {
@@ -100,14 +107,18 @@ void UChatWidget::Open()
 	UE_LOG(LogTemp, Warning, TEXT("UChatWidget::Open()"))
 
 	bOpen = true;
-	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
-
+	
 	APlayerController* PlayerController = Cast<APlayerController>(GetOwningPlayer());
 	if (validate(IsValid(PlayerController))) {
 		PlayerController->bShowMouseCursor = true;
 
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, TextBox);
-
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
 	}
+	PlayAnimation(OpenCloseAnimation, 0.0f, 1, EUMGSequencePlayMode::Reverse, 1.0f);
 
+	if (validate(IsValid(TextBox)) == false) return;
+	TextBox->SetKeyboardFocus();
+
+	if (validate(IsValid(ScrollBox)) == false) return;
+	ScrollBox->ScrollToEnd();
 }

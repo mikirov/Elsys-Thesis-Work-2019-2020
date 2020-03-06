@@ -21,7 +21,7 @@ protected:
 
 	//name of the map to be loaded as restart level
 	UPROPERTY(EditDefaultsOnly)
-	FName RestartLevelName;
+	FString ServerAddress;
 
 	//name of the main menu map
 	UPROPERTY(EditDefaultsOnly)

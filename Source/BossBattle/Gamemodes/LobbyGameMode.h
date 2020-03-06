@@ -17,11 +17,6 @@ class BOSSBATTLE_API ALobbyGameMode : public AGameModeBase
 
 private:
 
-	virtual void GetSeamlessTravelActorList
-	(
-		bool bToTransition,
-		TArray< AActor * > & ActorList
-	) override;
 
 	void BeginPlay() override;
 

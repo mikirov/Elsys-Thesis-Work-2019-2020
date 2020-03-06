@@ -22,6 +22,7 @@ public:
 
 protected:
 
+
 	void Logout(AController* Exiting) override;
 
 	void LoadLobby();

@@ -15,12 +15,8 @@ void UWinMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (RestartLevelName.IsNone()) {
-		RestartLevelName = FName("MainMap");
-	}
-
-	if (ServerAddress.IsNone()) {
-		ServerAddress = FName(TEXT("127.0.0.1")); // localhost
+	if (ServerAddress.IsEmpty()) {
+		ServerAddress = "185.20.159.64";
 	}
 
 	if (MainMenuLevelName == FName("")) {
@@ -62,16 +58,24 @@ void UWinMenuWidget::QuitGame()
 
 void UWinMenuWidget::RestartGame()
 {
-
+	if (validate(ServerAddress.Len() > 0) == false) return;
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
+	
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (validate(IsValid(PlayerController)) == false) return;
 
-	UGameplayStatics::OpenLevel(World, RestartLevelName);
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+	PlayerController->bShowMouseCursor = false;
+
+	PlayerController->ClientTravel(ServerAddress, ETravelType::TRAVEL_Absolute);
+
 }
 
 void UWinMenuWidget::LoadMainMenu()
 {
+	if (validate(MainMenuLevelName.ToString().Len() > 0) == false) return;
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 

@@ -9,13 +9,17 @@
 #include "Engine/DataTable.h"
 #include "UI/BattleHUD.h"
 #include "UI/PlayerStatsWidget.h"
+#include "TimerManager.h"
 
 #include "Gamemodes/BattleGameState.h"
 
 void AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* PlayerController)
 {
+
 	if (validate(IsValid(PlayerController)) == false) return;
 	CurrentPlayers--;
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* PlayerController) CurrentPlayers: %d"), CurrentPlayers)
+
 	if (CurrentPlayers == 0) {
 		LoadLobby();
 	}
@@ -27,6 +31,8 @@ void AMultiplayerGameMode::Logout(AController* Exiting)
 	Super::Logout(Exiting);
 	CurrentPlayers--;
 
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::Logout(AController* Exiting) CurrentPlayers: %d"), CurrentPlayers)
+
 	if (CurrentPlayers == 0) {
 		LoadLobby();
 	}
@@ -34,6 +40,8 @@ void AMultiplayerGameMode::Logout(AController* Exiting)
 
 void AMultiplayerGameMode::LoadLobby()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::LoadLobby()"))
+
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 	if (validate(LobbyMapName.Len() > 0) == false) return;
@@ -43,19 +51,29 @@ void AMultiplayerGameMode::LoadLobby()
 
 void AMultiplayerGameMode::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::BeginPlay()"))
+
 	Super::BeginPlay();
 	//bUseSeamlessTravel = true;
 }
 
 void AMultiplayerGameMode::WinGame()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::WinGame()"))
+
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(*Iterator);
 		if (validate(IsValid(Controller)) == false) return;
 
 		Controller->OnWinGame();
 	}
-	LoadLobby();
+	FTimerHandle RespawnTimerHandle; // not used anywhere
+	GetWorldTimerManager().SetTimer(
+		RespawnTimerHandle,
+		this,
+		&AMultiplayerGameMode::LoadLobby,
+		3.0f
+	);
 
 }
 
@@ -63,6 +81,7 @@ void AMultiplayerGameMode::WinGame()
 
 void AMultiplayerGameMode::UpdateHUDScore(int Score)
 {
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::UpdateHUDScore(int Score)"))
 
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(*Iterator);

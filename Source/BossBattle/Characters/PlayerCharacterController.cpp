@@ -43,23 +43,24 @@ void APlayerCharacterController::LoadWinLevel() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
 
-	validate(MapsFolderPath.Len() > 0);
 
-	if (validate(WinGameLevelName.Len() > 0) == false) { return; }
+	if (validate(WinGameLevelName.ToString().Len() > 0) == false) { return; }
 
-	World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
+	//World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
+
+	UGameplayStatics::OpenLevel(World, LoseGameLevelName);
 }
 
 
 void APlayerCharacterController::LoadLoseLevel()
 {
-	validate(MapsFolderPath.Len() > 0);
-
-	if (validate(LoseGameLevelName.Len() > 0) == false) { return; }
+	
+	if (validate(LoseGameLevelName.ToString().Len() > 0) == false) { return; }
 
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) { return; }
-	World->ServerTravel(MapsFolderPath + LoseGameLevelName, true);
+	//World->ServerTravel(MapsFolderPath + LoseGameLevelName, true);
+	UGameplayStatics::OpenLevel(World, LoseGameLevelName);
 }
 
 bool APlayerCharacterController::OnLoseGame_Validate() {
@@ -75,5 +76,13 @@ void APlayerCharacterController::OnLoseGame_Implementation() {
 	if (validate(IsValid(PlayerStatsWidget))) {
 		PlayerStatsWidget->SetLoseGame();
 	}
+
+	FTimerHandle RespawnTimerHandle; // not used anywhere
+	GetWorldTimerManager().SetTimer(
+		RespawnTimerHandle,
+		this,
+		&APlayerCharacterController::LoadWinLevel,
+		LoadEndLevelDelay
+	);
 
 }

@@ -64,6 +64,12 @@ protected:
 	UFUNCTION()
 	void PlayCameraShake();
 	
+	UFUNCTION()
+	void StartCrouch();
+
+	UFUNCTION()
+	void EndCrouch();
+
 	void BeginPlay() override;
 
 	void Die() override;
@@ -71,8 +77,6 @@ protected:
 	UFUNCTION()
 	void PickGun(class AGun* NewGun);
 
-	UFUNCTION()
-	void HandleCrouch();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);

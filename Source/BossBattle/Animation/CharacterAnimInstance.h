@@ -26,6 +26,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void Reload();
 
+	void SetCrouching(bool State);
+
 protected:
 
 

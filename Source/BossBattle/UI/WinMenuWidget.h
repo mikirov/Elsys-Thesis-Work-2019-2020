@@ -19,13 +19,10 @@ protected :
 	void NativeConstruct() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	FName ServerAddress;
+	FString ServerAddress;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevelName;
-
-	UPROPERTY(EditDefaultsOnly)
-	FName RestartLevelName;
 
 
 	UPROPERTY(meta = (BindWidget))

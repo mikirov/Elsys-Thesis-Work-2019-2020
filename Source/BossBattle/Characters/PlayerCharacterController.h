@@ -26,27 +26,24 @@ public:
 	bool OnLoseGame_Validate();
 	void OnLoseGame_Implementation();
 
-	void LoadWinLevel();
-
-	void LoadLoseLevel();
 
 
 
 protected:
 
+	float LoadEndLevelDelay = 3.0f;
+
+	void LoadWinLevel();
+
+	void LoadLoseLevel();
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bChatOpen = false;
 
 	UPROPERTY(EditDefaultsOnly)
-	FString MapsFolderPath;
+	FName WinGameLevelName;
 
 	UPROPERTY(EditDefaultsOnly)
-	FString WinGameLevelName;
-
-	UPROPERTY(EditDefaultsOnly)
-	FString LoseGameLevelName;
-
-	UPROPERTY(EditDefaultsOnly)
-	float LoadEndLevelDelay = 3.0f;
+	FName LoseGameLevelName;
 
 };

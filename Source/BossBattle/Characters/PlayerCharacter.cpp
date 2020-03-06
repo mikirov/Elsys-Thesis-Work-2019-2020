@@ -33,7 +33,8 @@
 #include "Weapons/Gun.h"
 #include "Components/EditableTextBox.h"
 #include "Components/WidgetComponent.h"
-
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/CharacterAnimInstance.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -69,6 +70,10 @@ APlayerCharacter::APlayerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
+
+
+	 // Initialise the can crouch property  
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 void APlayerCharacter::SetChat(class UChatWidget* ChatWidgetToSet) {
@@ -112,7 +117,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	
 	PlayerInputComponent->BindAction("OpenChat", IE_Pressed, this, &APlayerCharacter::OpenChat);
 
-	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::HandleCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::EndCrouch);
 
 	PlayerInputComponent->BindAction("Close", IE_Pressed, this, &APlayerCharacter::Close);
 }
@@ -189,7 +195,7 @@ void APlayerCharacter::OnDeathAnimationEnd()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
 	if (validate(IsValid(PlayerController)) == false) return;
-	PlayerController->LoadLoseLevel();
+	PlayerController->OnLoseGame();
 	Super::OnDeathAnimationEnd();
 }
 
@@ -200,14 +206,6 @@ void APlayerCharacter::PickGun(AGun* NewGun)
 	NewGun->OnFire.AddDynamic(this, &APlayerCharacter::PlayCameraShake);
 }
 
-void APlayerCharacter::HandleCrouch()
-{
-	UCharacterMovementComponent* PlayerCharacterMovementComponent = GetCharacterMovement();
-	if (validate(IsValid(PlayerCharacterMovementComponent)) == false) return;
-	bool bCrouching = PlayerCharacterMovementComponent->IsCrouching();
-
-	bCrouching ? UnCrouch() : Crouch();
-}
 
 void APlayerCharacter::PlayCameraShake() {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -223,6 +221,30 @@ void APlayerCharacter::PlayCameraShake() {
 
 }
 
+void APlayerCharacter::StartCrouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::StartCrouch()"))
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (validate(IsValid(Capsule))) {
+		Capsule->SetCapsuleHalfHeight(48.0f);
+	}
+	
+
+	CharacterAnimation->SetCrouching(true);
+}
+
+void APlayerCharacter::EndCrouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::EndCrouch"))
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (validate(IsValid(Capsule))) {
+		Capsule->SetCapsuleHalfHeight(96.0f);
+	}
+
+	CharacterAnimation->SetCrouching(false);
+
+}
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {

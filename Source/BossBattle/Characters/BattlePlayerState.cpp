@@ -3,7 +3,7 @@
 
 #include "BattlePlayerState.h"
 
-#include "UI/BattleHUD.h"
+#include "UI/ChatHUD.h"
 #include "UI/ChatWidget.h"
 #include "Utilities/CustomMacros.h"
 
@@ -28,13 +28,30 @@ void ABattlePlayerState::MulticastSendMessage_Implementation(const FText& Messag
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
 
-	ABattleHUD* HUD = Cast<ABattleHUD>(PlayerController->GetHUD());
+	AChatHUD* HUD = Cast<AChatHUD>(PlayerController->GetHUD());
 	if (validate(IsValid(HUD)) == false) return;
 
 	UChatWidget* ChatWidget = HUD->GetChatWidget();
 	if (validate(IsValid(ChatWidget)) == false) return;
 
 	ChatWidget->AddMessageWidget(Message, Sender);
+
+}
+
+void ABattlePlayerState::StartGame()
+{
+	SendStartCommand("StartGame");
+}
+
+bool ABattlePlayerState::SendStartCommand_Validate(const FString& Command)
+{
+	return true;
+}
+
+void ABattlePlayerState::SendStartCommand_Implementation(const FString& Command)
+{
+	UWorld* World = GetWorld();
+	if (validate(World) == false) return;
 
 }
 

@@ -16,8 +16,10 @@ void ULoseMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	RestartLevelName = FName(TEXT("MainMap"));
-
+	if (ServerAddress.IsEmpty()) {
+		ServerAddress = "185.20.159.64";
+	}
+	
 	MainMenuLevelName = FName(TEXT("MainMenu"));
 
 	if (validate(IsValid(RestartGameButton))) {
@@ -58,7 +60,7 @@ void ULoseMenuWidget::RestartGame()
 	
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
-	if (validate(RestartLevelName.ToString().Len() > 0) == false) { return; }
+	if (validate(ServerAddress.Len() > 0) == false) { return; }
 
 	APlayerController* PlayerController = World->GetFirstPlayerController();
 	if (validate(IsValid(PlayerController)) == false) return;
@@ -66,7 +68,8 @@ void ULoseMenuWidget::RestartGame()
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
 	PlayerController->bShowMouseCursor = false;
 
-	UGameplayStatics::OpenLevel(World, RestartLevelName);
+	PlayerController->ClientTravel(ServerAddress, ETravelType::TRAVEL_Absolute);
+
 }
 
 void ULoseMenuWidget::LoadMainMenu()
