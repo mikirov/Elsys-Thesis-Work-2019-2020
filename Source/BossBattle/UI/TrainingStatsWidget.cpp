@@ -26,13 +26,7 @@ void UTrainingStatsWidget::NativeConstruct()
 
 void UTrainingStatsWidget::Back()
 {
-	//APlayerController* PlayerController = GetOwningPlayer();
-	//if (validate(IsValid(PlayerController)) == false) { return; }
 
-	//AMainMenuHUD* MainMenuHUD = Cast<AMainMenuHUD>(PlayerController->GetHUD());
-	//if (validate(IsValid(MainMenuHUD)) == false) { return; }
-
-	//MainMenuHUD->LoadMainMenu();
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 

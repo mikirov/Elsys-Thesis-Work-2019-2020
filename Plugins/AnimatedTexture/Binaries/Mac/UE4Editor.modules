@@ -1,8 +1,0 @@
-{
-	"BuildId": "8386587",
-	"Modules": 
-	{
-		"AnimatedTexture": "UE4Editor-AnimatedTexture.dylib",
-		"AnimatedTextureEditor": "UE4Editor-AnimatedTextureEditor.dylib"
-	}
-}

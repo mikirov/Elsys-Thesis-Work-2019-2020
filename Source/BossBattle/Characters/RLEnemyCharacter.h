@@ -29,10 +29,12 @@ public:
 
 protected:
 
+	void OnDeathAnimationEnd() override;
+
+	void Destroyed() override;
+
 	UPROPERTY(EditDefaultsOnly)
 	class ASpawner* Spawner = nullptr;
-	
-	void Die() override;
 
 	virtual AActor* GetClosestEnemy();
 

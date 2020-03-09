@@ -40,15 +40,15 @@ void USettingsWidget::NativeConstruct() {
 		SaveSettings();
 	}
 
-	MainSettings.Add(FText::FromString("LOW"));
-	MainSettings.Add(FText::FromString("MEDIUM"));
-	MainSettings.Add(FText::FromString("HIGH"));
-	MainSettings.Add(FText::FromString("ULTRA"));
+	MainSettings.Add(FText::FromString("low"));
+	MainSettings.Add(FText::FromString("medium"));
+	MainSettings.Add(FText::FromString("high"));
+	MainSettings.Add(FText::FromString("ultra"));
 
-	FPSSettings.Add(FText::FromString("15Hz"));
-	FPSSettings.Add(FText::FromString("30Hz"));
-	FPSSettings.Add(FText::FromString("60Hz"));
-	FPSSettings.Add(FText::FromString("144Hz"));
+	FPSSettings.Add(FText::FromString("15hz"));
+	FPSSettings.Add(FText::FromString("30hz"));
+	FPSSettings.Add(FText::FromString("60hz"));
+	FPSSettings.Add(FText::FromString("144hz"));
 
 	GraphicalCommands.Add(FText::FromString("r.ScreenPercentage 25"));
 	GraphicalCommands.Add(FText::FromString("r.ScreenPercentage 50"));

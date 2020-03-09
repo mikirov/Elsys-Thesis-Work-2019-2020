@@ -8,7 +8,7 @@
 #include <limits>
 #include "Engine/World.h"
 #include "TimerManager.h"
-
+#include "GameFramework/Actor.h"
 
 #include "Utilities/CustomMacros.h"
 #include "Characters/AIEnemyCharacter.h"
@@ -16,6 +16,7 @@
 
 AActor* ARLTrainingCharacter::GetClosestEnemy()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingCharacter::GetClosestEnemy()"))
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return nullptr;
 
@@ -24,9 +25,11 @@ AActor* ARLTrainingCharacter::GetClosestEnemy()
 
 	float CurrentDistance = std::numeric_limits<float>::max();
 	AActor* ChosenActor = nullptr;
-	for (auto& Actor : OutActors) {
-		
-		float DistanceToActor = FVector::Dist(Actor->GetActorLocation(), GetActorLocation());
+	for (AActor* Actor : OutActors) {
+		AAIEnemyCharacter* AICharacter = Cast<AAIEnemyCharacter>(Actor);
+		if (validate(IsValid(AICharacter)) == false) return nullptr;
+
+		float DistanceToActor = FVector::Dist(AICharacter->GetActorLocation(), this->GetActorLocation());
 		if (DistanceToActor < CurrentDistance) {
 			ChosenActor = Actor;
 			CurrentDistance = DistanceToActor;
@@ -37,10 +40,11 @@ AActor* ARLTrainingCharacter::GetClosestEnemy()
 
 }
 
-void ARLTrainingCharacter::Die()
-{
-	Super::Die();
 
+
+void ARLTrainingCharacter::OnDeathAnimationEnd()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARLTrainingCharacter::OnDeathAnimationEnd"));
 	if (HasAuthority()) {
 		UWorld* World = GetWorld();
 		if (validate(IsValid(World)) == false) { return; }
@@ -56,4 +60,17 @@ void ARLTrainingCharacter::Die()
 			return;
 		}
 	}
+	//Destroy();
+	Super::OnDeathAnimationEnd();
 }
+
+void ARLTrainingCharacter::Destroyed()
+{
+	Super::Destroyed();
+}
+
+void ARLTrainingCharacter::Die()
+{
+	Super::Die();
+}
+

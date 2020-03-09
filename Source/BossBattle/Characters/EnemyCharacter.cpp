@@ -43,6 +43,7 @@ bool AEnemyCharacter::IsOnCriticalHealth()
 
 void AEnemyCharacter::Die()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AEnemyCharacter::Die()"))
 	Super::Die();
 
 	if (HasAuthority()) {
@@ -78,6 +79,16 @@ void AEnemyCharacter::Die()
 
 void AEnemyCharacter::ClearTakingDamage() {
 	bTakingDamage = false;
+}
+
+void AEnemyCharacter::OnDeathAnimationEnd()
+{
+	Super::OnDeathAnimationEnd();
+}
+
+void AEnemyCharacter::Destroyed()
+{
+	Super::Destroyed();
 }
 
 void AEnemyCharacter::OnTakingDamage(float CurrentHealth)

@@ -12,15 +12,6 @@ void ARLGameController::Tick(float DeltaTime)
 {
 	if (bPossessed == false) return;
 
-	//only take an action every FrameCount frames
-	if (CurrentFrame != FrameCount) {
-		CurrentFrame++;
-		return;
-	}
-	else {
-		CurrentFrame = 0;
-	}
-
 	Super::Tick(DeltaTime);
 
 	CurrentStateIndex = GetState();

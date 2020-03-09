@@ -23,6 +23,8 @@ public:
 	
 protected:
 
+	float TimeAlive = 0.0f;
+
 	//updates the action and episode values
 	void UpdateStepAndEpisode();
 
@@ -64,25 +66,30 @@ protected:
 	//reward the character receives for dying
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	float DeathReward = -1.0f;
+	
+	//multiplier
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
+	float CriticalHealthRewardMultiplier = 3;
 
 	//reward for dealing damage to the enemy
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
-	float DealingDamageReward = 0.1f;
+	float DealingDamageReward = 0.5f;	
+	
+	//reward for dealing damage to the enemy
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
+	float AliveReward = 0.5f;
 
 	//reward for taking damage
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
-	float TakingDamageReward = -0.1f;
+	float TakingDamageReward = -0.5f;
 
 	//random action chance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Epsilon = 0.1f;
+	float Epsilon = 0.25f;
 
 	//whether or not the character should take a random action
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
 	bool bRandomAction = false;
-
-	//UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
-	//float NextStateActionValue = 0.0f;
 
 	//discount factor for the future expected rewards
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
@@ -90,5 +97,5 @@ protected:
 
 	//rate at which the action values in the QTable get updated
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "RL Character")
-	float LearningRate = 0.1f;
+	float LearningRate = 0.2f;
 };

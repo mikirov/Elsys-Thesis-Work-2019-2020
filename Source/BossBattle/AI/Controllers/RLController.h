@@ -57,12 +57,6 @@ protected:
 	//number of states of the game
 	int StateCount = 8; // current number of states
 
-	//number of frames to wait to do a certain action
-	UPROPERTY(BlueprintReadWrite)
-	int FrameCount = 1;
-
-	//current waiting frame
-	int CurrentFrame = 0;
 	
 	//index of the current state
 	UPROPERTY(BlueprintReadOnly)

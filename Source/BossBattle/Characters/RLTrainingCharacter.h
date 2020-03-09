@@ -17,5 +17,9 @@ class BOSSBATTLE_API ARLTrainingCharacter : public ARLEnemyCharacter
 protected:
 	AActor* GetClosestEnemy() override;
 	
+	void OnDeathAnimationEnd() override;
+
+	void Destroyed() override;
+
 	void Die() override;
 };

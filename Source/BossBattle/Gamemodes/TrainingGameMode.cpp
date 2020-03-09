@@ -35,6 +35,8 @@ void ATrainingGameMode::BeginPlay()
 
 	}
 
+	CurrentEnemies = 4; // quickfix
+
 
 }
 
@@ -56,14 +58,22 @@ void ATrainingGameMode::ResetCharacters() {
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return;
 
-	Spawner->SpawnEnemy(RLEnemyTemplate, 1);
-
+	
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(World, AAIEnemyCharacter::StaticClass(), OutActors);
 	for (auto& Actor : OutActors) {
 		AAIEnemyCharacter* AIEnemy = Cast<AAIEnemyCharacter>(Actor);
+		if (validate(IsValid(AIEnemy)) == false) continue;
 		AIEnemy->Destroy();
 	}
+
+	ARLTrainingCharacter* RLCharacter =  Cast<ARLTrainingCharacter>(UGameplayStatics::GetActorOfClass(World, ARLEnemyCharacter::StaticClass()));
+	if (validate(IsValid(RLCharacter))) {
+		RLCharacter->Destroy();
+	}
+
+	Spawner->SpawnEnemy(RLEnemyTemplate, 1);
+
 
 	for (FTransform InitialTransform : InitialTransforms) {
 
@@ -72,6 +82,7 @@ void ATrainingGameMode::ResetCharacters() {
 		World->SpawnActor<AAIEnemyCharacter>(AIEnemyTemplate, InitialTransform, SpawnParameters);
 
 	}
+	CurrentEnemies = 4;
 	
 	
 }

@@ -70,9 +70,15 @@ void ARLEnemyCharacter::FocusOnEnemy() {
 	RLController->SetControlRotation(FRotator(0, LookAtRotation.Yaw, 0));
 }
 
-void ARLEnemyCharacter::Die()
+
+void ARLEnemyCharacter::OnDeathAnimationEnd()
 {
-	Super::Die();
+	Super::OnDeathAnimationEnd();
+}
+
+void ARLEnemyCharacter::Destroyed()
+{
+	Super::Destroyed();
 }
 
 AActor* ARLEnemyCharacter::GetClosestEnemy()

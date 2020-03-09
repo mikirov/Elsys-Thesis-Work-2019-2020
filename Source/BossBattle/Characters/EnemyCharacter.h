@@ -31,6 +31,10 @@ public:
 
 protected:
 
+	void OnDeathAnimationEnd() override;
+
+	void Destroyed() override;
+
 	// Is the character dead?
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy Character")
 	bool bDead = false;

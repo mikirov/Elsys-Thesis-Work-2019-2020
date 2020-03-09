@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 #include "Characters/HealthComponent.h"
@@ -20,7 +21,7 @@
 #include "Utilities/Action.h"
 #include "Characters/AIEnemyCharacter.h"
 #include "AI/Controllers/EnemyAIController.h"
-
+#include "Utilities/TrainingSaveGame.h"
 
 
 void ARLTrainingController::UpdateStepAndEpisode()
@@ -42,6 +43,34 @@ void ARLTrainingController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	SerializeTable(QTable);
 
+	ShowTable(QTable);
+
+	UTrainingSaveGame* SaveGameInstance = Cast<UTrainingSaveGame>(UGameplayStatics::CreateSaveGameObject(UTrainingSaveGame::StaticClass()));
+	if (validate(IsValid(SaveGameInstance)) == false) return;
+
+	// Set data on the savegame object.
+	SaveGameInstance->TakingDamageReward = TakingDamageReward;
+	SaveGameInstance->DealingDamageReward = DealingDamageReward;
+	SaveGameInstance->KillReward = KillReward;
+	SaveGameInstance->DeathReward = DeathReward;
+	SaveGameInstance->Epsilon = Epsilon;
+	SaveGameInstance->LearningRate = LearningRate;
+	SaveGameInstance->AliveReward = AliveReward;
+	SaveGameInstance->CriticalHealthRewardMultiplier = CriticalHealthRewardMultiplier;
+
+
+	FString SaveSlotName = "Training";
+	// Save the data immediately.
+	if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0)"))
+			// Save succeeded.
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, 0) == false"))
+
+	}
+
 	Super::EndPlay(EndPlayReason);
 
 }
@@ -53,17 +82,52 @@ float ARLTrainingController::GetReward()
 	UWorld* World = GetWorld();
 	if (validate(IsValid(World)) == false) return 0.0f;
 
-	AAIEnemyCharacter* AICharacter = Cast<AAIEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass()));
-	if (validate(IsValid(AICharacter)) == false) return 0.0f;
+	//AAIEnemyCharacter* AICharacter = Cast<AAIEnemyCharacter>(UGameplayStatics::GetActorOfClass(World, AAIEnemyCharacter::StaticClass()));
+	//if (validate(IsValid(AICharacter)) == false) return 0.0f;
+	
+	bool bHittingAICharacter = false;
+	bool bKilledAICharacter = false;
+	bDealingDamage = false;
 
-	bool bHittingAICharacter = AICharacter->IsTakingDamage();
-	bool bKilledAICharacter = AICharacter->IsDead();
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(World, AAIEnemyCharacter::StaticClass(), OutActors);
+	for (AActor* Actor : OutActors) {
+		AAIEnemyCharacter* AICharacter = Cast<AAIEnemyCharacter>(Actor);
+		if (validate(IsValid(AICharacter)) == false) return 0.0f;
+
+		if (AICharacter->IsTakingDamage()) {
+			bHittingAICharacter = true;
+			bDealingDamage = true;
+		}
+		if (AICharacter->IsDead()) {
+			bKilledAICharacter = true;
+		}
+	}
+
+	
+	bDealingDamage = bHittingAICharacter;
 
 	ARLEnemyCharacter* RLCharacter = Cast<ARLEnemyCharacter>(GetPawn());
 	if (validate(IsValid(RLCharacter)) == false) return 0.0f;
 
-	float Reward = bKilledAICharacter ? KillReward : (RLCharacter->IsDead() ? DeathReward : (RLCharacter->IsTakingDamage() ? TakingDamageReward : (bHittingAICharacter ? DealingDamageReward : 0.0f)));
+	float Reward = 0.0f;
+	if (bKilledAICharacter) {
+		Reward += KillReward;
+	}
+	if (RLCharacter->IsDead()) {
+		Reward += DeathReward;
+	}
+	if (RLCharacter->IsTakingDamage()) {
+		Reward += TakingDamageReward;
+	}
+	if (bHittingAICharacter) {
+		Reward += DealingDamageReward;
+	}
 
+	if (RLCharacter->IsOnCriticalHealth()) {
+		Reward += (TimeAlive * AliveReward * CriticalHealthRewardMultiplier);
+	}
 	return Reward;
 }
 
@@ -79,6 +143,8 @@ void ARLTrainingController::ResetTable()
 	}
 
 	SerializeTable(QTable);
+
+	ShowTable(QTable);
 }
 
 
@@ -88,6 +154,20 @@ void ARLTrainingController::OnPossess(APawn* InPawn)
 
 	Super::OnPossess(InPawn);
 
+	FString SaveSlotName = "Training";
+
+	UTrainingSaveGame* LoadedGame = Cast<UTrainingSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+	if (validate(LoadedGame) != false) {
+		TakingDamageReward = LoadedGame->TakingDamageReward;
+		DealingDamageReward = LoadedGame->DealingDamageReward;
+		KillReward = LoadedGame->KillReward;
+		AliveReward = LoadedGame->AliveReward;
+		DeathReward = LoadedGame->DeathReward;
+		Epsilon = LoadedGame->Epsilon;
+		LearningRate = LoadedGame->LearningRate;
+		CriticalHealthRewardMultiplier = LoadedGame->CriticalHealthRewardMultiplier;
+	}
+
 	//ShowTable(QTable);
 
 }
@@ -96,16 +176,11 @@ void ARLTrainingController::OnPossess(APawn* InPawn)
 void ARLTrainingController::Tick(float DeltaTime)
 {
 
+	
 	if (bPossessed == false) return;
 
-	//only take an action every FrameCount frames
-	if (CurrentFrame != FrameCount) {
-		CurrentFrame++;
-		return;
-	}
-	else {
-		CurrentFrame = 0;
-	}
+	TimeAlive += DeltaTime;
+
 
 	Super::Tick(DeltaTime);
 
@@ -146,7 +221,7 @@ void ARLTrainingController::Tick(float DeltaTime)
 
 	QTable[PreviousStateIndex][PreviousActionIndex] = PreviousActionValue;
 
-	ShowTable(QTable);
+	//ShowTable(QTable);
 
 	//taking the current action
 	TakeAction(CurrentActionIndex);

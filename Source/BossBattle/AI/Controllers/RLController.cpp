@@ -43,8 +43,8 @@ void ARLController::OnPossess(APawn* InPawn)
 	Actions.push_back(new MoveRightAction(RLCharacter));
 	Actions.push_back(new FocusOnEnemyAction(RLCharacter));
 	Actions.push_back(new ShootEnemyAction(RLCharacter));
-	Actions.push_back(new InteractAction(RLCharacter));
-	Actions.push_back(new ReloadAction(RLCharacter));
+	//Actions.push_back(new InteractAction(RLCharacter));
+	//Actions.push_back(new ReloadAction(RLCharacter));
 
 	QTable = new float*[StateCount];
 
@@ -55,7 +55,7 @@ void ARLController::OnPossess(APawn* InPawn)
 		}
 	}
 
-	ShowTable(QTable);
+	//ShowTable(QTable);
 
 	bPossessed = true;
 

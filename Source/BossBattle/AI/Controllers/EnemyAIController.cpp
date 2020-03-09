@@ -2,7 +2,6 @@
 
 
 #include "EnemyAIController.h"
-#include "Perception/AIPerceptionComponent.h"
 
 #include "../../Utilities/CustomMacros.h"
 

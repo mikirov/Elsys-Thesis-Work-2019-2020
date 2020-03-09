@@ -98,6 +98,7 @@ FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 
 void ABattleCharacter::OnDeathAnimationEnd()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::OnDeathAnimationEnd"))
 	Destroy();
 }
 
@@ -123,6 +124,8 @@ void ABattleCharacter::Die()
 
 void ABattleCharacter::Destroyed()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::Destroyed()"))
 	Super::Destroyed();
 
 	if (IsValid(Gun)) {

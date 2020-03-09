@@ -48,7 +48,7 @@ void APlayerCharacterController::LoadWinLevel() {
 
 	//World->ServerTravel(MapsFolderPath + WinGameLevelName, true);
 
-	UGameplayStatics::OpenLevel(World, LoseGameLevelName);
+	UGameplayStatics::OpenLevel(World, WinGameLevelName);
 }
 
 
@@ -81,7 +81,7 @@ void APlayerCharacterController::OnLoseGame_Implementation() {
 	GetWorldTimerManager().SetTimer(
 		RespawnTimerHandle,
 		this,
-		&APlayerCharacterController::LoadWinLevel,
+		&APlayerCharacterController::LoadLoseLevel,
 		LoadEndLevelDelay
 	);
 
