@@ -221,30 +221,6 @@ void APlayerCharacter::PlayCameraShake() {
 
 }
 
-void APlayerCharacter::StartCrouch()
-{
-	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::StartCrouch()"))
-
-	UCapsuleComponent* Capsule = GetCapsuleComponent();
-	if (validate(IsValid(Capsule))) {
-		Capsule->SetCapsuleHalfHeight(48.0f);
-	}
-	
-
-	CharacterAnimation->SetCrouching(true);
-}
-
-void APlayerCharacter::EndCrouch()
-{
-	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::EndCrouch"))
-	UCapsuleComponent* Capsule = GetCapsuleComponent();
-	if (validate(IsValid(Capsule))) {
-		Capsule->SetCapsuleHalfHeight(96.0f);
-	}
-
-	CharacterAnimation->SetCrouching(false);
-
-}
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {

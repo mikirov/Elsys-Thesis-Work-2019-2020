@@ -23,8 +23,11 @@ EBTNodeResult::Type UBTTask_AimTowards::ExecuteTask(UBehaviorTreeComponent& Owne
 	
 	FVector TargetLocation = TargetCharacter->GetActorLocation();
 	if (IsValid(TargetCharacter)) {
-		float EyeHeight = TargetCharacter->bIsCrouched ? TargetCharacter->CrouchedEyeHeight : TargetCharacter->BaseEyeHeight;
-		TargetLocation += FVector(0, 0, EyeHeight);	
+
+		if (TargetCharacter->IsCrouching()) {
+			TargetLocation -= FVector(0, 0, 24);
+
+		}
 	}
 
 	FRotator LookAtRotation = AICharacter->GetAimAtRotation(TargetLocation);

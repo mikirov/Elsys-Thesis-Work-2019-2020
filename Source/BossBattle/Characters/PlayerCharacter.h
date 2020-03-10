@@ -19,7 +19,9 @@ public:
 
 	AGun* GetGun();
 
+
 protected:
+
 
 
 	UFUNCTION()
@@ -64,12 +66,6 @@ protected:
 	UFUNCTION()
 	void PlayCameraShake();
 	
-	UFUNCTION()
-	void StartCrouch();
-
-	UFUNCTION()
-	void EndCrouch();
-
 	void BeginPlay() override;
 
 	void Die() override;

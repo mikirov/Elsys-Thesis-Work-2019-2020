@@ -50,6 +50,39 @@ ABattleCharacter::ABattleCharacter()
 	
 }
 
+bool ABattleCharacter::IsCrouching() {
+	return bCrouching;
+}
+
+void ABattleCharacter::StartCrouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::StartCrouch()"))
+
+		UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (validate(IsValid(Capsule))) {
+		Capsule->SetCapsuleHalfHeight(48.0f);
+	}
+
+	bCrouching = true;
+	CharacterAnimation->SetCrouching(true);
+}
+
+void ABattleCharacter::EndCrouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::EndCrouch"))
+		UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (validate(IsValid(Capsule))) {
+		Capsule->SetCapsuleHalfHeight(96.0f);
+	}
+
+
+	bCrouching = false;
+
+	CharacterAnimation->SetCrouching(false);
+
+}
+
+
 // Called when the game starts or when spawned
 void ABattleCharacter::BeginPlay()
 {

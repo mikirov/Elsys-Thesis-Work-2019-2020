@@ -61,10 +61,20 @@ public:
 
 	bool IsDead();
 	
+	UFUNCTION()
+	void StartCrouch();
+
+	UFUNCTION()
+	void EndCrouch();
+
+
 	class UHealthComponent* GetHealthComponent();
+
+	bool IsCrouching();
 
 protected:
 
+	bool bCrouching = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gun")
 	TSubclassOf<class AGun> StartingGunTemplate = nullptr;
