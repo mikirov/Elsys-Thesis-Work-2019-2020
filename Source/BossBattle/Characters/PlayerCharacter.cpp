@@ -117,8 +117,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	
 	PlayerInputComponent->BindAction("OpenChat", IE_Pressed, this, &APlayerCharacter::OpenChat);
 
-	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouch);
-	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::EndCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::ServerStartCrouching);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::ServerStopCrouching);
 
 	PlayerInputComponent->BindAction("Close", IE_Pressed, this, &APlayerCharacter::Close);
 }

@@ -33,22 +33,9 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 	MovementDirection = CalculateDirection(Velocity, CharacterPawn->GetControlRotation());
 
 
-	//AimingDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
-	//AimingDirection = FCustomUtilities::NormalizeFloatAsRotationValue(AimingDirection);
-	//
-	//MovementDirection = (Velocity.Rotation() - CharacterPawn->GetControlRotation()).Yaw;
-	//MovementDirection = FCustomUtilities::NormalizeFloatAsRotationValue(MovementDirection);
-	//
 	UPawnMovementComponent* CharacterMovement = CharacterPawn->GetMovementComponent();
 	if (validate(IsValid(CharacterMovement)) == false) return;
-	//bCrouching = CharacterMovement->IsCrouching();
 	bInAir = CharacterMovement->IsFalling();
-
-	//FRotator RotationDelta = CharacterPawn->GetControlRotation() - CharacterPawn->GetActorRotation();
-	//RotationDelta = FCustomUtilities::GetStandardUnrealRotation(RotationDelta);
-
-	//AimOffsetVertical = RotationDelta.Pitch;
-	//AimOffsetHorizontal = FMath::Clamp(RotationDelta.Yaw, AimOffsetLowerLimit, AimOffsetUpperLimit);
 }
 
 

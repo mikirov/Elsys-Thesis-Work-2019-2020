@@ -129,6 +129,11 @@ FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 }
 
 
+void ABattleCharacter::ServerStopCrouching_Implementation()
+{
+	MulticastStopCrouching();
+}
+
 void ABattleCharacter::OnDeathAnimationEnd()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::OnDeathAnimationEnd"))
@@ -343,6 +348,26 @@ void ABattleCharacter::MulticastStartReloading_Implementation()
 	StartReloading();
 }
 
+void ABattleCharacter::MulticastStartCrouching_Implementation()
+{
+	StartCrouch();
+}
+
+void ABattleCharacter::MulticastStopCrouching_Implementation()
+{
+	EndCrouch();
+}
+
+bool ABattleCharacter::MulticastStopCrouching_Validate()
+{
+	return true;
+}
+
+bool ABattleCharacter::MulticastStartCrouching_Validate()
+{
+	return true;
+}
+
 bool ABattleCharacter::MulticastStartReloading_Validate() {
 	return true;
 }
@@ -363,6 +388,21 @@ void ABattleCharacter::ServerInteractWithWeapon_Implementation()
 	InteractWithWeapon();
 }
 
+
+bool ABattleCharacter::ServerStartCrouching_Validate()
+{
+	return true;
+}
+
+void ABattleCharacter::ServerStartCrouching_Implementation()
+{
+	MulticastStartCrouching();
+}
+
+bool ABattleCharacter::ServerStopCrouching_Validate()
+{
+	return true;
+}
 
 bool ABattleCharacter::ServerInteractWithWeapon_Validate()
 {

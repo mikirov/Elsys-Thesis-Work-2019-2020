@@ -51,6 +51,18 @@ public:
 	bool ServerInteractWithWeapon_Validate();
 	void ServerInteractWithWeapon_Implementation();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStartCrouching();
+	bool ServerStartCrouching_Validate();
+	void ServerStartCrouching_Implementation();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStopCrouching();
+	bool ServerStopCrouching_Validate();
+	void ServerStopCrouching_Implementation();
+
+
+
 	virtual void OnDeathAnimationEnd();
 
 	void FinishReloading();
@@ -122,6 +134,17 @@ protected:
 	void MulticastStartReloading();
 	bool MulticastStartReloading_Validate();
 	void MulticastStartReloading_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void MulticastStartCrouching();
+	bool MulticastStartCrouching_Validate();
+	void MulticastStartCrouching_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void MulticastStopCrouching();
+	bool MulticastStopCrouching_Validate();
+	void MulticastStopCrouching_Implementation();
+
 
 	void StartReloading();
 
