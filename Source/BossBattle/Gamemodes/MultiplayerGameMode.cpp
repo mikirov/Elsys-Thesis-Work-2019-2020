@@ -20,10 +20,14 @@ void AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* Playe
 	CurrentPlayers--;
 	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* PlayerController) CurrentPlayers: %d"), CurrentPlayers)
 
+	Super::OnPlayerDeath(PlayerController);
+
+
 	if (CurrentPlayers == 0) {
+		UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath:LoadLobby();")
+
 		LoadLobby();
 	}
-	Super::OnPlayerDeath(PlayerController);
 }
 
 void AMultiplayerGameMode::Logout(AController* Exiting)
@@ -61,20 +65,20 @@ void AMultiplayerGameMode::WinGame()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::WinGame()"))
 
+	
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(*Iterator);
 		if (validate(IsValid(Controller)) == false) return;
 
+		UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::Controller->OnWinGame();"))
+
 		Controller->OnWinGame();
 	}
-	FTimerHandle RespawnTimerHandle; // not used anywhere
-	GetWorldTimerManager().SetTimer(
-		RespawnTimerHandle,
-		this,
-		&AMultiplayerGameMode::LoadLobby,
-		3.0f
-	);
 
+	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::AMultiplayerGameMode::LoadLobby"))
+
+	FTimerManager TimerManager;
+	GetWorldTimerManager().SetTimer(TimerManager, AMultiplayerGameMode::LoadLobby(), 3.0f, false);
 }
 
 
