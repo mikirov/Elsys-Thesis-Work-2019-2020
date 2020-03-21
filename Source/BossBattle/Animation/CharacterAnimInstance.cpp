@@ -7,9 +7,11 @@
 #include "Math/UnrealMathUtility.h"
 #include "UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
+
 #include "TimerManager.h"
 #include "Engine/World.h"
 
+#include "Animation/AnimMontage.h"
 #include "Characters/BattleCharacter.h"
 #include "Utilities/CustomMacros.h"
 #include "Utilities/CustomUtilities.h"
@@ -24,15 +26,10 @@ void UCharacterAnimInstance::NativeInitializeAnimation() {
 
 void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 	Super::NativeUpdateAnimation(DeltaTimeX);
-
 	if (validate(IsValid(CharacterPawn)) == false) { return; }
-
 	FVector Velocity = CharacterPawn->GetVelocity();
 	Speed = Velocity.Size();
-
 	MovementDirection = CalculateDirection(Velocity, CharacterPawn->GetControlRotation());
-
-
 	UPawnMovementComponent* CharacterMovement = CharacterPawn->GetMovementComponent();
 	if (validate(IsValid(CharacterMovement)) == false) return;
 	bInAir = CharacterMovement->IsFalling();
@@ -47,18 +44,32 @@ void UCharacterAnimInstance::OnReloadFinished()
 
 void UCharacterAnimInstance::OnDeathAnimationEnd()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::OnDeathAnimationEnd"))
 	if (validate(IsValid(CharacterPawn)) == false) return;
 	CharacterPawn->OnDeathAnimationEnd();
 
 }
 
 void UCharacterAnimInstance::Die() {
+	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::Die"))
 	AnimationState = EAnimationState::Dead;
 	
 }
 
+
 void UCharacterAnimInstance::SetCrouching(bool State)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::SetCrouching"))
 	bCrouching = State;
+}
+
+void UCharacterAnimInstance::SetReloading(bool State) {
+	if (State) {
+		PreviousState = AnimationState;
+		AnimationState = EAnimationState::Reloading;
+	}
+	else {
+		AnimationState = PreviousState;
+	}
 }
 

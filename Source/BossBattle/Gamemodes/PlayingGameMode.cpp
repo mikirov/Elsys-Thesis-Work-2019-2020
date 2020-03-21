@@ -148,9 +148,7 @@ TArray<class APlayerCharacterController*> APlayingGameMode::GetPlayerControllers
 
 void APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)
 {
-
 	UE_LOG(LogTemp, Warning, TEXT("APlayingGameMode::OnPlayerDeath(APlayerCharacterController* PlayerController)"))
 	PlayerController->OnLoseGame();
-	
 }
 

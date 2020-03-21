@@ -168,8 +168,6 @@ void ARLTrainingController::OnPossess(APawn* InPawn)
 		CriticalHealthRewardMultiplier = LoadedGame->CriticalHealthRewardMultiplier;
 	}
 
-	//ShowTable(QTable);
-
 }
 
 //we will use the tick method for every step 

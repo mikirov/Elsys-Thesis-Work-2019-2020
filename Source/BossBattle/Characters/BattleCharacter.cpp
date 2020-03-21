@@ -112,6 +112,7 @@ void ABattleCharacter::Move(FVector Direction) {
 	AddMovementInput(Direction);
 }
 
+
 FRotator ABattleCharacter::GetAimAtRotation(FVector TargetLocation) {
 	
 	if (validate(IsValid(Gun)) == false) { return FRotator(0, 0, 0); }
@@ -272,7 +273,8 @@ void ABattleCharacter::StartReloading()
 	if (validate(IsValid(Gun)) == false) { return; }
 
 	bReloadingAllowed = false;
-	CharacterAnimation->Reload();
+
+	CharacterAnimation->SetReloading(true);
 }
 
 void ABattleCharacter::FinishReloading()
@@ -280,7 +282,7 @@ void ABattleCharacter::FinishReloading()
 	if (validate(IsValid(Gun)) == false) return;
 
 	bReloadingAllowed = true;
-	Gun->FinishReload();
+	CharacterAnimation->SetReloading(false);
 }
 
 
@@ -304,6 +306,7 @@ void ABattleCharacter::SpawnStartingGun()
 
 
 void ABattleCharacter::ServerStartFiring_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerStartFiring_Implementation"))
 	StartFiring();
 }
 
@@ -314,6 +317,7 @@ bool ABattleCharacter::ServerStartFiring_Validate()
 }
 
 void ABattleCharacter::ServerStopFiring_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerStopFiring_Implementation"))
 	StopFiring();
 }
 
@@ -325,7 +329,17 @@ bool ABattleCharacter::ServerStopFiring_Validate()
 
 void ABattleCharacter::ServerStartReloading_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerStartReloading_Implementation"))
 	MulticastStartReloading();
+
+
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABattleCharacter::UpdateGun, 2.16666, false);
+
+
+	FTimerHandle TimerHandle2;
+	GetWorldTimerManager().SetTimer(TimerHandle2, this, &ABattleCharacter::ServerFinishReloading, 2.16666, false);
+
 }
 
 bool ABattleCharacter::ServerStartReloading_Validate()
@@ -335,6 +349,7 @@ bool ABattleCharacter::ServerStartReloading_Validate()
 
 void ABattleCharacter::ServerFinishReloading_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerFinishReloading_Implementation"));
 	MulticastFinishReloading();
 }
 
@@ -345,16 +360,21 @@ bool ABattleCharacter::ServerFinishReloading_Validate()
 
 void ABattleCharacter::MulticastStartReloading_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::MulticastStartReloading_Implementation"))
 	StartReloading();
 }
 
 void ABattleCharacter::MulticastStartCrouching_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::MulticastStartCrouching_Implementation"))
+
 	StartCrouch();
 }
 
 void ABattleCharacter::MulticastStopCrouching_Implementation()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::MulticastStopCrouching_Implementation"))
 	EndCrouch();
 }
 
@@ -375,7 +395,16 @@ bool ABattleCharacter::MulticastStartReloading_Validate() {
 
 void ABattleCharacter::MulticastFinishReloading_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::MulticastFinishReloading_Implementation"))
 	FinishReloading();
+}
+
+void ABattleCharacter::UpdateGun()
+{
+	if (validate(IsValid(Gun)) == false) return;
+	if (HasAuthority() == false) return;
+	Gun->FinishReload();
+
 }
 
 bool ABattleCharacter::MulticastFinishReloading_Validate()
@@ -385,6 +414,7 @@ bool ABattleCharacter::MulticastFinishReloading_Validate()
 
 void ABattleCharacter::ServerInteractWithWeapon_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerInteractWithWeapon_Implementation"))
 	InteractWithWeapon();
 }
 
@@ -396,6 +426,7 @@ bool ABattleCharacter::ServerStartCrouching_Validate()
 
 void ABattleCharacter::ServerStartCrouching_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::ServerStartCrouching_Implementation"))
 	MulticastStartCrouching();
 }
 

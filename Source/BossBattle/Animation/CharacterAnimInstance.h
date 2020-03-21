@@ -9,6 +9,7 @@
 UENUM()
 enum class EAnimationState : uint8 {
 	Walking,
+	Reloading,
 	Dead
 };
 
@@ -23,13 +24,16 @@ class BOSSBATTLE_API UCharacterAnimInstance : public UAnimInstance
 public:
 	void Die();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Reload();
+	void SetReloading(bool State);
 
 	void SetCrouching(bool State);
 
+
 protected:
 
+
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* ReloadMontage = nullptr;
 
 	void NativeInitializeAnimation() override;
 
@@ -62,11 +66,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	float Speed = 0;
 	
-	//UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	//float Direction = 0;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	EAnimationState AnimationState = EAnimationState::Walking;
+
+	EAnimationState PreviousState = EAnimationState::Walking;
 
 	UFUNCTION(BlueprintCallable)
 	void OnDeathAnimationEnd();

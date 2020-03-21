@@ -17,17 +17,17 @@ void AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* Playe
 {
 
 	if (validate(IsValid(PlayerController)) == false) return;
-	CurrentPlayers--;
+	//CurrentPlayers--;
 	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath(class APlayerCharacterController* PlayerController) CurrentPlayers: %d"), CurrentPlayers)
 
 	Super::OnPlayerDeath(PlayerController);
 
 
-	if (CurrentPlayers == 0) {
-		UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath:LoadLobby();")
+	//if (CurrentPlayers == 0) {
+	//	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::OnPlayerDeath:LoadLobby()"))
 
-		LoadLobby();
-	}
+	//	LoadLobby();
+	//}
 }
 
 void AMultiplayerGameMode::Logout(AController* Exiting)
@@ -77,8 +77,8 @@ void AMultiplayerGameMode::WinGame()
 
 	UE_LOG(LogTemp, Warning, TEXT("AMultiplayerGameMode::AMultiplayerGameMode::LoadLobby"))
 
-	FTimerManager TimerManager;
-	GetWorldTimerManager().SetTimer(TimerManager, AMultiplayerGameMode::LoadLobby(), 3.0f, false);
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AMultiplayerGameMode::LoadLobby, 3.0f, false);
 }
 
 

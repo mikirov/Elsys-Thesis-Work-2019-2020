@@ -10,6 +10,10 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Engine/World.h"
+#include "UI/BattleHUD.h"
+#include "Characters/PlayerCharacterController.h"
+#include "UI/PlayerStatsWidget.h"
+
 #include "TimerManager.h"
 
 void AEnemyCharacter::Reset() {
@@ -24,6 +28,20 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	HealthComponent->OnHealthChanged.AddDynamic(this, &AEnemyCharacter::OnTakingDamage);
+
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(*Iterator);
+		if (validate(IsValid(Controller)) == false) return;
+
+		ABattleHUD* HUD = Cast<ABattleHUD>(Controller->GetHUD());
+		if (validate(IsValid(HUD)) == false) return;
+
+		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+		if (validate(IsValid(PlayerStatsWidget)) == false) return;
+
+		float Percent = 1.0f;
+		PlayerStatsWidget->SetEnemyHealth(Percent);
+	}
 }
 
 bool AEnemyCharacter::IsTakingDamage()
@@ -101,5 +119,22 @@ void AEnemyCharacter::OnTakingDamage(float CurrentHealth)
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyCharacter::ClearTakingDamage, 0.0f, false, 0.25f);
+
+
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(*Iterator);
+		if (validate(IsValid(Controller)) == false) return;
+		
+		ABattleHUD* HUD = Cast<ABattleHUD>(Controller->GetHUD());
+		if (validate(IsValid(HUD)) == false) return;
+
+		UPlayerStatsWidget* PlayerStatsWidget = HUD->GetPlayerStatsWidget();
+		if (validate(IsValid(PlayerStatsWidget)) == false) return;
+
+		float Percent = CurrentHealth / HealthComponent->GetMaxHealth();
+		PlayerStatsWidget->SetEnemyHealth(Percent);
+	}
+
+
 
 }

@@ -55,6 +55,7 @@ AGun::AGun()
 void AGun::BeginPlay()
 {
 	Super::BeginPlay();
+	if (HasAuthority() == false) return;
 
 	if (validate(IsValid(WeaponDataTable)) == false) return;
 	FString ContextString(TEXT("GENERAL"));
@@ -76,7 +77,7 @@ void AGun::BeginPlay()
 
 void AGun::PullTrigger() {
 	if (validate(WeaponData != nullptr) == false) return;
-
+	if (HasAuthority() == false) return;
 	GetWorldTimerManager().SetTimer(
 		FireTimerHandle,
 		this,
@@ -90,6 +91,7 @@ void AGun::PullTrigger() {
 
 
 void AGun::ReleaseTrigger() {
+	if (HasAuthority() == false) return;
 	bTriggerPressed = false;
 	GetWorldTimerManager().ClearTimer(FireTimerHandle);
 }
@@ -97,7 +99,7 @@ void AGun::ReleaseTrigger() {
 
 void AGun::Fire() {
 	if (validate(WeaponData != nullptr) == false) return;
-
+	if (HasAuthority() == false) return;
 	//UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentClipAmmo)
 
 	if (HasAmmo(WeaponData->BulletsPerShot)) {
@@ -157,6 +159,7 @@ void AGun::Tick(float deltaTime)
 }
 
 void AGun::SpawnProjectile() {
+	if (HasAuthority() == false) return;
 
 	if (validate(WeaponData != nullptr) == false) return;
 	if (validate(IsValid(ProjectileSpawnTransform)) == false) { return; }
@@ -231,6 +234,7 @@ bool AGun::CanReload()
 
 void AGun::StartReload()
 {
+	if (HasAuthority() == false) return;
 	if (CanReload() == false) {
 		return;
 	}
@@ -252,6 +256,7 @@ void AGun::StartReload()
 
 void AGun::FinishReload()
 {
+	if (HasAuthority() == false) return;
 	if (validate(WeaponData != nullptr) == false) return;
 
 	if (WeaponData->bInfiniteAmmo) {
@@ -275,6 +280,7 @@ void AGun::FinishReload()
 
 bool AGun::HasAmmo(int Amount)
 {
+	if (HasAuthority() == false) return false;
 	return CurrentClipAmmo >= Amount;
 }
 

@@ -14,9 +14,13 @@ class BOSSBATTLE_API UPlayerStatsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-
+	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	float Health = 1.0f;
+
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	float EnemyHealth = 1.0f;
 
 	//text to show when the playerrs win the game
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -37,6 +41,8 @@ public:
 	void SetWinGame();
 
 	void SetHealth(float Value);
+
+	void SetEnemyHealth(float Value);
 
 private:
 

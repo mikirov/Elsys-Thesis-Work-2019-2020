@@ -14,7 +14,6 @@ class BOSSBATTLE_API ABattleCharacter : public ACharacter
 public:
 
 
-
 	// Sets default values for this character's properties
 	ABattleCharacter();
 
@@ -152,6 +151,9 @@ protected:
 	void MulticastFinishReloading();
 	bool MulticastFinishReloading_Validate();
 	void MulticastFinishReloading_Implementation();
+
+	UFUNCTION()
+	void UpdateGun();
 
 	FTimerHandle AttemptFiringTimerHandle;
 

@@ -23,10 +23,7 @@ void UTrainingWidget::NativeConstruct()
 	if (validate(IsValid(AITrainingButton))) {
 		AITrainingButton->OnClicked.AddDynamic(this, &UTrainingWidget::LoadAITraining);
 	}
-	//if (validate(IsValid(RLTrainingButton))) {
-	//	RLTrainingButton->OnClicked.AddDynamic(this, &UTrainingWidget::LoadRLTraining);
-	//}
-
+	
 }
 
 void UTrainingWidget::Back()
@@ -55,18 +52,4 @@ void UTrainingWidget::LoadAITraining()
 	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
 
 	UGameplayStatics::OpenLevel(World, AITrainingLevelName);
-}
-
-void UTrainingWidget::LoadRLTraining()
-{
-	UWorld* World = GetWorld();
-	if (validate(IsValid(World)) == false) { return; }
-	if (validate(RLTrainingLevelName.ToString().Len() > 0) == false) { return; }
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (validate(IsValid(PlayerController)) == false) return;
-
-	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
-
-	UGameplayStatics::OpenLevel(World, RLTrainingLevelName);
 }

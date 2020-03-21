@@ -50,6 +50,11 @@ void UPlayerStatsWidget::SetHealth(float Value)
 	Health = Value;
 }
 
+void UPlayerStatsWidget::SetEnemyHealth(float Value)
+{
+	EnemyHealth = Value;
+}
+
 void UPlayerStatsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

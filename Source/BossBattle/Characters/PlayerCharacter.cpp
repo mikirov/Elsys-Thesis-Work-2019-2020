@@ -124,6 +124,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 }
 
 void APlayerCharacter::OpenChat() {
+	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OpenChat"))
 	if (validate(IsValid(ChatWidget)) == false) return;
 
 	ChatWidget->Open();

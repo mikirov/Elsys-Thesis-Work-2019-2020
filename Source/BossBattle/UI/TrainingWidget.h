@@ -20,10 +20,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* AITrainingButton = nullptr;
 
-	//RL vs RL training map button
-	UPROPERTY(meta = (BindWidget))
-	class UButton* RLTrainingButton = nullptr;
-
 	//back to main menu button
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BackButton = nullptr;
@@ -44,10 +40,5 @@ protected:
 
 	//loads RL vs AI training map
 	UFUNCTION()
-	void LoadAITraining();
-
-	//loads RL vs RL training map
-	UFUNCTION()
-	void LoadRLTraining();
-	
+	void LoadAITraining();	
 };
