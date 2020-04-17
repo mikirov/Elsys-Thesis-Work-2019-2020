@@ -38,6 +38,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaTimeX) {
 
 void UCharacterAnimInstance::OnReloadFinished()
 {
+	if (validate(AnimationState != EAnimationState::Dead) == false) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::OnReloadFinished"))
 	CharacterPawn->ServerFinishReloading();
 }
@@ -59,16 +61,23 @@ void UCharacterAnimInstance::Die() {
 
 void UCharacterAnimInstance::SetCrouching(bool State)
 {
+	if (AnimationState == EAnimationState::Dead) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("UCharacterAnimInstance::SetCrouching"))
 	bCrouching = State;
 }
 
 void UCharacterAnimInstance::SetReloading(bool State) {
+	if (validate(AnimationState != EAnimationState::Dead) == false) return;
+
 	if (State) {
 		PreviousState = AnimationState;
 		AnimationState = EAnimationState::Reloading;
+		UE_LOG(LogTemp, Warning, TEXT(" UCharacterAnimInstance::SetReloading(true)"))
 	}
 	else {
+
+		UE_LOG(LogTemp, Warning, TEXT(" UCharacterAnimInstance::SetReloading(false)"))
 		AnimationState = PreviousState;
 	}
 }

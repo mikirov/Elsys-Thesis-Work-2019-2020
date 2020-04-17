@@ -272,6 +272,7 @@ void ABattleCharacter::StartReloading()
 	if (bReloadingAllowed == false) { return; }
 	if (validate(IsValid(Gun)) == false) { return; }
 
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::StartReloading"))
 	bReloadingAllowed = false;
 
 	CharacterAnimation->SetReloading(true);
@@ -280,6 +281,9 @@ void ABattleCharacter::StartReloading()
 void ABattleCharacter::FinishReloading()
 {
 	if (validate(IsValid(Gun)) == false) return;
+
+
+	UE_LOG(LogTemp, Warning, TEXT("ABattleCharacter::FinishReloading"))
 
 	bReloadingAllowed = true;
 	CharacterAnimation->SetReloading(false);

@@ -60,6 +60,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	bool bInAir = false;
 
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	float MovementDirection = 0;
 
