@@ -5,12 +5,17 @@ This projet implements and compares both Reinforcement learning AI and conventio
 # The Game:
 ## Weapons:
 - The game implements a data-driven weapon system (with multiple projectiles, ammunition, particle systems, reloading animation). Everything is server-side and synchronized across multiple player instances.
+
 ![Bazooka-gif](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200413_231529.gif)
+
 ![Default-gun-gif](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200413_233054.gif)
 ## Co-op game mode:
 - The game implements a lobby that waits for 4 people to join before entering the main arena. The game spawns BT AI and RL AI against the 4 players.
+
 ![lobby](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/lobby.png)
+
 ![lobby2](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/lobby2.png)
+
 ## Various animations:
 - The players have animations for different actions (all animation logic is written in C++)
 ![walk-animation](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200303_212213.gif)
