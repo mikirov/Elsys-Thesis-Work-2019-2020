@@ -2,6 +2,9 @@
 *
 !*/
 
+# Do not ignore documentation changes
+!/Documentation/**
+
 # Do not ignore git files in the root of the repo.
 !/.git*
 
