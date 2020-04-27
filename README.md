@@ -14,7 +14,9 @@ This projet implements and compares both Reinforcement learning AI and conventio
 ## Various animations:
 - The players have animations for different actions (all animation logic is written in C++)
 ![walk-animation](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200303_212213.gif)
+
 ![death-animation](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200303_212418.gif)
+
 ![reload-animation](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/20200303_213937.gif)
 ## Chat:
 - A fully synchronized C++ chat is implemented into the game. It has animations and a sccroll button:
@@ -27,9 +29,9 @@ This projet implements and compares both Reinforcement learning AI and conventio
 ## Reinforcement learning AI:
 ![training](https://github.com/mikirov/Elsys-Thesis-Work-2019-2020/blob/master/Documentation/Images/training.png)
 - The reinforcement learning AI consists of two phases: training the agent and playing against the agent:
-- - A fully costumizable training user interface was created. It allows the developer to tweek training data in real time to achieve the wanted behavior.
-- - Progress is being made towards exporting the RL code to a plugin.
-- - The agent stores it's progress when killed and when another one spawns in the next epoch the training continues where it left off.
+  - A fully costumizable training user interface was created. It allows the developer to tweek training data in real time to achieve the wanted behavior.
+  - Progress is being made towards exporting the RL code to a plugin.
+  - The agent stores it's progress when killed and when another one spawns in the next epoch the training continues where it left off.
 - After an agent is trained it reads the model data from it's Q-table and does the best action
 
 ## Explanation of The Reinforcement learning algorithm:
