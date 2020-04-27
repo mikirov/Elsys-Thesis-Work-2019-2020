@@ -1,4 +1,4 @@
-# Brawler arena shooter Game with implemented Reinfocement learning Artificial Intelligence
+# Brawler Arena Shooter Game with implemented Reinfocement Learning Artificial Intelligence
 
 This projet implements and compares both Reinforcement learning AI and conventional Behavior Tree AI on top of a 3D multiplayer brawler arena shooter game.
 
