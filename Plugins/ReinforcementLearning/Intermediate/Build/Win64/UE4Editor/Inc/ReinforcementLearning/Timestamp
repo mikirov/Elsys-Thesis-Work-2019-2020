@@ -1,0 +1,16 @@
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\AI\RLController.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\AI\RLGameController.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\AI\RLTrainingController.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Gamemodes\TrainingGameMode.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\UI\TrainingStatsWidget.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\UI\TrainingHUD.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\AimAction.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\LearningComponent.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\MoveBackwardAction.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\MoveForwardAction.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\MoveLeftAction.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\AI\RLEnemyController.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\MoveRightAction.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\State.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Public\Utilities\Action.h
+C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Source\ReinforcementLearning\Private\Utilities\TrainingSaveGame.h

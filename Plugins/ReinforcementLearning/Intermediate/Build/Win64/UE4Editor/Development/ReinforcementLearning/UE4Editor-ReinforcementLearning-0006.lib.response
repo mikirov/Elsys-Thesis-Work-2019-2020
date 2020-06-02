@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-ReinforcementLearning-0006.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Repos\elsys-thesis-work\Intermediate\Build\Win64\BossBattleEditor\Development\Engine\SharedPCH.Engine.h.obj"
+"C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Intermediate\Build\Win64\UE4Editor\Development\ReinforcementLearning\Module.ReinforcementLearning.cpp.obj"
+"C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Intermediate\Build\Win64\UE4Editor\Development\ReinforcementLearning\Module.ReinforcementLearning.gen.cpp.obj"
+"C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Intermediate\Build\Win64\UE4Editor\Development\ReinforcementLearning\Default.rc2.res"
+/OUT:"C:\Repos\elsys-thesis-work\Plugins\ReinforcementLearning\Intermediate\Build\Win64\UE4Editor\Development\ReinforcementLearning\UE4Editor-ReinforcementLearning-0006.lib"
+/INCLUDE:IMPLEMENT_MODULE_ReinforcementLearning

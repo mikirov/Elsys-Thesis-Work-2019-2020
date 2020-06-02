@@ -1,0 +1,43 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.ReinforcementLearning.cpp.obj": [
+			"RLController.cpp.obj",
+			"RLEnemyController.cpp.obj",
+			"RLGameController.cpp.obj",
+			"RLTrainingController.cpp.obj",
+			"TrainingGameMode.cpp.obj",
+			"ReinforcementLearning.cpp.obj",
+			"TrainingHUD.cpp.obj",
+			"TrainingStatsWidget.cpp.obj",
+			"Action.cpp.obj",
+			"AimAction.cpp.obj",
+			"LearningComponent.cpp.obj",
+			"MoveBackwardAction.cpp.obj",
+			"MoveForwardAction.cpp.obj",
+			"MoveLeftAction.cpp.obj",
+			"MoveRightAction.cpp.obj",
+			"State.cpp.obj",
+			"TrainingSaveGame.cpp.obj"
+		],
+		"Module.ReinforcementLearning.gen.cpp.obj": [
+			"Action.gen.cpp.obj",
+			"AimAction.gen.cpp.obj",
+			"LearningComponent.gen.cpp.obj",
+			"MoveBackwardAction.gen.cpp.obj",
+			"MoveForwardAction.gen.cpp.obj",
+			"MoveLeftAction.gen.cpp.obj",
+			"MoveRightAction.gen.cpp.obj",
+			"ReinforcementLearning.init.gen.cpp.obj",
+			"RLController.gen.cpp.obj",
+			"RLEnemyController.gen.cpp.obj",
+			"RLGameController.gen.cpp.obj",
+			"RLTrainingController.gen.cpp.obj",
+			"State.gen.cpp.obj",
+			"TrainingGameMode.gen.cpp.obj",
+			"TrainingHUD.gen.cpp.obj",
+			"TrainingSaveGame.gen.cpp.obj",
+			"TrainingStatsWidget.gen.cpp.obj"
+		]
+	}
+}

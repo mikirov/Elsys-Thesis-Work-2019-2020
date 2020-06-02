@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "ReinforcementLearning",
+	"Description": "Reinforcement learning implementation",
+	"Category": "Other",
+	"CreatedBy": "Mihail Kirov",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ReinforcementLearning",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
