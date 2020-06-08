@@ -20,8 +20,6 @@ public:
 	
 	void Die() override;
 
-	void BeginPlay();
-
 protected:
 
 	// target player used for checking collision actor

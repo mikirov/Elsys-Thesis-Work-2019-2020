@@ -32,6 +32,7 @@ protected:
 
 	bool AreAllEnemiesDead();
 
+	UPROPERTY(BlueprintReadOnly)
 	int CurrentScore = 0;
 
 	int CurrentEnemies = 0;

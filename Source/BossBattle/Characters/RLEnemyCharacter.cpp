@@ -43,12 +43,6 @@ void ARLEnemyCharacter::MoveRight(float Value)
 }
 
 
-void ARLEnemyCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
 
 void ARLEnemyCharacter::FocusOnEnemy() {
 	UWorld* World = GetWorld();

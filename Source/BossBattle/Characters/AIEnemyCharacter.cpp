@@ -43,9 +43,3 @@ void AAIEnemyCharacter::Die()
 
 }
 
-void AAIEnemyCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-

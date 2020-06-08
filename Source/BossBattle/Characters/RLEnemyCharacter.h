@@ -25,7 +25,6 @@ public:
 	//action binding function. Moves the character left or right
 	void MoveRight(float Value);
 
-	void BeginPlay() override;
 
 protected:
 
